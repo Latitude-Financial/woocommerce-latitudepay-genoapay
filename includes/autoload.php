@@ -99,7 +99,6 @@ class WC_BinaryPay_Manager
          * Assign gateways into plugin
          */
         $this->gateways = apply_filters('wc_binarypay_payment_gateways', array(
-            'MageBinary_BinaryPay_Method_Offline',
             'MageBinary_BinaryPay_Method_Genoapay'
         ));
     }
@@ -112,6 +111,14 @@ class WC_BinaryPay_Manager
     public function plugins_loaded() {
         // $this->plugin_validations ();
         load_plugin_textdomain('magebinary-binarypay', false, dirname(WC_BINARYPAY_PLUGIN_NAME) . '/i18n/languages' );
+    }
+
+    public function plugin_path() {
+        return WC_BINARYPAY_PATH;
+    }
+
+    public function template_path() {
+        return WC_BINARYPAY_TEMPLATES;
     }
 
     /**

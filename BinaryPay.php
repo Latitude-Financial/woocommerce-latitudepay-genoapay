@@ -16,6 +16,7 @@ defined( 'ABSPATH' ) || exit;
 
 define('WC_BINARYPAY_PATH', plugin_dir_path ( __FILE__ ));
 define('WC_BINARYPAY_ASSETS', plugin_dir_url( __FILE__ ) . 'assets/');
+define('WC_BINARYPAY_TEMPLATES', plugin_dir_url( __FILE__ ) . 'templates/');
 define('WC_BINARYPAY_PLUGIN_NAME', plugin_basename ( __FILE__ ));
 
 add_action('plugins_loaded', 'wc_binarypay_init', 11);

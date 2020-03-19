@@ -41,6 +41,7 @@ class MageBinary_BinaryPay_Method_Offline extends MageBinary_BinaryPay_Method_Ab
         $this->method_title         = __('BinaryPay Offline Gateway', 'magebinary-binarypay');
         $this->tab_title            = __('Offline', 'magebinary-binarypay');
         $this->method_description   = __('BinaryPay Offline Gateway', 'magebinary-binarypay');
+        $this->template             = 'cc-checkout.php';
     }
 
     public function process_payment($order_id)

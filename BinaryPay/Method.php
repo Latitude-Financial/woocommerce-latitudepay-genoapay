@@ -33,13 +33,27 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
 {
     public $gateway;
 
-    public function __construct() {
+    const WC_BINARYPAY_SPAM_COUNT = 0;
+
+    public function __construct()
+    {
+        $this->has_fields = true;
+        $this->nonce_key = $this->id . '_nonce_key';
+        $this->token_key = $this->id . '_token_key';
+        $this->device_data_key = $this->id . '_device_data';
+        $this->save_method_key = $this->id . '_save_method';
+        $this->payment_type_key = $this->id . '_payment_type';
+        $this->config_key = $this->id . '_config_data';
+
         $this->init_form_fields();
         $this->init_settings();
+        $this->title = $this->get_option('title');
+        $this->description = $this->get_option('description');
         $this->add_hooks();
     }
 
-    public static function init() {
+    public static function init()
+    {
         add_filter('woocommerce_available_payment_gateways', array(
             __CLASS__, 'available_payment_gateways'
         ));
@@ -53,9 +67,56 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         return $gateways;
     }
 
+    public function payment_fields() {
+        // $this->enqueue_frontend_scripts ( binarypay()->frontend_scripts );
+        if (is_checkout() || $this->is_change_payment_request()) {
+            $user = wp_get_current_user();
+            $methods = $this->get_tokens();
+            wc_binarypay_get_template('checkout/binarypay-payment-method.php', array(
+                    'methods' => $methods,
+                    'has_methods' => (bool) $methods,
+                    'gateway' => $this
+            ) );
+        } else {
+            wc_binarypay_get_template('checkout/binarypay-payment-method.php', array(
+                    'methods' => array(),
+                    'has_methods' => false,
+                    'gateway' => $this
+            ) );
+        }
+    }
+
+    /**
+     *
+     * @param WC_Braintree_Frontend_Scripts $scripts
+     */
+    public function enqueue_frontend_scripts($scripts) {
+        global $wp;
+        if (is_checkout() && !is_order_received_page()) {
+            $this->enqueue_checkout_scripts($scripts);
+        }
+
+        if (is_add_payment_method_page() && ! isset($wp->query_vars[ 'payment-methods' ])) {
+            $this->enqueue_add_payment_method_scripts($scripts);
+        }
+
+        if (is_cart()) {
+            $this->enqueue_cart_scripts($scripts);
+        }
+
+        if (is_product()) {
+            $this->enqueue_product_scripts($scripts);
+        }
+    }
+
     /**
      * Add all standard filters
      */
     public function add_hooks() {
+        add_action('woocommerce_update_options_payment_gateways_' . $this->id, array(
+                $this, 'process_admin_options'
+        ));
     }
 }
+
+MageBinary_BinaryPay_Method_Abstract::init();
