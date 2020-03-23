@@ -4,7 +4,7 @@
  * @package BinaryPay/Templates
  * @var MageBinary_BinaryPay_Method_Abstract $gateway
  */
-wc_braintree_spam_bot_field();
+wc_binarypay_spam_bot_field();
 ?>
 <div class="wc-binarypay-payment-gateway <?php if($has_methods){?>has_methods<?php }?>">
     <?php
@@ -28,8 +28,7 @@ wc_braintree_spam_bot_field();
     if ($methods) {
         wc_binarypay_get_template('payment-methods.php', array(
                 'gateway' => $gateway,
-                'methods' => $methods,
-                'label' => $gateway->get_saved_method_label()
+                'methods' => $methods
         ));
     }
     ?>
