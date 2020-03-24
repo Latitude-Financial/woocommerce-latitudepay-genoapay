@@ -55,6 +55,11 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      */
     const DEBUG_MODE_LOG = 'log';
 
+    const DEFAULT_VALUE = 'NULL';
+    const ENVIRONMENT_SANDBOX = 'sandbox';
+    const ENVIRONMENT_PRODUCTION = 'production';
+    const ENVIRONMENT_DEVELOPMENT = 'development';
+
     /**
      * @var MageBinary_BinaryPay_Method_Abstract
      */
@@ -69,6 +74,16 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      * @var integer
      */
     protected $max_order_total;
+
+    /**
+     * @var string
+     */
+    protected $environment;
+
+    /**
+     * @var string
+     */
+    protected $currency_code;
 
     public function __construct()
     {
@@ -86,6 +101,9 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         $this->description = $this->get_option('description');
         $this->min_order_total = $this->get_option('min_order_total');
         $this->max_order_total = $this->get_option('max_order_total');
+        $this->environment     = $this->get_option('environment');
+        $this->currency_code   = get_woocommerce_currency();
+
         $this->add_hooks();
     }
 
@@ -135,7 +153,6 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         $pos = false === $index ? count($form_fields) : $index + 1;
         return array_merge(array_slice($form_fields, 0, $pos), $value, array_slice($form_fields, $pos));
     }
-
 
     public function payment_fields() {
         // $this->enqueue_frontend_scripts ( binarypay()->frontend_scripts );
@@ -201,12 +218,28 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      *
      * @return string
      */
-    public function get_credentials($key = null)
+    public function get_credentials()
     {
+        $public_key = '';
+        switch ($this->environment) {
+            case MageBinary_BinaryPay_Method_Abstract::ENVIRONMENT_SANDBOX:
+            case MageBinary_BinaryPay_Method_Abstract::ENVIRONMENT_DEVELOPMENT:
+                $public_key = $this->get_option('sandbox_public_key');
+                $private_key = $this->get_option('sandbox_private_key');
+                break;
+            case MageBinary_BinaryPay_Method_Abstract::ENVIRONMENT_PRODUCTION:
+                $public_key = $this->get_option('sandbox_public_key');
+                $private_key = $this->get_option('sandbox_private_key');
+                break;
+            default:
+                throw new Exception('xxxxxxx');
+                break;
+        }
+
         $credentials = array(
-            'username'      => $this->get_option('username'),
-            'password'      => $this->get_option('password'),
-            'environment'   => $this->get_option('environment'),
+            'username'      => $public_key,
+            'password'      => $private_key,
+            'environment'   => $this->environment,
             'accountId'     => $this->get_option('account_id')
         );
         return $credentials;
@@ -225,9 +258,9 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
 
     public function get_environments(){
         return array(
-            'development' => __('Development', 'magebinary-binarypay'),
-            'sandbox'     => __('Sandbox', 'magebinary-binarypay'),
-            'production'  => __('Production', 'magebinary-binarypay'),
+            self::ENVIRONMENT_DEVELOPMENT => __('Development', 'magebinary-binarypay'),
+            self::ENVIRONMENT_SANDBOX     => __('Sandbox', 'magebinary-binarypay'),
+            self::ENVIRONMENT_PRODUCTION  => __('Production', 'magebinary-binarypay'),
         );
     }
 
@@ -238,11 +271,84 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
 
     /**
      * get_reference_number - get next order Id by last order id, to fix webpayment multiple increment id number bugs
-     * @return Integer
+     * @return integer
      */
     protected function get_reference_number()
     {
-        // return $reserveOrderId;
+        // global $woocommerce, $post;
+        // $order = new WC_Order($post->ID);
+        // $reserved_order_id = trim(str_replace('#', '', $order->get_order_number()));
+        // print_r($reserved_order_id);die();
+        return '11111111';
+    }
+
+    /**
+     * get_amount - get amount of the current quote
+     */
+    protected function get_amount()
+    {
+        global $woocommerce;
+        $amount = floatval(preg_replace('#[^\d.]#', '', $woocommerce->cart->get_displayed_subtotal()));
+        return $amount;
+    }
+
+    /**
+     * _getQuoteProducts
+     * @return array
+     */
+    protected function get_quote_products()
+    {
+        global $woocommerce;
+        $items = $woocommerce->cart->get_cart();
+
+        $products = [];
+        foreach ($items as $_item) {
+            $_item = new Varien_Object($_item);
+            $_product = new Varien_Object($_item['data']->get_parent_data());
+            $productItem = [
+                'name'          => $_product->getData('title'),
+                'price' => [
+                    'amount'    => $_item->getData('line_tax_data/subtotal'),
+                    'currency'  => $this->currency_code
+                ],
+                'sku'           => $_product->getData('sku'),
+                'quantity'      => $_item->getData('quantity'),
+                'taxIncluded'   => 1
+            ];
+            array_push($products, $productItem);
+        }
+        return $products;
+    }
+
+    protected function get_billing_address()
+    {
+        global $woocommerce;
+        $address = $woocommerce->cart->get_customer()->get_billing_address();
+        $address2 = $woocommerce->cart->get_customer()->get_billing_address_2();
+
+        if ($address2) {
+            $address .= ', ' . $address2;
+        }
+
+        return $address;
+    }
+
+    /**
+     * get_shipping_data
+     * @return array
+     */
+    protected function get_shipping_data()
+    {
+        global $woocommerce;
+        $shippingDetail = [
+            'carrier' => $woocommerce->session->get('chosen_shipping_methods'),
+            'price' => [
+                'amount' => 0,
+                'currency' => $this->currency_code
+            ],
+            'taxIncluded' => 0
+        ];
+        return $shippingDetail;
     }
 
     /**

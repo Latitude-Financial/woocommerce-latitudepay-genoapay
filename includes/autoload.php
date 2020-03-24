@@ -3,6 +3,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__
 require_once('Exception.php');
 require_once('Http.php');
 require_once('Config.php');
+require_once('Varien/Object.php');
 
 
 spl_autoload_register(

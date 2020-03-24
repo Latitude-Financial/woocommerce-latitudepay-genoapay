@@ -5,17 +5,18 @@
  * @var MageBinary_BinaryPay_Method_Abstract $gateway
  */
 wc_binarypay_spam_bot_field();
+var_dump($gateway->get_purchase_url());die();
 ?>
 <div class="wc-binarypay-payment-gateway <?php if($has_methods){?>has_methods<?php }?>">
     <?php
-    wc_binarypay_nonce_field ( $gateway );
-    wc_binarypay_device_data_field ( $gateway );
+        wc_binarypay_nonce_field($gateway);
+        wc_binarypay_device_data_field($gateway);
     ?>
     <?php
-    $description = $gateway->get_description();
-    if ( $description ) {
-        echo wpautop( wptexturize( $description ) );
-    }
+        $description = $gateway->get_description();
+        if ($description) {
+            echo wpautop(wptexturize($description));
+        }
     ?>
     <?php if ($has_methods) : ?>
     <input type="radio" class="wc-binarypay-payment-type" id="<?php echo $gateway->id?>_use_nonce" name="<?php echo $gateway->payment_type_key?>" value="nonce"/>

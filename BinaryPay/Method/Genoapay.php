@@ -36,6 +36,11 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
      */
     protected $gateway_class = 'MageBinary_BinaryPay_Method_Genoapay';
 
+    /**
+     * @var string
+     */
+    protected $return_url = '/api/v1/binarypay/return';
+
     public function __construct()
     {
         $this->id                   = MageBinary_BinaryPay_Model_Config::GENOAPAY;
@@ -50,8 +55,6 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
          * The description will show in the backend
          */
         $this->method_description   = __('Available to NZ residents who are 18 years old and over and have a valid debit or credit card.', 'magebinary-binarypay');
-
-
         parent::__construct();
     }
 
@@ -108,6 +111,10 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
             )
         );
 
+        // add unique method fields added by concrete gateway class
+        $gateway_form_fields = $this->get_gateway_form_fields();
+        $this->form_fields = array_merge( $this->form_fields, $gateway_form_fields );
+
         if (count($this->get_environments()) > 1) {
             $this->form_fields = $this->add_form_fields($this->form_fields, 'description', array(
                     'environment' => array(
@@ -123,9 +130,53 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
         }
     }
 
-    // public function output_checkout_fields()
-    // {
-    // }
+    /**
+     * Returns an array of form fields specific for this method
+     *
+     * @since 3.0.0
+     * @see SV_WC_Payment_Gateway::get_gateway_form_fields()
+     * @return array of form fields
+     */
+    protected function get_gateway_form_fields() {
+
+        return array(
+            // merchant account ID per currency feature
+            'merchant_account_id_title' => array(
+                'title'       => __('Merchant Account Info', 'magebinary-binarypay'),
+                'type'        => 'title',
+                'description' => sprintf(
+                    esc_html__( 'Enter additional merchant account IDs if you do not want to use your GenoaPay account default. %1$sLearn more about merchant account IDs%2$s', 'magebinary-binarypay' ),
+                    '<a href="' . esc_url( "binarypay()->get_documentation_url()" ). '#merchant-account-ids' . '">', '&nbsp;&rarr;</a>'
+                ),
+            ),
+            // production
+            'public_key' => array(
+                'title'    => __('Public Key', 'magebinary-binarypay'),
+                'type'     => 'text',
+                'class'    => 'environment-field production-field',
+                'desc_tip' => __('The Public Key for your GenoaPay account.', 'magebinary-binarypay'),
+            ),
+            'private_key' => array(
+                'title'    => __('Private Key', 'magebinary-binarypay'),
+                'type'     => 'text',
+                'class'    => 'environment-field production-field',
+                'desc_tip' => __('The Private Key for your GenoaPay account.', 'magebinary-binarypay'),
+            ),
+            // sandbox
+            'sandbox_public_key' => array(
+                'title'    => __('Sandbox Public Key', 'magebinary-binarypay'),
+                'type'     => 'text',
+                'class'    => 'environment-field sandbox-field',
+                'desc_tip' => __('The Public Key for your GenoaPay sandbox account.', 'magebinary-binarypay'),
+            ),
+            'sandbox_private_key' => array(
+                'title'    => __('Sandbox Private Key', 'magebinary-binarypay'),
+                'type'     => 'text',
+                'class'    => 'environment-field sandbox-field',
+                'desc_tip' => __('The Private Key for your GenoaPay sandbox account.', 'magebinary-binarypay'),
+            ),
+        );
+    }
 
     public function add_hooks()
     {
@@ -138,55 +189,65 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
 
     public function get_purchase_url()
     {
+        global $woocommerce;
+
         try {
             $gateway    = $this->get_gateway();
 
             $reference          = $this->get_reference_number();
-            $amount             = $this->getAmount($isBackend);
+            $amount             = $this->get_amount();
 
-            $billingAddress     = $this->_getQuote()->getBillingAddress();
-            $shippingAddress    = $this->_getQuote()->getShippingAddress();
+            $currencyCode       = $this->currency_code;
+            $customer           = $woocommerce->cart->get_customer();
+            $cart               = $woocommerce->cart;
 
             $payment = array(
                 BinaryPay::REFERENCE                => (string) $reference,
                 BinaryPay::AMOUNT                   => $amount,
-                BinaryPay::CURRENCY                 => $this->getCurrencyCode() ?: self::DEFAULT_VALUE,
-                BinaryPay::RETURN_URL               => Mage::getUrl($this->_returnUrl),
-                BinaryPay::MOBILENUMBER             => $billingAddress->getTelephone() ?: '0210123456',
-                BinaryPay::EMAIL                    => $this->_getCustomerEmail() ?: self::DEFAULT_VALUE,
-                BinaryPay::FIRSTNAME                => $this->_getFirstName() ?: $billingAddress->getFirstname(),
-                BinaryPay::SURNAME                  => $this->_getSurname() ?: $billingAddress->getLastname(),
-                BinaryPay::SHIPPING_ADDRESS         => current($shippingAddress->getStreet()) ?: self::DEFAULT_VALUE,
-                BinaryPay::SHIPPING_COUNTRY_CODE    => $shippingAddress->getCountryId() ?: self::DEFAULT_VALUE,
-                BinaryPay::SHIPPING_POSTCODE        => $shippingAddress->getPostcode() ?: self::DEFAULT_VALUE,
-                BinaryPay::SHIPPING_SUBURB          => $shippingAddress->getRegion() ?: self::DEFAULT_VALUE,
-                BinaryPay::SHIPPING_CITY            => $shippingAddress->getCity() ?: self::DEFAULT_VALUE,
-                BinaryPay::BILLING_ADDRESS          => current($billingAddress->getStreet()) ?: self::DEFAULT_VALUE,
-                BinaryPay::BILLING_COUNTRY_CODE     => $billingAddress->getCountryId() ?: self::DEFAULT_VALUE,
-                BinaryPay::BILLING_POSTCODE         => $billingAddress->getPostcode() ?: self::DEFAULT_VALUE,
-                BinaryPay::BILLING_SUBURB           => $billingAddress->getRegion() ?: self::DEFAULT_VALUE,
-                BinaryPay::BILLING_CITY             => $billingAddress->getCity() ?: self::DEFAULT_VALUE,
-                BinaryPay::TAX_AMOUNT               => $shippingAddress->getQuote()->getShippingAddress()->getData('tax_amount'),
-                BinaryPay::PRODUCTS                 => $this->_getQuoteProducts(),
+                BinaryPay::CURRENCY                 => $currencyCode ?: self::DEFAULT_VALUE,
+                BinaryPay::RETURN_URL               => $this->return_url,
+                BinaryPay::MOBILENUMBER             => $customer->get_billing_phone() ?: '0210123456',
+                BinaryPay::EMAIL                    => $customer->get_billing_email(),
+                BinaryPay::FIRSTNAME                => $customer->get_billing_first_name() ?: self::DEFAULT_VALUE,
+                BinaryPay::SURNAME                  => $customer->get_billing_last_name() ?: self::DEFAULT_VALUE,
+                BinaryPay::SHIPPING_ADDRESS         => $customer->get_shipping_address() ?: self::DEFAULT_VALUE,
+                BinaryPay::SHIPPING_COUNTRY_CODE    => $customer->get_shipping_country() ?: self::DEFAULT_VALUE,
+                BinaryPay::SHIPPING_POSTCODE        => $customer->get_shipping_postcode() ?: self::DEFAULT_VALUE,
+                BinaryPay::SHIPPING_SUBURB          => $customer->get_shipping_state() ?: self::DEFAULT_VALUE,
+                BinaryPay::SHIPPING_CITY            => $customer->get_shipping_city() ?: self::DEFAULT_VALUE,
+                BinaryPay::BILLING_ADDRESS          => $this->get_billing_address() ?: self::DEFAULT_VALUE,
+                BinaryPay::BILLING_COUNTRY_CODE     => $customer->get_billing_country() ?: self::DEFAULT_VALUE,
+                BinaryPay::BILLING_POSTCODE         => $customer->get_billing_postcode() ?: self::DEFAULT_VALUE,
+                BinaryPay::BILLING_SUBURB           => $customer->get_billing_state() ?: self::DEFAULT_VALUE,
+                BinaryPay::BILLING_CITY             => $customer->get_billing_city() ?: self::DEFAULT_VALUE,
+                BinaryPay::TAX_AMOUNT               => array_sum($cart->get_taxes()),
+                BinaryPay::PRODUCTS                 => $this->get_quote_products(),
                 BinaryPay::SHIPPING_LINES           => [
-                    $this->_getShippingData()
+                    $this->get_shipping_data()
                 ]
             );
 
+            echo '<pre>';
+            print_r($payment);
+            echo '</pre>';
+            die();
+
             $response   = $gateway->purchase($payment);
-
+            echo '<pre>';
+            print_r($response);
+            echo '</pre>';
+            die();
             $this->setSesionReferense($reference, $response);
-
-            // Mage::getSingleton('checkout/session')->setGenoapayReference($reference);
-            // Mage::getSingleton('checkout/session')->setGenoapayToken($response['token']);
 
             $purchaseUrl = $this->_getPurchaseUrl($response);
         } catch (BinaryPay_Exception $e) {
-            Mage::throwException($e->getMessage());
+            var_dump($e->getMessage());die();
+            // Mage::throwException($e->getMessage());
         } catch (Exception $e) {
             $message = $e->getMessage() ?: 'Something massively went wrong. Please try again. If the problem still exists, please contact us';
-            Mage::throwException($message);
-            Mage::log($e->getTrace(), null, 'BinaryPay.log', true);
+            var_dump($e->getMessage());die();
+            // Mage::throwException($message);
+            // Mage::log($e->getTrace(), null, 'BinaryPay.log', true);
         }
 
         return $purchaseUrl;
