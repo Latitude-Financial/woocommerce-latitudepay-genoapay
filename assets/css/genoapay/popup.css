@@ -1,0 +1,192 @@
+#g-infomodal-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #000;
+    opacity: 0.5;
+    z-index: 3000;
+}
+
+.g-info-modal::before {
+    content: '';
+    position: absolute;
+    display: block;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: red;
+}
+.g-infomodal-content {
+    width: calc(100% - 30px);
+    max-width: 520px;
+    max-height: calc(100% - 30px);
+    background: #ffffff;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 2px 9px 0 rgba(0,0,0,0.30);
+            box-shadow: 0 2px 9px 0 rgba(0,0,0,0.30);
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%);
+}
+.g-infomodal-content p {
+    font-size: 15px;
+    line-height: 22px;
+}
+
+.g-modal-header {
+    background: #00AB8E;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center right;
+    height: 140px;
+    margin-bottom: 20px;
+}
+
+.g-modal-header span {
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    color: #ffffff;
+    display: block;
+    font-size: 22px;
+    font-weight: 500;
+}
+.g-infomodal-body {
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    margin: 15px;
+}
+.g-infomodal-card {
+    width: auto;
+    display: block;
+    height: 120px;
+    text-align: center;
+    background: #F8F8F8;
+    border: 1px solid #E8E8E8;
+    margin-bottom: 15px;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    position: relative;
+}
+.g-infomodal-card-content {
+    height: calc(100% - 40px);
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+}
+.g-infomodal-card-footer {
+    height: 40px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+}
+.g-infomodal-card-title {
+    font-size: 14px;
+}
+.g-infomodal-close {
+    position: absolute;
+    right: -15px;
+    top: -15px;
+    padding: 5px;
+}
+.g-infomodal-close:hover {
+    cursor: pointer;
+}
+
+.g-infomodal-inner {
+    overflow-y: auto;
+    max-height: calc(100vh - 30px);
+    border-radius: 5px;
+}
+.g-infomodal-container {
+    height: 100%;
+    position: fixed;
+    z-index: 3000;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,.4);
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+}
+.g-infomodal-terms {
+    font-size: 12px;
+    line-height: 16px;
+    margin: 15px 0;
+    margin-top: 30px;
+}
+.g-infomodal-list {
+    font-size: 13px;
+    display: block;
+    margin: 15px 0;
+    padding-left: 15px;
+    overflow: auto;
+}
+.g-infomodal-list li {
+    float: left;
+    width: 100%;
+}
+.g-infomodal-logo {
+    display: block;
+    margin: 0 auto;
+    padding: 20px 0 15px 0;
+    width: 150px;
+}
+
+.g-infomodal-card-group {
+    overflow: auto;
+    margin-bottom: 10px;
+}
+
+@media (min-width : 520px) {
+    .g-infomodal-card {
+        width: calc(33.333% - 3.333px);
+        float: left;
+        margin-right: 5px;
+        height: 150px
+    }
+    .g-infomodal-card-group .g-infomodal-card:last-child {
+        margin-right: 0;
+    }
+    .g-infomodal-card-content {
+        height: calc(100% - 50px);
+    }
+    .g-infomodal-card-title span {
+        display: block;
+    }
+    .g-infomodal-card-footer {
+        height: 50px;
+    }
+    .g-infomodal-list li {
+        width: 50%;
+    }
+}

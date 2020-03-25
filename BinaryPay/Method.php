@@ -55,7 +55,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      */
     const DEBUG_MODE_LOG = 'log';
 
-    const DEFAULT_VALUE = 'NULL';
+    const DEFAULT_VALUE = 'NO_VALUE';
     const ENVIRONMENT_SANDBOX = 'sandbox';
     const ENVIRONMENT_PRODUCTION = 'production';
     const ENVIRONMENT_DEVELOPMENT = 'development';
@@ -99,7 +99,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         $this->init_settings();
         $this->title = $this->get_option('title');
         $this->description = $this->get_option('description');
-        $this->min_order_total = $this->get_option('min_order_total');
+        $this->min_order_total = $this->get_option('min_order_total', 200);
         $this->max_order_total = $this->get_option('max_order_total');
         $this->environment     = $this->get_option('environment');
         $this->currency_code   = get_woocommerce_currency();
@@ -258,9 +258,9 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
 
     public function get_environments(){
         return array(
-            self::ENVIRONMENT_DEVELOPMENT => __('Development', 'magebinary-binarypay'),
-            self::ENVIRONMENT_SANDBOX     => __('Sandbox', 'magebinary-binarypay'),
-            self::ENVIRONMENT_PRODUCTION  => __('Production', 'magebinary-binarypay'),
+            self::ENVIRONMENT_DEVELOPMENT => __('Development', 'woocommerce-payment-gateway-magebinary-binarypay'),
+            self::ENVIRONMENT_SANDBOX     => __('Sandbox', 'woocommerce-payment-gateway-magebinary-binarypay'),
+            self::ENVIRONMENT_PRODUCTION  => __('Production', 'woocommerce-payment-gateway-magebinary-binarypay'),
         );
     }
 
@@ -298,17 +298,21 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      */
     protected function get_quote_products()
     {
-        global $woocommerce;
-        $items = $woocommerce->cart->get_cart();
+        $items = WC()->cart->get_cart();
 
         $products = [];
         foreach ($items as $_item) {
             $_item = new Varien_Object($_item);
-            $_product = new Varien_Object($_item['data']->get_parent_data());
+            if ($_item['data'] instanceof WC_Product_Simple) {
+                $_product = new Varien_Object($_item['data']->get_data());
+            } else {
+                $_product = new Varien_Object($_item['data']->get_parent_data());
+            }
+
             $productItem = [
-                'name'          => $_product->getData('title'),
+                'name'          => $_product->getData('title') ?: $_product->getData('name'),
                 'price' => [
-                    'amount'    => $_item->getData('line_tax_data/subtotal'),
+                    'amount'    => $_item->getData('line_tax_data/subtotal') ?: $_product->getData('price'),
                     'currency'  => $this->currency_code
                 ],
                 'sku'           => $_product->getData('sku'),
@@ -339,9 +343,8 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      */
     protected function get_shipping_data()
     {
-        global $woocommerce;
         $shippingDetail = [
-            'carrier' => $woocommerce->session->get('chosen_shipping_methods'),
+            'carrier' => WC()->session->get('chosen_shipping_methods') ?: self::DEFAULT_VALUE,
             'price' => [
                 'amount' => 0,
                 'currency' => $this->currency_code
@@ -388,6 +391,15 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         add_filter('woocommerce_available_payment_gateways', array(
                 $this, 'is_payment_available'
         ), 10, 1);
+
+        /**
+         * Include extra CSS and Javascript files
+         */
+        add_action('wp_enqueue_scripts', array($this, 'include_extra_scripts'));
+    }
+
+    public function include_extra_scripts() {
+        return;
     }
 }
 

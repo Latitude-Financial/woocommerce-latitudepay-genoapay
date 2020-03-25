@@ -5,7 +5,6 @@
  * @var MageBinary_BinaryPay_Method_Abstract $gateway
  */
 wc_binarypay_spam_bot_field();
-var_dump($gateway->get_purchase_url());die();
 ?>
 <div class="wc-binarypay-payment-gateway <?php if($has_methods){?>has_methods<?php }?>">
     <?php
@@ -26,11 +25,11 @@ var_dump($gateway->get_purchase_url());die();
         <?php wc_binarypay_get_template('checkout/' . $gateway->template, array('gateway' => $gateway))?>
     </div>
     <?php
-    if ($methods) {
-        wc_binarypay_get_template('payment-methods.php', array(
-                'gateway' => $gateway,
-                'methods' => $methods
-        ));
-    }
+        if ($methods) {
+            wc_binarypay_get_template('payment-methods.php', array(
+                    'gateway' => $gateway,
+                    'methods' => $methods
+            ));
+        }
     ?>
 </div>

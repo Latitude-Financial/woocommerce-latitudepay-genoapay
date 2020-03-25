@@ -6,7 +6,7 @@
  * Version: 0.0.1
  * Author: MageBinary
  * Author URI: https://magebinary.com/
- * Text Domain: magebinary-binarypay
+ * Text Domain: woocommerce-payment-gateway-magebinary-binarypay
  * Domain Path: /i18n/languages/
  *
  * @package MageBinary

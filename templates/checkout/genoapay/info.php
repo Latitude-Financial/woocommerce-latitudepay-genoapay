@@ -6,4 +6,6 @@
     <strong style="font-size: 12px">
         <p>10 interest free payments from <?php echo wc_price($orderTotal / 10)  ?></p>
     </strong>
+
+    <?php include("modal.php"); ?>
 </div>

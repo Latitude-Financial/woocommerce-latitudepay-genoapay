@@ -112,7 +112,7 @@ class WC_BinaryPay_Manager
 
     public function plugins_loaded() {
         // $this->plugin_validations ();
-        load_plugin_textdomain('magebinary-binarypay', false, dirname(WC_BINARYPAY_PLUGIN_NAME) . '/i18n/languages' );
+        load_plugin_textdomain('woocommerce-payment-gateway-magebinary-binarypay', false, dirname(WC_BINARYPAY_PLUGIN_NAME) . '/i18n/languages' );
     }
 
     public function plugin_path() {

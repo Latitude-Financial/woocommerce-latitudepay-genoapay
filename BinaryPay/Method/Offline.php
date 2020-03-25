@@ -36,11 +36,11 @@ class MageBinary_BinaryPay_Method_Offline extends MageBinary_BinaryPay_Method_Ab
         parent::__construct();
 
         $this->id                   = 'binarypay_offline';
-        $this->default_title        = __('Offline', 'magebinary-binarypay');
-        $this->order_button_text    = __('Place Order with Offline Payment', 'magebinary-binarypay');
-        $this->method_title         = __('BinaryPay Offline Gateway', 'magebinary-binarypay');
-        $this->tab_title            = __('Offline', 'magebinary-binarypay');
-        $this->method_description   = __('BinaryPay Offline Gateway', 'magebinary-binarypay');
+        $this->default_title        = __('Offline', 'woocommerce-payment-gateway-magebinary-binarypay');
+        $this->order_button_text    = __('Place Order with Offline Payment', 'woocommerce-payment-gateway-magebinary-binarypay');
+        $this->method_title         = __('BinaryPay Offline Gateway', 'woocommerce-payment-gateway-magebinary-binarypay');
+        $this->tab_title            = __('Offline', 'woocommerce-payment-gateway-magebinary-binarypay');
+        $this->method_description   = __('BinaryPay Offline Gateway', 'woocommerce-payment-gateway-magebinary-binarypay');
         $this->template             = 'cc-checkout.php';
     }
 
@@ -67,29 +67,29 @@ class MageBinary_BinaryPay_Method_Offline extends MageBinary_BinaryPay_Method_Ab
     {
         $this->form_fields = apply_filters('wc_offline_form_fields', array(
             'enabled' => array(
-                'title'   => __( 'Enable/Disable', 'magebinary-binarypay' ),
+                'title'   => __( 'Enable/Disable', 'woocommerce-payment-gateway-magebinary-binarypay' ),
                 'type'    => 'checkbox',
-                'label'   => __( 'Enable Offline Payment', 'magebinary-binarypay' ),
+                'label'   => __( 'Enable Offline Payment', 'woocommerce-payment-gateway-magebinary-binarypay' ),
                 'default' => 'yes'
             ),
             'title' => array(
-                'title'       => __( 'Title', 'magebinary-binarypay' ),
+                'title'       => __( 'Title', 'woocommerce-payment-gateway-magebinary-binarypay' ),
                 'type'        => 'text',
-                'description' => __( 'This controls the title for the payment method the customer sees during checkout.', 'magebinary-binarypay' ),
-                'default'     => __( 'Offline Payment', 'magebinary-binarypay' ),
+                'description' => __( 'This controls the title for the payment method the customer sees during checkout.', 'woocommerce-payment-gateway-magebinary-binarypay' ),
+                'default'     => __( 'Offline Payment', 'woocommerce-payment-gateway-magebinary-binarypay' ),
                 'desc_tip'    => true,
             ),
             'description' => array(
-                'title'       => __( 'Description', 'magebinary-binarypay' ),
+                'title'       => __( 'Description', 'woocommerce-payment-gateway-magebinary-binarypay' ),
                 'type'        => 'textarea',
-                'description' => __( 'Payment method description that the customer will see on your checkout.', 'magebinary-binarypay' ),
-                'default'     => __( 'Please remit payment to Store Name upon pickup or delivery.', 'magebinary-binarypay' ),
+                'description' => __( 'Payment method description that the customer will see on your checkout.', 'woocommerce-payment-gateway-magebinary-binarypay' ),
+                'default'     => __( 'Please remit payment to Store Name upon pickup or delivery.', 'woocommerce-payment-gateway-magebinary-binarypay' ),
                 'desc_tip'    => true,
             ),
             'instructions' => array(
-                'title'       => __( 'Instructions', 'magebinary-binarypay' ),
+                'title'       => __( 'Instructions', 'woocommerce-payment-gateway-magebinary-binarypay' ),
                 'type'        => 'textarea',
-                'description' => __( 'Instructions that will be added to the thank you page and emails.', 'magebinary-binarypay' ),
+                'description' => __( 'Instructions that will be added to the thank you page and emails.', 'woocommerce-payment-gateway-magebinary-binarypay' ),
                 'default'     => '',
                 'desc_tip'    => true,
             ),
