@@ -55,10 +55,40 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      */
     const DEBUG_MODE_LOG = 'log';
 
+    /**
+     * @var string
+     */
     const DEFAULT_VALUE = 'NO_VALUE';
+
+    /**
+     * @var string
+     */
     const ENVIRONMENT_SANDBOX = 'sandbox';
+
+    /**
+     * @var string
+     */
     const ENVIRONMENT_PRODUCTION = 'production';
+
+    /**
+     * @var string
+     */
     const ENVIRONMENT_DEVELOPMENT = 'development';
+
+    /**
+     * @var string
+     */
+    const PENDING_ORDER_STATUS = 'pending';
+
+    /**
+     * @var string
+     */
+    const PROCESSING_ORDER_STATUS = 'processing';
+
+    /**
+     * @var string
+     */
+    const FAILED_ORDER_STATUS = 'failed';
 
     /**
      * @var MageBinary_BinaryPay_Method_Abstract
@@ -84,6 +114,23 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      * @var string
      */
     protected $currency_code;
+
+    /**
+     * @var string
+     */
+    protected $order_comment;
+
+    /**
+     * @var string
+     * Woocommerce called tokens, this is for different purpose
+     */
+    protected $token;
+
+    /**
+     * @var Varien_Object
+     * An object which saved all the response we got from the payment provider
+     */
+    protected $request;
 
     public function __construct()
     {
@@ -287,8 +334,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      */
     protected function get_amount()
     {
-        global $woocommerce;
-        $amount = floatval(preg_replace('#[^\d.]#', '', $woocommerce->cart->get_displayed_subtotal()));
+        $amount = WC()->cart->total;
         return $amount;
     }
 
@@ -299,27 +345,25 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
     protected function get_quote_products()
     {
         $items = WC()->cart->get_cart();
+        $isTaxIncluded = WC()->cart->display_prices_including_tax();
 
         $products = [];
         foreach ($items as $_item) {
             $_item = new Varien_Object($_item);
-            if ($_item['data'] instanceof WC_Product_Simple) {
-                $_product = new Varien_Object($_item['data']->get_data());
-            } else {
-                $_product = new Varien_Object($_item['data']->get_parent_data());
-            }
-
-            $productItem = [
+            $_product = ($_item['data'] instanceof WC_Product_Simple) ? $_item['data']->get_data() : $_item['data']->get_parent_data();
+            $_product = new Varien_Object($_product);
+            $product_price = ($isTaxIncluded) ? wc_get_price_including_tax($_item['data']) : wc_get_price_excluding_tax($_item['data']);
+            $product_line_item = [
                 'name'          => $_product->getData('title') ?: $_product->getData('name'),
                 'price' => [
-                    'amount'    => $_item->getData('line_tax_data/subtotal') ?: $_product->getData('price'),
+                    'amount'    => $product_price,
                     'currency'  => $this->currency_code
                 ],
                 'sku'           => $_product->getData('sku'),
                 'quantity'      => $_item->getData('quantity'),
-                'taxIncluded'   => 1
+                'taxIncluded'   => (int) $isTaxIncluded
             ];
-            array_push($products, $productItem);
+            array_push($products, $product_line_item);
         }
         return $products;
     }
@@ -338,15 +382,33 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
     }
 
     /**
+     * get_carrier_method_name
+     * @return string shipping_method
+     */
+    protected function get_carrier_method_name()
+    {
+        $shipping_method = current(WC()->session->get('chosen_shipping_methods'));
+        switch ($shipping_method) {
+            case 'flat_rate:1':
+                $shipping_method = "flatrate";
+                break;
+            default:
+                # code...
+                break;
+        }
+        return $shipping_method;
+    }
+
+    /**
      * get_shipping_data
      * @return array
      */
     protected function get_shipping_data()
     {
         $shippingDetail = [
-            'carrier' => WC()->session->get('chosen_shipping_methods') ?: self::DEFAULT_VALUE,
+            'carrier' => $this->get_carrier_method_name() ?: self::DEFAULT_VALUE,
             'price' => [
-                'amount' => 0,
+                'amount' => WC()->cart->get_shipping_total(),
                 'currency' => $this->currency_code
             ],
             'taxIncluded' => 0
@@ -372,6 +434,14 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
     public function get_id()
     {
         return $this->id;
+    }
+
+    /**
+     * get_checkout_session
+     */
+    public function get_checkout_session()
+    {
+        return WC()->session;
     }
 
 

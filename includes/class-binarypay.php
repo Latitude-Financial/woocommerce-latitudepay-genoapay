@@ -18,6 +18,7 @@ abstract class BinaryPay
     const STATUS_APPROVED   = 'APPROVED';
     const STATUS_ERROR      = 'ERROR';
     const STATUS_PROCESSING = 'IN_PROGRESS';
+    const STATUS_COMPLETED  = 'COMPLETED';
 
     /**
      *  Account Infomation
