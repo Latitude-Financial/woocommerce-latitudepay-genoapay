@@ -46,6 +46,11 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
      */
     protected $order_status = self::PENDING_ORDER_STATUS;
 
+    /**
+     * @var string
+     */
+    protected $return_action_name = 'genoapay_return_action';
+
     public function __construct()
     {
         $this->id                   = MageBinary_BinaryPay_Model_Config::GENOAPAY;
@@ -55,8 +60,12 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
         $this->method_title         = __('GenoaPay', 'woocommerce-payment-gateway-magebinary-binarypay');
         $this->tab_title            = __('GenoaPay', 'woocommerce-payment-gateway-magebinary-binarypay');
         $this->icon                 = WC_BINARYPAY_ASSETS . 'genoapay.svg';
-        // Allow refund and purchase product action
+
+        /**
+          * Allow refund and purchase product action
+          */
         $this->supports             = array('products', 'refunds');
+
         /**
          * The description will show in the backend
          */
@@ -202,51 +211,65 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
         $request = new Varien_Object($_GET);
         // save request
         $this->request = $request;
-
-        if ('genoapay_return_action' == $request->getData('wc-api')) {
-            // validate the response
-            $this->validate_response($request);
-
+        try {
             // process the order depends on the request
-            $this->process_response($request);
+            $this->validate_response()
+                 ->process_response()
+                 ->process_order();
+        } catch (BinaryPay_Exception $e) {
+            wc_add_notice($e->getMessage(), 'error', $request->getData());
+            wp_redirect($this->redirect_url);
+        }catch (InvalidArgumentException $e) {
+            wc_add_notice($e->getMessage(), 'error', $request->getData());
+            wp_redirect($this->redirect_url);
         }
     }
 
     /**
      * validate_response
      */
-    public function validate_response($request)
+    public function validate_response()
     {
+        $request = $this->request;
+
+        if (!$request) {
+            throw new InvalidArgumentException(__('Request object cannot be empty!', 'woocommerce-payment-gateway-magebinary-binarypay'));
+        }
+
         $session = $this->get_checkout_session();
         $token = $session->get('purchase_token');
         // Unset session after use
         $session->set('purchase_token', null);
 
-        if ($request->getData('token') !== $token) {
+        if (!$this->return_action_name || $this->return_action_name !== $request->getData('wc-api')) {
+            throw new BinaryPay_Exception(__('The return action handler is not valid for the request.', 'woocommerce-payment-gateway-magebinary-binarypay'));
+        }
+
+        if (!$token || $request->getData('token') !== $token) {
             $this->redirect_url = WC()->cart->get_cart_url();
             $session->set('order_id', null);
             /**
              * @todo If debug then output the request in to the log file
              */
-            wc_add_notice("The response is not valid. Please contact the merchant for more details.");
-            wp_redirect($this->redirect_url);
-            // throw new BinaryPay_Exception('The response is not valid. Please contact the merchant for more details.');
+            throw new BinaryPay_Exception(__("You are not allowed to access the return handler directly. If you want to know more about this error message, please contact the us.",'woocommerce-payment-gateway-magebinary-binarypay'));
         }
+        return $this;
     }
 
     /**
      * process_response
      */
-    protected function process_response($request)
+    protected function process_response()
     {
+        $request = $this->request;
         $result = $request->getData('result');
         switch ($result) {
-            case BinaryPay::STATUS_COMPLETED:
+            case BinaryPay_Variable::STATUS_COMPLETED:
                 $this->order_status = self::PROCESSING_ORDER_STATUS;
                 $this->order_comment = __('Payment received', 'woocommerce-payment-gateway-magebinary-binarypay');
                 // send invoice email
                 break;
-            case BinaryPay::STATUS_UNKNOWN:
+            case BinaryPay_Variable::STATUS_UNKNOWN:
                 $this->order_status = self::FAILED_ORDER_STATUS;
                 $this->order_comment = __('Payment failed', 'woocommerce-payment-gateway-magebinary-binarypay');
                 break;
@@ -254,7 +277,7 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
                 # code...
                 break;
         }
-        $this->process_order();
+        return $this;
     }
 
     /**
@@ -299,36 +322,35 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
     public function get_purchase_url()
     {
         try {
+            $session    = $this->get_checkout_session();
             $gateway    = $this->get_gateway();
-
-            $reference          = $this->get_reference_number();
-            $amount             = $this->get_amount();
-
-            $customer           = WC()->cart->get_customer();
-            $cart               = WC()->cart;
+            $reference  = $this->get_reference_number();
+            $amount     = $this->get_amount();
+            $cart       = WC()->cart;
+            $customer   = $cart->get_customer();
 
             $payment = array(
-                BinaryPay::REFERENCE                => (string) $reference,
-                BinaryPay::AMOUNT                   => $amount,
-                BinaryPay::CURRENCY                 => $this->currency_code ?: self::DEFAULT_VALUE,
-                BinaryPay::RETURN_URL               => home_url() . $this->return_url,
-                BinaryPay::MOBILENUMBER             => $customer->get_billing_phone() ?: '0210123456',
-                BinaryPay::EMAIL                    => $customer->get_billing_email(),
-                BinaryPay::FIRSTNAME                => $customer->get_billing_first_name() ?: self::DEFAULT_VALUE,
-                BinaryPay::SURNAME                  => $customer->get_billing_last_name() ?: self::DEFAULT_VALUE,
-                BinaryPay::SHIPPING_ADDRESS         => $customer->get_shipping_address() ?: self::DEFAULT_VALUE,
-                BinaryPay::SHIPPING_COUNTRY_CODE    => $customer->get_shipping_country() ?: self::DEFAULT_VALUE,
-                BinaryPay::SHIPPING_POSTCODE        => $customer->get_shipping_postcode() ?: self::DEFAULT_VALUE,
-                BinaryPay::SHIPPING_SUBURB          => $customer->get_shipping_state() ?: self::DEFAULT_VALUE,
-                BinaryPay::SHIPPING_CITY            => $customer->get_shipping_city() ?: self::DEFAULT_VALUE,
-                BinaryPay::BILLING_ADDRESS          => $this->get_billing_address() ?: self::DEFAULT_VALUE,
-                BinaryPay::BILLING_COUNTRY_CODE     => $customer->get_billing_country() ?: self::DEFAULT_VALUE,
-                BinaryPay::BILLING_POSTCODE         => $customer->get_billing_postcode() ?: self::DEFAULT_VALUE,
-                BinaryPay::BILLING_SUBURB           => $customer->get_billing_state() ?: self::DEFAULT_VALUE,
-                BinaryPay::BILLING_CITY             => $customer->get_billing_city() ?: self::DEFAULT_VALUE,
-                BinaryPay::TAX_AMOUNT               => array_sum($cart->get_taxes()),
-                BinaryPay::PRODUCTS                 => $this->get_quote_products(),
-                BinaryPay::SHIPPING_LINES           => [
+                BinaryPay_Variable::REFERENCE                => (string) $reference,
+                BinaryPay_Variable::AMOUNT                   => $amount,
+                BinaryPay_Variable::CURRENCY                 => $this->currency_code ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::RETURN_URL               => home_url() . $this->return_url,
+                BinaryPay_Variable::MOBILENUMBER             => $customer->get_billing_phone() ?: '0210123456',
+                BinaryPay_Variable::EMAIL                    => $customer->get_billing_email(),
+                BinaryPay_Variable::FIRSTNAME                => $customer->get_billing_first_name() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::SURNAME                  => $customer->get_billing_last_name() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::SHIPPING_ADDRESS         => $customer->get_shipping_address() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::SHIPPING_COUNTRY_CODE    => $customer->get_shipping_country() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::SHIPPING_POSTCODE        => $customer->get_shipping_postcode() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::SHIPPING_SUBURB          => $customer->get_shipping_state() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::SHIPPING_CITY            => $customer->get_shipping_city() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::BILLING_ADDRESS          => $this->get_billing_address() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::BILLING_COUNTRY_CODE     => $customer->get_billing_country() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::BILLING_POSTCODE         => $customer->get_billing_postcode() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::BILLING_SUBURB           => $customer->get_billing_state() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::BILLING_CITY             => $customer->get_billing_city() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::TAX_AMOUNT               => array_sum($cart->get_taxes()),
+                BinaryPay_Variable::PRODUCTS                 => $this->get_quote_products(),
+                BinaryPay_Variable::SHIPPING_LINES           => [
                     $this->get_shipping_data()
                 ]
             );
@@ -338,44 +360,44 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
             $purchaseUrl    = $responseObject->getData('paymentUrl');
             // Save token into the session
             $this->get_checkout_session()->set('purchase_token', $responseObject->getData('token'));
-
         } catch (BinaryPay_Exception $e) {
-            throw new WP_Error('');
-            var_dump($e->getMessage());die();
-            // Mage::throwException($e->getMessage());
+            throw new Exception($e->getMessage());
         } catch (Exception $e) {
             $message = $e->getMessage() ?: 'Something massively went wrong. Please try again. If the problem still exists, please contact us';
-            var_dump($e->getMessage());die();
-            // Mage::throwException($message);
-            // Mage::log($e->getTrace(), null, 'BinaryPay.log', true);
+            throw new Exception($message);
         }
-
         return $purchaseUrl;
     }
 
+    /**
+     * process_refund
+     */
     public function process_refund($order_id, $amount = null, $reason = '')
     {
         $gateway = $this->get_gateway();
         $order = wc_get_order($order_id);
         $transaction_id = $order->get_transaction_id();
 
-        $refund     = array(
-             BinaryPay::PURCHASE_TOKEN          => $transaction_id,
-             BinaryPay::CURRENCY                => $this->currency_code,
-             BinaryPay::AMOUNT                  => $amount,
-             BinaryPay::REFERENCE               => '11111111',
-             BinaryPay::REASON                  => '',
+        /**
+         * @todo support to add refund reason via wordpress backend
+         */
+        $refund = array(
+             BinaryPay_Variable::PURCHASE_TOKEN  => $transaction_id,
+             BinaryPay_Variable::CURRENCY        => $this->currency_code,
+             BinaryPay_Variable::AMOUNT          => $amount,
+             BinaryPay_Variable::REFERENCE       => $order->get_id(),
+             BinaryPay_Variable::REASON          => '',
+             BinaryPay_Variable::PASSWORD        => $this->credentials['password']
         );
 
         try {
             if (empty($transaction_id)) {
                 throw new InvalidArgumentException(sprintf(__ ('The transaction ID for order %1$s is blank. A refund cannot be processed unless there is a valid transaction associated with the order.', 'woocommerce-payment-gateway-magebinary-binarypay' ), $order_id ));
             }
-
             $response = $gateway->refund($refund);
             $order->update_meta_data('_transaction_status', $response['status']);
             $order->add_order_note (
-                sprintf ( __ ( 'Refund successful in GenoaPay. Amount: %1$s. Refund ID: %2$s', 'woocommerce-payment-gateway-magebinary-binarypay' ),
+                sprintf(__('Refund successful in GenoaPay. Amount: %1$s. Refund ID: %2$s', 'woocommerce-payment-gateway-magebinary-binarypay'),
                 wc_price($amount, array(
                     'currency' => $order->get_currency()
                 )
@@ -390,7 +412,7 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
     /**
      * Process payment
      * After investigation this step is after the order has been placed
-     * So we can handle the response then trigger this function
+     * Therefore we should handle the response then continue to run this function
      */
     public function process_payment($order_id)
     {

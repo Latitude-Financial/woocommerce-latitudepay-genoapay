@@ -1,2 +1,6 @@
 # Sublime Text 3 SFTP configuration
 sftp-config.json
+
+# Ignore log file
+log/*
+!log/.gitkeep

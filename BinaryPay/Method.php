@@ -150,6 +150,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         $this->max_order_total = $this->get_option('max_order_total');
         $this->environment     = $this->get_option('environment');
         $this->currency_code   = get_woocommerce_currency();
+        $this->credentials     = $this->get_credentials();
 
         $this->add_hooks();
     }
@@ -166,21 +167,6 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
                     unset($gateways[$index]);
                 }
             }
-        }
-        return $gateways;
-    }
-
-    public static function init()
-    {
-        add_filter('woocommerce_available_payment_gateways', array(
-            __CLASS__, 'available_payment_gateways'
-        ));
-    }
-
-    public static function available_payment_gateways($gateways) {
-        global $wp;
-        if (is_add_payment_method_page() && isset($wp->query_vars['add-payment-method'])) {
-            // unset($gateways['braintree_paypal']);
         }
         return $gateways;
     }
@@ -202,7 +188,6 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
     }
 
     public function payment_fields() {
-        // $this->enqueue_frontend_scripts ( binarypay()->frontend_scripts );
         if (is_checkout() || $this->is_change_payment_request()) {
             $user = wp_get_current_user();
             $methods = $this->get_tokens();
@@ -267,7 +252,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      */
     public function get_credentials()
     {
-        $public_key = '';
+        $public_key = $private_key = '';
         switch ($this->environment) {
             case MageBinary_BinaryPay_Method_Abstract::ENVIRONMENT_SANDBOX:
             case MageBinary_BinaryPay_Method_Abstract::ENVIRONMENT_DEVELOPMENT:
@@ -322,11 +307,14 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      */
     protected function get_reference_number()
     {
-        // global $woocommerce, $post;
-        // $order = new WC_Order($post->ID);
-        // $reserved_order_id = trim(str_replace('#', '', $order->get_order_number()));
-        // print_r($reserved_order_id);die();
-        return '11111111';
+        $session = $this->get_checkout_session();
+        $order_id = $session->get('order_id');
+
+        if (empty($order_id)) {
+            throw new WP_Error('Cannot identify the current order id number to process the payment.');
+        }
+
+        return $order_id;
     }
 
     /**
@@ -472,5 +460,3 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         return;
     }
 }
-
-MageBinary_BinaryPay_Method_Abstract::init();

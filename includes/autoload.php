@@ -1,5 +1,8 @@
 <?php
 set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__)));
+require_once('Variable.php');
+require_once('GatewayInterface.php');
+require_once('Base.php');
 require_once('Exception.php');
 require_once('Http.php');
 require_once('Config.php');
