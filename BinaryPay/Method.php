@@ -25,6 +25,8 @@
 * @license     http://www.apache.org/licenses/LICENSE-2.0
 */
 
+defined( 'ABSPATH' ) || exit;
+
 if (!class_exists('WC_Payment_Gateway')) {
     return;
 }

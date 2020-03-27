@@ -74,8 +74,6 @@ class BinaryPay_Http
             curl_setopt($curl, CURLOPT_POSTFIELDS, $requestBody);
         }
 
-        // Mage::log($requestBody);die();
-
         /* Adding SSL support with setConfig. It must comes with CA string */
         /* @TODO: This might still need some work in the future.           */
         // if (isset($this->_config['ssl']) && isset($this->_config['ssl-ca'])) {
@@ -87,10 +85,15 @@ class BinaryPay_Http
         $httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $response = array('status' => $httpStatus, 'body' => $response);
         /*TODO: TIDY*/
-        if ($this->_config['debug']) {
-            $response['request-header'] = "\n".curl_getinfo($curl, CURLINFO_HEADER_OUT);
-            $response['request-header'] .= $requestBody."\n\n";
-            print_r($response);
+        if (true) {
+            $info = "======DEBUG INFO STARTS======\n";
+            $info .= "REQUEST:\n";
+            $info .= "\n".curl_getinfo($curl, CURLINFO_HEADER_OUT);
+            $info .= $requestBody."\n\n";
+            $info .= "RESPONSE:\n";
+            $info .= json_encode($response) ."\n\n";
+            $info .="======DEBUG INFO ENDS========\n\n\n";
+            BinaryPay::log($info);
         }
         curl_close($curl);
         return $response;

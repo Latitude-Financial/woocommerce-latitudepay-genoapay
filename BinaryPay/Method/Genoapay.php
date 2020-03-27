@@ -118,10 +118,7 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
                 'default' => self::DEBUG_MODE_OFF,
                 'options' => array(
                     self::DEBUG_MODE_OFF      => esc_html__('Off', 'woocommerce-payment-gateway-magebinary-binarypay'),
-                    self::DEBUG_MODE_CHECKOUT => esc_html__('Show on Checkout Page', 'woocommerce-payment-gateway-magebinary-binarypay' ),
                     self::DEBUG_MODE_LOG      => esc_html__('Save to Log', 'woocommerce-payment-gateway-magebinary-binarypay'),
-                    /* translators: show debugging information on both checkout page and in the log */
-                    self::DEBUG_MODE_BOTH     => esc_html__('Both', 'woocommerce-payment-gateway-magebinary-binarypay')
                 )
             )
         );
@@ -361,9 +358,11 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
             // Save token into the session
             $this->get_checkout_session()->set('purchase_token', $responseObject->getData('token'));
         } catch (BinaryPay_Exception $e) {
+            BinaryPay::log($e->getMessage(), true, 'woocommerce-genoapay.log');
             throw new Exception($e->getMessage());
         } catch (Exception $e) {
             $message = $e->getMessage() ?: 'Something massively went wrong. Please try again. If the problem still exists, please contact us';
+            BinaryPay::log($message, true, 'woocommerce-genoapay.log');
             throw new Exception($message);
         }
         return $purchaseUrl;
@@ -404,6 +403,7 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
             ), $response['refundId']));
             $order->save();
         } catch (Exception $e) {
+            BinaryPay::log($e->getMessage(), true, 'woocommerce-genoapay.log');
             return new WP_Error('refund-error', sprintf(__('Exception thrown while issuing refund. Reason: %1$s Exception class: %2$s', 'woocommerce-payment-gateway-magebinary-binarypay'), $e->getMessage(), get_class($e)));
         }
         return true;
