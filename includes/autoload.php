@@ -97,14 +97,15 @@ class WC_BinaryPay_Manager
          * Gateways*
          */
         include_once WC_BINARYPAY_PATH . '/BinaryPay/Method.php';
-        include_once WC_BINARYPAY_PATH . '/BinaryPay/Method/Offline.php';
         include_once WC_BINARYPAY_PATH . '/BinaryPay/Method/Genoapay.php';
+        include_once WC_BINARYPAY_PATH . '/BinaryPay/Method/Latitudepay.php';
 
         /**
          * Assign gateways into plugin
          */
         $this->gateways = apply_filters('wc_binarypay_payment_gateways', array(
-            'MageBinary_BinaryPay_Method_Genoapay'
+            'MageBinary_BinaryPay_Method_Genoapay',
+            'MageBinary_BinaryPay_Method_Latitudepay',
         ));
     }
 

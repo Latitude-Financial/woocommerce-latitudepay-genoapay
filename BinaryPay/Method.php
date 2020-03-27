@@ -34,18 +34,6 @@ if (!class_exists('WC_Payment_Gateway')) {
 abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
 {
     /**
-      * @var string
-      * Debug mode display on checkout
-      */
-    const DEBUG_MODE_CHECKOUT = 'checkout';
-
-    /**
-     * @var string
-     * Debug mode log to file and display on checkout
-     */
-    const DEBUG_MODE_BOTH = 'both';
-
-    /**
      * @var string
      * Debug mode disabled
      */
@@ -150,7 +138,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         $this->description = $this->get_option('description');
         $this->min_order_total = $this->get_option('min_order_total', 200);
         $this->max_order_total = $this->get_option('max_order_total');
-        $this->environment     = $this->get_option('environment');
+        $this->environment     = $this->get_option('environment', MageBinary_BinaryPay_Method_Abstract::ENVIRONMENT_DEVELOPMENT);
         $this->currency_code   = get_woocommerce_currency();
         $this->credentials     = $this->get_credentials();
 
@@ -208,6 +196,76 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
     }
 
     /**
+     * Initialize Gateway Settings Form Fields
+     */
+    public function init_form_fields()
+    {
+        /**
+         * Display the following options as the backend settings
+         */
+        $this->form_fields = array(
+            'enabled' => array(
+                'title'     => __('Enable/Disable', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'type'      => 'checkbox',
+                'label'     => __('Enable', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'default'   => 'yes'
+            ),
+            'title' => array(
+                'title'         => __('Title', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'type'          => 'text',
+                'description'   => __('This controls the title which the user sees during checkout.', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'default'       => __('GenoaPay', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'desc_tip'      => true
+            ),
+            'description' => array(
+                'title'         => __('Customer Message', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'type'          => 'textarea',
+                'default'       => ''
+            ),
+            'min_order_total' => array(
+                'title'     => __('Minimum Order Total', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'type'      => 'text',
+                'default'   => '200'
+            ),
+            'max_order_total' => array(
+                'title'     => __('Maximum Order Total', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'type'      => 'text',
+                'default'   => ''
+            ),
+            'debug_mode' => array(
+                'title'   => esc_html__('Debug Mode', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'type'    => 'select',
+                /* translators: Placeholders: %1$s - <a> tag, %2$s - </a> tag */
+                'desc'    => sprintf(esc_html__('Show Detailed Error Messages and API requests/responses on the checkout page and/or save them to the %1$sdebug log%2$s', 'woocommerce-payment-gateway-magebinary-binarypay' ), '<a href="' . 'xxxxx' . '">', '</a>'),
+                'default' => self::DEBUG_MODE_OFF,
+                'options' => array(
+                    self::DEBUG_MODE_OFF      => esc_html__('Off', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                    self::DEBUG_MODE_LOG      => esc_html__('Save to Log', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                )
+            )
+        );
+
+        // add unique method fields added by concrete gateway class
+        $gateway_form_fields = $this->get_gateway_form_fields();
+        $this->form_fields = array_merge( $this->form_fields, $gateway_form_fields );
+
+        if (count($this->get_environments()) > 1) {
+            $this->form_fields = $this->add_form_fields($this->form_fields, 'description', array(
+                    'environment' => array(
+                        /* translators: environment as in a software environment (test/production) */
+                        'title'    => esc_html__('Environment', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                        'type'     => 'select',
+                        'default'  => self::ENVIRONMENT_SANDBOX,  // default to first defined environment
+                        'desc_tip' => esc_html__('Select the gateway environment to use for transactions.', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                        'options'  => $this->get_environments(),
+                    )
+                )
+            );
+        }
+    }
+
+
+    /**
      *
      * @param WC_Braintree_Frontend_Scripts $scripts
      */
@@ -256,12 +314,12 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
     {
         $public_key = $private_key = '';
         switch ($this->environment) {
-            case MageBinary_BinaryPay_Method_Abstract::ENVIRONMENT_SANDBOX:
-            case MageBinary_BinaryPay_Method_Abstract::ENVIRONMENT_DEVELOPMENT:
+            case self::ENVIRONMENT_SANDBOX:
+            case self::ENVIRONMENT_DEVELOPMENT:
                 $public_key = $this->get_option('sandbox_public_key');
                 $private_key = $this->get_option('sandbox_private_key');
                 break;
-            case MageBinary_BinaryPay_Method_Abstract::ENVIRONMENT_PRODUCTION:
+            case self::ENVIRONMENT_PRODUCTION:
                 $public_key = $this->get_option('sandbox_public_key');
                 $private_key = $this->get_option('sandbox_private_key');
                 break;
@@ -277,6 +335,61 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
             'accountId'     => $this->get_option('account_id')
         );
         return $credentials;
+    }
+
+    /**
+     * Returns an array of form fields specific for this method
+     *
+     * @since 1.0.0
+     * @return array of form fields
+     */
+    protected function get_gateway_form_fields() {
+        return array(
+            // merchant account ID per currency feature
+            'merchant_account_id_title' => array(
+                'title'       => __('Merchant Account Info', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'type'        => 'title',
+                'description' => sprintf(
+                    esc_html__('Enter additional merchant account IDs if you do not want to use your GenoaPay account default. %1$sLearn more about merchant account IDs%2$s', 'woocommerce-payment-gateway-magebinary-binarypay' ),
+                    '<a href="' . esc_url( "binarypay()->get_documentation_url()" ). '#merchant-account-ids' . '">', '&nbsp;&rarr;</a>'
+                ),
+            ),
+            // production
+            'public_key' => array(
+                'title'    => __('Public Key', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'type'     => 'text',
+                'class'    => 'environment-field production-field',
+                'desc_tip' => __('The Public Key for your GenoaPay account.', 'woocommerce-payment-gateway-magebinary-binarypay'),
+            ),
+            'private_key' => array(
+                'title'    => __('Private Key', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'type'     => 'text',
+                'class'    => 'environment-field production-field',
+                'desc_tip' => __('The Private Key for your GenoaPay account.', 'woocommerce-payment-gateway-magebinary-binarypay'),
+            ),
+            // sandbox
+            'sandbox_public_key' => array(
+                'title'    => __('Sandbox Public Key', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'type'     => 'text',
+                'class'    => 'environment-field sandbox-field',
+                'desc_tip' => __('The Public Key for your GenoaPay sandbox account.', 'woocommerce-payment-gateway-magebinary-binarypay'),
+            ),
+            'sandbox_private_key' => array(
+                'title'    => __('Sandbox Private Key', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'type'     => 'text',
+                'class'    => 'environment-field sandbox-field',
+                'desc_tip' => __('The Private Key for your GenoaPay sandbox account.', 'woocommerce-payment-gateway-magebinary-binarypay'),
+            ),
+        );
+    }
+
+    /**
+     * Inlcude extra stylesheet and scripts for current payment gateway
+     */
+    public function include_extra_scripts()
+    {
+        wp_register_style('woocommerce-payment-gateway-magebinary-binarypay-' . $this->id, plugins_url('woocommerce-payment-gateway-magebinary-binarypay/assets/css/' . $this->id . '/styles.css'));
+        wp_enqueue_style('woocommerce-payment-gateway-magebinary-binarypay-' . $this->id);
     }
 
     /**
@@ -456,9 +569,5 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
          * Include extra CSS and Javascript files
          */
         add_action('wp_enqueue_scripts', array($this, 'include_extra_scripts'));
-    }
-
-    public function include_extra_scripts() {
-        return;
     }
 }

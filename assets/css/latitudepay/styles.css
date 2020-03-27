@@ -1,0 +1,189 @@
+.lp-modal-container {
+    z-index: 10000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0, 0, 0, .7);
+    font-family: sans-serif
+}
+.lp-modal {
+    z-index: 10001;
+    width: calc(100% - 30px);
+    max-width: 800px;
+    max-height: calc(100% - 30px);
+    background: #fff;
+    border-radius: 5px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%)
+}
+.lp-content {
+    overflow-y: auto;
+    max-height: calc(100vh - 30px);
+    border-radius: 5px
+}
+.lp-block {
+    padding: 0 15px
+}
+.lp-subheading {
+    font-size: 17px;
+    line-height: 24px;
+    color: #0066fb;
+    font-weight: 700;
+    margin-bottom: 15px
+}
+.lp-line-break {
+    display: none
+}
+.lp-header {
+    border-bottom: 1px solid #f2f7ff;
+    height: 130px;
+    position: relative
+}
+.lp-header img.lp-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    max-width: 240px
+}
+.lp-close-container {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    right: 0;
+    top: 0
+}
+.lp-close-container:hover {
+    cursor: pointer
+}
+.lp-close {
+    width: 13px;
+    height: 13px;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAAAAXNSR0IArs4c6QAAAN9JREFUKBWdkrENgzAQRW0kOsrsQEXFBizBGhklazBEsgENFBE7UNIhhfxn2RZYbpKTLPvu/+87n88Y2TRNzTiOz2VZbvipEQeHB2Y57Pv+0hnBXFVVV9f1Cogh2LYNHMFalmVXSPCQEzI0EELGRCCaucG3GQBw1uq1Bi1XknbMVWI55YTW2s9xHAW4t1i6ExHMCQNbexQQizf5x/dkOJGN9/tzc6KITCIPSUnG+4PH3X1OlCstyXjp6l/dK/Qv2ba2bfvmo1UP7Q9GxqHQD98VCRNw6RKPT4RMBPzfZ+8LU1qinjFn+kQAAAAASUVORK5CYII=);
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%)
+}
+.lp-heading {
+    font-size: 28px;
+    line-height: 42px;
+    text-align-last: center;
+    color: #0066fb;
+    padding-top: 40px;
+    padding-bottom: 40px
+}
+.lp-bold {
+    font-weight: 700
+}
+.lp-requirements {
+    overflow: auto;
+    background: #0066fb;
+    color: #fff;
+    padding-top: 50px;
+    padding-bottom: 50px
+}
+.lp-requirements .lp-subheading {
+    color: #fff
+}
+.lp-requirements-list {
+    padding: 0;
+    margin: 0
+}
+.lp-requirements-list li {
+    list-style: none;
+    width: 100%;
+    display: block;
+    float: left;
+    margin: 5px 0;
+    position: relative;
+    padding-left: 30px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    font-size: 15px;
+    color: #fff;
+    letter-spacing: .12px;
+    line-height: 21px
+}
+.lp-requirements-list li:after {
+    content: url(../img/lp_tick.png);
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 18px;
+    height: 14px
+}
+.lp-steps {
+    background-color: #f2f7ff;
+    margin: 0;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    overflow: auto
+}
+.lp-steps li {
+    padding: 25px 0;
+    margin: 0;
+    list-style: none;
+    text-align: center;
+    width: 100%;
+    padding-right: 15px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box
+}
+.lp-steps li:last-child {
+    padding-right: 0
+}
+.lp-steps li span {
+    font-size: 15px;
+    color: #595959;
+    letter-spacing: .12px;
+    text-align: center;
+    line-height: 23px
+}
+.lp-steps li img {
+    position: relative
+}
+.lp-footer {
+    padding: 20px 15px;
+    text-align: center;
+    color: #595959;
+    font-size: 15px;
+    line-height: 23px
+}
+@media only screen and (min-width: 900px) {
+    .lp-block {
+        padding-right: 80px;
+        padding-left: 80px
+    }
+    .lp-heading {
+        font-size: 34px
+    }
+    img.lp-logo {
+        max-width: 280px
+    }
+    .lp-steps li {
+        width: 33.33%;
+        float: left
+    }
+    .lp-line-break {
+        display: block
+    }
+    .lp-requirements-list li {
+        width: 50%;
+        float: left
+    }
+}
