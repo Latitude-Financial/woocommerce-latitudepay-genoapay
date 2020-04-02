@@ -1,10 +1,10 @@
 <?php
 /**
-* Magento BinaryPay Payment Extension
+* Woocommerce LatitudeFinance Payment Extension
 *
 * NOTICE OF LICENSE
 *
-* Copyright 2017 MageBinary
+* Copyright 2020 LatitudeFinance
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-* @category    MageBinary
-* @package     MageBinary_BinaryPay
+* @category    LatitudeFinance
+* @package     Latitude_Finance
 * @author      MageBinary Team
-* @copyright   Copyright (c) 2017 - 2020 MageBinary (http://www.magebinary.com)
+* @copyright   Copyright (c) 2020 LatitudeFinance (https://www.latitudefinancial.com.au/)
 * @license     http://www.apache.org/licenses/LICENSE-2.0
 */
 
@@ -177,22 +177,16 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         return array_merge(array_slice($form_fields, 0, $pos), $value, array_slice($form_fields, $pos));
     }
 
+    /**
+     * Payment field
+     */
     public function payment_fields() {
-        if (is_checkout() || $this->is_change_payment_request()) {
-            $user = wp_get_current_user();
-            $methods = $this->get_tokens();
-            wc_binarypay_get_template('checkout/binarypay-payment-method.php', array(
-                    'methods' => $methods,
-                    'has_methods' => (bool) $methods,
-                    'gateway' => $this
-            ) );
-        } else {
-            wc_binarypay_get_template('checkout/binarypay-payment-method.php', array(
-                    'methods' => array(),
-                    'has_methods' => false,
-                    'gateway' => $this
-            ) );
-        }
+        /**
+         * Pass in gateway object
+         */
+        wc_latitudefinance_get_template('checkout/latitudefinance-payment-method.php', array(
+            'gateway' => $this
+        ));
     }
 
     /**
@@ -205,42 +199,42 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
          */
         $this->form_fields = array(
             'enabled' => array(
-                'title'     => __('Enable/Disable', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'title'     => __('Enable/Disable', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'      => 'checkbox',
-                'label'     => __('Enable', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'label'     => __('Enable', 'woocommerce-payment-gateway-latitudefinance'),
                 'default'   => 'yes'
             ),
             'title' => array(
-                'title'         => __('Title', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'title'         => __('Title', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'          => 'text',
-                'description'   => __('This controls the title which the user sees during checkout.', 'woocommerce-payment-gateway-magebinary-binarypay'),
-                'default'       => __('GenoaPay', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'description'   => __('This controls the title which the user sees during checkout.', 'woocommerce-payment-gateway-latitudefinance'),
+                'default'       => __('GenoaPay', 'woocommerce-payment-gateway-latitudefinance'),
                 'desc_tip'      => true
             ),
             'description' => array(
-                'title'         => __('Customer Message', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'title'         => __('Customer Message', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'          => 'textarea',
                 'default'       => ''
             ),
             'min_order_total' => array(
-                'title'     => __('Minimum Order Total', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'title'     => __('Minimum Order Total', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'      => 'text',
                 'default'   => '200'
             ),
             'max_order_total' => array(
-                'title'     => __('Maximum Order Total', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'title'     => __('Maximum Order Total', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'      => 'text',
                 'default'   => ''
             ),
             'debug_mode' => array(
-                'title'   => esc_html__('Debug Mode', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'title'   => esc_html__('Debug Mode', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'    => 'select',
                 /* translators: Placeholders: %1$s - <a> tag, %2$s - </a> tag */
-                'desc'    => sprintf(esc_html__('Show Detailed Error Messages and API requests/responses on the checkout page and/or save them to the %1$sdebug log%2$s', 'woocommerce-payment-gateway-magebinary-binarypay' ), '<a href="' . 'xxxxx' . '">', '</a>'),
+                'desc'    => sprintf(esc_html__('Show Detailed Error Messages and API requests/responses on the checkout page and/or save them to the %1$sdebug log%2$s', 'woocommerce-payment-gateway-latitudefinance' ), '<a href="' . 'xxxxx' . '">', '</a>'),
                 'default' => self::DEBUG_MODE_OFF,
                 'options' => array(
-                    self::DEBUG_MODE_OFF      => esc_html__('Off', 'woocommerce-payment-gateway-magebinary-binarypay'),
-                    self::DEBUG_MODE_LOG      => esc_html__('Save to Log', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                    self::DEBUG_MODE_OFF      => esc_html__('Off', 'woocommerce-payment-gateway-latitudefinance'),
+                    self::DEBUG_MODE_LOG      => esc_html__('Save to Log', 'woocommerce-payment-gateway-latitudefinance'),
                 )
             )
         );
@@ -253,10 +247,10 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
             $this->form_fields = $this->add_form_fields($this->form_fields, 'description', array(
                     'environment' => array(
                         /* translators: environment as in a software environment (test/production) */
-                        'title'    => esc_html__('Environment', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                        'title'    => esc_html__('Environment', 'woocommerce-payment-gateway-latitudefinance'),
                         'type'     => 'select',
                         'default'  => self::ENVIRONMENT_SANDBOX,  // default to first defined environment
-                        'desc_tip' => esc_html__('Select the gateway environment to use for transactions.', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                        'desc_tip' => esc_html__('Select the gateway environment to use for transactions.', 'woocommerce-payment-gateway-latitudefinance'),
                         'options'  => $this->get_environments(),
                     )
                 )
@@ -347,38 +341,38 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         return array(
             // merchant account ID per currency feature
             'merchant_account_id_title' => array(
-                'title'       => __('Merchant Account Info', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'title'       => __('Merchant Account Info', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'        => 'title',
                 'description' => sprintf(
-                    esc_html__('Enter additional merchant account IDs if you do not want to use your GenoaPay account default. %1$sLearn more about merchant account IDs%2$s', 'woocommerce-payment-gateway-magebinary-binarypay' ),
-                    '<a href="' . esc_url( "binarypay()->get_documentation_url()" ). '#merchant-account-ids' . '">', '&nbsp;&rarr;</a>'
+                    esc_html__('Enter additional merchant account IDs if you do not want to use your GenoaPay account default. %1$sLearn more about merchant account IDs%2$s', 'woocommerce-payment-gateway-latitudefinance' ),
+                    '<a href="' . esc_url( "latitudefinance()->get_documentation_url()" ). '#merchant-account-ids' . '">', '&nbsp;&rarr;</a>'
                 ),
             ),
             // production
             'public_key' => array(
-                'title'    => __('Public Key', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'title'    => __('Public Key', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'     => 'text',
                 'class'    => 'environment-field production-field',
-                'desc_tip' => __('The Public Key for your GenoaPay account.', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'desc_tip' => __('The Public Key for your GenoaPay account.', 'woocommerce-payment-gateway-latitudefinance'),
             ),
             'private_key' => array(
-                'title'    => __('Private Key', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'title'    => __('Private Key', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'     => 'text',
                 'class'    => 'environment-field production-field',
-                'desc_tip' => __('The Private Key for your GenoaPay account.', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'desc_tip' => __('The Private Key for your GenoaPay account.', 'woocommerce-payment-gateway-latitudefinance'),
             ),
             // sandbox
             'sandbox_public_key' => array(
-                'title'    => __('Sandbox Public Key', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'title'    => __('Sandbox Public Key', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'     => 'text',
                 'class'    => 'environment-field sandbox-field',
-                'desc_tip' => __('The Public Key for your GenoaPay sandbox account.', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'desc_tip' => __('The Public Key for your GenoaPay sandbox account.', 'woocommerce-payment-gateway-latitudefinance'),
             ),
             'sandbox_private_key' => array(
-                'title'    => __('Sandbox Private Key', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'title'    => __('Sandbox Private Key', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'     => 'text',
                 'class'    => 'environment-field sandbox-field',
-                'desc_tip' => __('The Private Key for your GenoaPay sandbox account.', 'woocommerce-payment-gateway-magebinary-binarypay'),
+                'desc_tip' => __('The Private Key for your GenoaPay sandbox account.', 'woocommerce-payment-gateway-latitudefinance'),
             ),
         );
     }
@@ -388,8 +382,8 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      */
     public function include_extra_scripts()
     {
-        wp_register_style('woocommerce-payment-gateway-magebinary-binarypay-' . $this->id, plugins_url('woocommerce-payment-gateway-magebinary-binarypay/assets/css/' . $this->id . '/styles.css'));
-        wp_enqueue_style('woocommerce-payment-gateway-magebinary-binarypay-' . $this->id);
+        wp_register_style('woocommerce-payment-gateway-latitudefinance-' . $this->id, plugins_url('woocommerce-payment-gateway-latitudefinance/assets/css/' . $this->id . '/styles.css'));
+        wp_enqueue_style('woocommerce-payment-gateway-latitudefinance-' . $this->id);
     }
 
     /**
@@ -405,9 +399,9 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
 
     public function get_environments(){
         return array(
-            self::ENVIRONMENT_DEVELOPMENT => __('Development', 'woocommerce-payment-gateway-magebinary-binarypay'),
-            self::ENVIRONMENT_SANDBOX     => __('Sandbox', 'woocommerce-payment-gateway-magebinary-binarypay'),
-            self::ENVIRONMENT_PRODUCTION  => __('Production', 'woocommerce-payment-gateway-magebinary-binarypay'),
+            self::ENVIRONMENT_DEVELOPMENT => __('Development', 'woocommerce-payment-gateway-latitudefinance'),
+            self::ENVIRONMENT_SANDBOX     => __('Sandbox', 'woocommerce-payment-gateway-latitudefinance'),
+            self::ENVIRONMENT_PRODUCTION  => __('Production', 'woocommerce-payment-gateway-latitudefinance'),
         );
     }
 
@@ -547,23 +541,54 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         return WC()->session;
     }
 
+    /**
+     * Add checkout template to the product page
+     * @since 1.0.0
+     * @return void
+     */
+    public function show_product_checkout_gateways()
+    {
+        die('123123123');
+        $gateways = array();
+        foreach (WC()->payment_gateways()->get_available_payment_gateways() as $id => $gateway) {
+            if ($gateway->product_checkout_enabled()) {
+                $gateways[$id] = $gateway;
+            }
+        }
+
+        if (count($gateways) > 0) {
+            wc_latitudefinance_get_template('product/payment.php', array(
+                'gateways' => $gateways
+            ));
+        }
+    }
+
 
     /**
      * Add all standard filters
      */
-    public function add_hooks() {
+    public function add_hooks()
+    {
         /**
          * This is line is important, we cannot save the options without this lane
          */
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array(
-                $this, 'process_admin_options'
+            $this, 'process_admin_options'
         ));
+
         /**
          * Validate if the payment method available for the order or not
          */
         add_filter('woocommerce_available_payment_gateways', array(
-                $this, 'is_payment_available'
+            $this, 'is_payment_available'
         ), 10, 1);
+
+        /**
+         * Template hooks
+         */
+        add_action('woocommerce_before_add_to_cart_button', array(
+            $this, 'show_product_checkout_gateways'
+        ));
 
         /**
          * Include extra CSS and Javascript files

@@ -1,4 +1,30 @@
 <?php
+/**
+* Woocommerce LatitudeFinance Payment Extension
+*
+* NOTICE OF LICENSE
+*
+* Copyright 2020 LatitudeFinance
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*   http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*
+* @category    LatitudeFinance
+* @package     Latitude_Finance
+* @author      MageBinary Team
+* @copyright   Copyright (c) 2020 LatitudeFinance (https://www.latitudefinancial.com.au/)
+* @license     http://www.apache.org/licenses/LICENSE-2.0
+*/
+
 set_include_path(get_include_path() . PATH_SEPARATOR . realpath(dirname(__FILE__)));
 require_once('Variable.php');
 require_once('GatewayInterface.php');
@@ -11,7 +37,7 @@ require_once('Varien/Object.php');
 
 spl_autoload_register(
     function ($className) {
-        $libName = 'BinaryPay';
+        $libName = 'LatitudeFinance';
 
         if ($className != $libName) {
             $file = __DIR__ . DIRECTORY_SEPARATOR . 'Gateways' . DIRECTORY_SEPARATOR . $className . '.php';
@@ -40,10 +66,10 @@ spl_autoload_register(
     }
 );
 
-class WC_BinaryPay_Manager
+class WC_LatitudeFinance_Manager
 {
     /**
-     * @var WC_BinaryPay_Manager
+     * @var WC_LatitudeFinance_Manager
      */
     public static $instance;
 
@@ -74,9 +100,9 @@ class WC_BinaryPay_Manager
             'plugins_loaded'
         ), 10);
 
-        add_action('plugins_loaded', array($this,
-            'admin_includes'
-        ), 20);
+        // add_action('plugins_loaded', array($this,
+        //     'admin_includes'
+        // ), 20);
     }
 
     /**
@@ -86,8 +112,8 @@ class WC_BinaryPay_Manager
         /**
          * Functions
          */
-        include_once WC_BINARYPAY_PATH . '/includes/wc-binarypay-functions.php';
-        include_once WC_BINARYPAY_PATH . '/includes/wc-binarypay-hooks.php';
+        include_once WC_LATITUDEPAY_PATH . '/includes/wc-latitudefinance-functions.php';
+        include_once WC_LATITUDEPAY_PATH . '/includes/wc-latitudefinance-hooks.php';
 
         /**
          * Settings
@@ -96,35 +122,30 @@ class WC_BinaryPay_Manager
         /**
          * Gateways*
          */
-        include_once WC_BINARYPAY_PATH . '/BinaryPay/Method.php';
-        include_once WC_BINARYPAY_PATH . '/BinaryPay/Method/Genoapay.php';
-        include_once WC_BINARYPAY_PATH . '/BinaryPay/Method/Latitudepay.php';
+        include_once WC_LATITUDEPAY_PATH . '/LatitudeFinance/Method.php';
+        include_once WC_LATITUDEPAY_PATH . '/LatitudeFinance/Method/Genoapay.php';
+        include_once WC_LATITUDEPAY_PATH . '/LatitudeFinance/Method/Latitudepay.php';
 
         /**
          * Assign gateways into plugin
          */
-        $this->gateways = apply_filters('wc_binarypay_payment_gateways', array(
+        $this->gateways = apply_filters('wc_latitudefinance_payment_gateways', array(
             'MageBinary_BinaryPay_Method_Genoapay',
             'MageBinary_BinaryPay_Method_Latitudepay',
         ));
     }
 
-    public function admin_includes() {
-        if (is_admin() && function_exists('WC')) {
-        }
-    }
-
     public function plugins_loaded() {
         // $this->plugin_validations ();
-        load_plugin_textdomain('woocommerce-payment-gateway-magebinary-binarypay', false, dirname(WC_BINARYPAY_PLUGIN_NAME) . '/i18n/languages' );
+        load_plugin_textdomain('woocommerce-payment-gateway-latitudefinance', false, dirname(WC_LATITUDEPAY_PLUGIN_NAME) . '/i18n/languages' );
     }
 
     public function plugin_path() {
-        return WC_BINARYPAY_PATH;
+        return WC_LATITUDEPAY_PATH;
     }
 
     public function template_path() {
-        return WC_BINARYPAY_TEMPLATES;
+        return WC_LATITUDEPAY_TEMPLATES;
     }
 
     /**
@@ -137,26 +158,22 @@ class WC_BinaryPay_Manager
     }
 }
 
-if (function_exists('binarypay')) {
-    throw new Exception('"binarypay" function already existed.');
+if (function_exists('latitudefinance')) {
+    throw new Exception('"latitudefinance" function already existed.');
 } else {
     /**
      * Returns the main instance of BinaryPay for WooCommerce
      *
      * @since 1.0.0
      * @package BinaryPay
-     * @return WC_BinaryPay_Manager
+     * @return WC_LatitudeFinance_Manager
      */
-    function binarypay() {
-        return WC_BinaryPay_Manager::instance();
+    function latitudefinance() {
+        return WC_LatitudeFinance_Manager::instance();
     }
 
     /**
-     * create singleton instance of WC_BinaryPay_Manager
+     * create singleton instance of WC_LatitudeFinance_Manager
      */
-    binarypay();
+    latitudefinance();
 }
-
-
-
-

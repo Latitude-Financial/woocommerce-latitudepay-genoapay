@@ -1,20 +1,20 @@
 <a href="javascript: void(0)" id="genoapay-popup">
-    <img style="margin-top: 10px" src="<?php echo WC_BINARYPAY_ASSETS . "genoapay.svg" ?>" />
+    <img style="margin-top: 10px" src="<?php echo WC_LATITUDEPAY_ASSETS . "genoapay.svg" ?>" />
 </a>
 
 <div class="g-infomodal-container" id="g-infomodal-container" style="display: none;">
     <div class="g-infomodal-content">
-        <img id="g-infomodal-close" class="g-infomodal-close" src="<?php echo WC_BINARYPAY_ASSETS . 'genoapay/close_btn_gen_green.svg' ?>">
+        <img id="g-infomodal-close" class="g-infomodal-close" src="<?php echo WC_LATITUDEPAY_ASSETS . 'genoapay/close_btn_gen_green.svg' ?>">
         <div class="g-infomodal-inner">
             <div class="g-modal-header">
-                <img class="g-infomodal-logo" src="<?php echo WC_BINARYPAY_ASSETS . 'genoapay/genoapay_logo_white.svg' ?>">
+                <img class="g-infomodal-logo" src="<?php echo WC_LATITUDEPAY_ASSETS . 'genoapay/genoapay_logo_white.svg' ?>">
                 <span>Pay over 10 weeks.<br>No interest, no fees.</span>
             </div>
             <div class="g-infomodal-body">
                 <div class="g-infomodal-card-group">
                     <div class="g-infomodal-card">
                         <div class="g-infomodal-card-content">
-                            <img src="<?php echo WC_BINARYPAY_ASSETS . 'genoapay/shopping_trolly_icon.svg' ?>">
+                            <img src="<?php echo WC_LATITUDEPAY_ASSETS . 'genoapay/shopping_trolly_icon.svg' ?>">
                         </div>
                         <div class="g-infomodal-card-footer">
                             <div class="g-infomodal-card-title"><span>Checkout with </span><span>Genoapay</span></div>
@@ -22,7 +22,7 @@
                     </div>
                     <div class="g-infomodal-card">
                         <div class="g-infomodal-card-content">
-                            <img src="<?php echo WC_BINARYPAY_ASSETS . 'genoapay/thin_tick_icon.svg' ?>">
+                            <img src="<?php echo WC_LATITUDEPAY_ASSETS . 'genoapay/thin_tick_icon.svg' ?>">
                         </div>
                         <div class="g-infomodal-card-footer">
                             <div class="g-infomodal-card-title"><span>Credit approval </span><span>in seconds</span></div>
@@ -30,7 +30,7 @@
                     </div>
                     <div class="g-infomodal-card">
                         <div class="g-infomodal-card-content">
-                            <img src="<?php echo WC_BINARYPAY_ASSETS . 'genoapay/get_it_now_icon.svg' ?>">
+                            <img src="<?php echo WC_LATITUDEPAY_ASSETS . 'genoapay/get_it_now_icon.svg' ?>">
                         </div>
                         <div class="g-infomodal-card-footer">
                             <div class="g-infomodal-card-title"><span>Get it now, </span><span>pay over 10 weeks</span></div>

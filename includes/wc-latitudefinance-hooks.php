@@ -25,18 +25,4 @@
 * @license     http://www.apache.org/licenses/LICENSE-2.0
 */
 
-class BinaryPay_Exception extends Exception
-{
-    /**
-     * BinaryPay_Exception
-     * @param Exception $errorMessage exception portal.
-     */
-    public function __construct($errorMessage, $code = null)
-    {
-        $this->message = $errorMessage;
-        if (!empty($code)) {
-            $this->code = $code;
-        }
-    }
-
-}
+add_filter('woocommerce_payment_gateways', 'wc_latitudefinance_payment_gateways');

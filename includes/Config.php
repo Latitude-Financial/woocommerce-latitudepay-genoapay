@@ -1,10 +1,10 @@
 <?php
 /**
-* Magento BinaryPay Payment Extension
+* Woocommerce LatitudeFinance Payment Extension
 *
 * NOTICE OF LICENSE
 *
-* Copyright 2020 MageBinary
+* Copyright 2020 LatitudeFinance
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -18,34 +18,15 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-* @category    MageBinary
-* @package     MageBinary_BinaryPay
+* @category    LatitudeFinance
+* @package     Latitude_Finance
 * @author      MageBinary Team
-* @copyright   Copyright (c) 2017 - 2020 MageBinary (http://www.magebinary.com)
+* @copyright   Copyright (c) 2020 LatitudeFinance (https://www.latitudefinancial.com.au/)
 * @license     http://www.apache.org/licenses/LICENSE-2.0
 */
+
 class MageBinary_BinaryPay_Model_Config
 {
-    /**
-     * Paymark payment method - Directpost
-     */
-    const PAYMARK_DIRECTPOST            = 'paymark_directpost';
-
-    /**
-     * Paymark payment method - Webpayment
-     */
-    const PAYMARK_WEBPAYMENT            = 'paymark_webpayment';
-
-    /**
-     * Paymark payment method - OnlineEFTPOS
-     */
-    const PAYMARK_ONLINEEFTPOS          = 'paymark_onlineeftpos';
-
-    /**
-     * Qcard payment method - Flexi Long term
-     */
-    const QCARD_FLEXILONG               = 'qcard_flexilong';
-
     /**
      * Genoapay
      */
@@ -55,19 +36,4 @@ class MageBinary_BinaryPay_Model_Config
      * Latitudepay
      */
     const LATITUDEPAY                   = 'latitudepay';
-
-    /**
-     * Polipay
-     */
-    const POLIPAY                       = 'polipay';
-
-    /**
-     * Successful redirect page URL
-     */
-    const SUCCESSFUL_PAGE_URL           = 'checkout/onepage/success';
-
-    /**
-     * Checkout cart page URL
-     */
-    const CHECKOUT_CART_PAGE_URL         = 'checkout/cart';
 }
