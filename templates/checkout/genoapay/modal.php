@@ -1,6 +1,8 @@
-<a href="javascript: void(0)" id="genoapay-popup">
-    <img style="margin-top: 10px" src="<?php echo WC_LATITUDEPAY_ASSETS . "genoapay.svg" ?>" />
-</a>
+<?php if (is_checkout()) : ?>
+    <a href="javascript: void(0)" id="genoapay-popup">
+        <img style="margin-top: 10px" src="<?php echo WC_LATITUDEPAY_ASSETS . "genoapay.svg" ?>" />
+    </a>
+<?php endif ?>
 
 <div class="g-infomodal-container" id="g-infomodal-container" style="display: none;">
     <div class="g-infomodal-content">

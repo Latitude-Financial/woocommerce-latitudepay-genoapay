@@ -25,4 +25,17 @@
 * @license     http://www.apache.org/licenses/LICENSE-2.0
 */
 
+/**
+ * Add custom payment gateway to Woocommerce payment gateways
+ */
 add_filter('woocommerce_payment_gateways', 'wc_latitudefinance_payment_gateways');
+
+/**
+ * Template hooks
+ */
+add_action('woocommerce_before_add_to_cart_button', 'wc_latitudefinance_show_product_checkout_gateways');
+
+/**
+ * Include extra CSS and Javascript files
+ */
+add_action('wp_enqueue_scripts', 'wc_latitudefinance_include_extra_scripts');

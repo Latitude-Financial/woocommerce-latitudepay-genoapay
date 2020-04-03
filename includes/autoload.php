@@ -78,7 +78,10 @@ class WC_LatitudeFinance_Manager
      *
      * @var array
      */
-    private $gateways = array();
+    public static $gateways = [
+        MageBinary_BinaryPay_Method_Genoapay::class,
+        MageBinary_BinaryPay_Method_Latitudepay::class
+    ];
 
     public function __construct() {
         $this->add_hooks();
@@ -129,10 +132,7 @@ class WC_LatitudeFinance_Manager
         /**
          * Assign gateways into plugin
          */
-        $this->gateways = apply_filters('wc_latitudefinance_payment_gateways', array(
-            'MageBinary_BinaryPay_Method_Genoapay',
-            'MageBinary_BinaryPay_Method_Latitudepay',
-        ));
+        apply_filters('wc_latitudefinance_payment_gateways', self::$gateways);
     }
 
     public function plugins_loaded() {
@@ -154,7 +154,7 @@ class WC_LatitudeFinance_Manager
      * @return array
      */
     public function get_payment_gateways() {
-        return $this->gateways;
+        return self::$gateways;
     }
 }
 

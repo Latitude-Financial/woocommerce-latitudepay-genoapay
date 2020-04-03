@@ -134,9 +134,10 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
 
         $this->init_form_fields();
         $this->init_settings();
+
         $this->title = $this->get_option('title');
         $this->description = $this->get_option('description');
-        $this->min_order_total = $this->get_option('min_order_total', 200);
+        $this->min_order_total = $this->get_option('min_order_total', 20);
         $this->max_order_total = $this->get_option('max_order_total');
         $this->environment     = $this->get_option('environment', MageBinary_BinaryPay_Method_Abstract::ENVIRONMENT_DEVELOPMENT);
         $this->currency_code   = get_woocommerce_currency();
@@ -150,11 +151,13 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      */
     public function is_payment_available($gateways)
     {
-        foreach ($gateways as $index => $gateway) {
-            if ($gateway instanceof $this->gateway_class) {
-                $orderTotal = WC()->cart->total;
-                if ($orderTotal > $this->max_order_total && $this->max_order_total || $orderTotal < $this->min_order_total && !is_null($this->min_order_total)) {
-                    unset($gateways[$index]);
+        if (is_checkout()) {
+            foreach ($gateways as $index => $gateway) {
+                if ($gateway instanceof $this->gateway_class) {
+                    $orderTotal = WC()->cart->total;
+                    if ($orderTotal > $this->max_order_total && $this->max_order_total || $orderTotal < $this->min_order_total && !is_null($this->min_order_total)) {
+                        unset($gateways[$index]);
+                    }
                 }
             }
         }
@@ -378,15 +381,6 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
     }
 
     /**
-     * Inlcude extra stylesheet and scripts for current payment gateway
-     */
-    public function include_extra_scripts()
-    {
-        wp_register_style('woocommerce-payment-gateway-latitudefinance-' . $this->id, plugins_url('woocommerce-payment-gateway-latitudefinance/assets/css/' . $this->id . '/styles.css'));
-        wp_enqueue_style('woocommerce-payment-gateway-latitudefinance-' . $this->id);
-    }
-
-    /**
      * Returns the environment setting, one of the $environments keys, ie
      * 'production'
      *
@@ -542,30 +536,8 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
     }
 
     /**
-     * Add checkout template to the product page
-     * @since 1.0.0
-     * @return void
-     */
-    public function show_product_checkout_gateways()
-    {
-        die('123123123');
-        $gateways = array();
-        foreach (WC()->payment_gateways()->get_available_payment_gateways() as $id => $gateway) {
-            if ($gateway->product_checkout_enabled()) {
-                $gateways[$id] = $gateway;
-            }
-        }
-
-        if (count($gateways) > 0) {
-            wc_latitudefinance_get_template('product/payment.php', array(
-                'gateways' => $gateways
-            ));
-        }
-    }
-
-
-    /**
      * Add all standard filters
+     * This hook will only be called when the gateway object has been initialized
      */
     public function add_hooks()
     {
@@ -584,15 +556,9 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         ), 10, 1);
 
         /**
-         * Template hooks
-         */
-        add_action('woocommerce_before_add_to_cart_button', array(
-            $this, 'show_product_checkout_gateways'
-        ));
-
-        /**
+         * Unified the this with the product page CSS
          * Include extra CSS and Javascript files
          */
-        add_action('wp_enqueue_scripts', array($this, 'include_extra_scripts'));
+        // add_action('wp_enqueue_scripts', array($this, 'include_extra_scripts'));
     }
 }
