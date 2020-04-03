@@ -75,9 +75,8 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
 
     public function return_action()
     {
-        $request = new Varien_Object($_GET);
         // save request
-        $this->request = $request;
+        $this->request = $_GET;
         try {
             // process the order depends on the request
             $this->validate_response()
@@ -108,11 +107,11 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
         // Unset session after use
         $session->set('purchase_token', null);
 
-        if (!$this->return_action_name || $this->return_action_name !== $request->getData('wc-api')) {
+        if (!$this->return_action_name || $this->return_action_name !== wc_latitudefinance_get_array_data('wc-api', $request)) {
             throw new BinaryPay_Exception(__('The return action handler is not valid for the request.', 'woocommerce-payment-gateway-latitudefinance'));
         }
 
-        if (!$token || $request->getData('token') !== $token) {
+        if (!$token || wc_latitudefinance_get_array_data('token', $request) !== $token) {
             $this->redirect_url = WC()->cart->get_cart_url();
             $session->set('order_id', null);
             /**
@@ -129,7 +128,7 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
     protected function process_response()
     {
         $request = $this->request;
-        $result = $request->getData('result');
+        $result = wc_latitudefinance_get_array_data('result', $request);
         switch ($result) {
             case BinaryPay_Variable::STATUS_COMPLETED:
                 $this->order_status = self::PROCESSING_ORDER_STATUS;
@@ -160,7 +159,7 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
         }
         // order object
         $order = wc_get_order($order_id);
-        $token = $this->request->getData('token');
+        $token = wc_latitudefinance_get_array_data('token', $this->request);
 
         // Mark as on-hold (we're awaiting the payment)
         $order->update_status($this->order_status, $this->order_comment);
@@ -223,10 +222,9 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
             );
 
             $response       = $gateway->purchase($payment);
-            $responseObject = new Varien_Object($response);
-            $purchaseUrl    = $responseObject->getData('paymentUrl');
+            $purchaseUrl    = wc_latitudefinance_get_array_data('paymentUrl', $response);
             // Save token into the session
-            $this->get_checkout_session()->set('purchase_token', $responseObject->getData('token'));
+            $this->get_checkout_session()->set('purchase_token', wc_latitudefinance_get_array_data('token', $response));
         } catch (BinaryPay_Exception $e) {
             BinaryPay::log($e->getMessage(), true, 'woocommerce-genoapay.log');
             throw new Exception($e->getMessage());

@@ -32,6 +32,7 @@ class Genoapay extends BinaryPay
     const TOKEN_ENDPOINT = 'token';
     const PURCHASE_ENDPOINT = 'sale/online';
     const PURCHASE_STATUS_ENDPOINT = 'sale/pos';
+    const CONFIGURATON_ENDPOINT= 'configuration';
 
     const STATUS_SUCCESSFUL = 200;
     const STATUS_INVALID = 400;
@@ -163,6 +164,15 @@ class Genoapay extends BinaryPay
     }
 
     /**
+     * getConfigurationUrl
+     * @return string
+     */
+    public function getConfigurationUrl()
+    {
+        return $this->getApiUrl() . self::API_VERSION . DIRECTORY_SEPARATOR . self::CONFIGURATON_ENDPOINT;
+    }
+
+    /**
      * creates a full array signature of a valid gateway request
      * @return array gateway request signature format
      */
@@ -188,6 +198,29 @@ class Genoapay extends BinaryPay
             ),
             parent::createSignature()
         );
+    }
+
+    /**
+     * Get configuration back from Latitude Finance API
+     * @return array
+     */
+    public function configuration(array $args = array())
+    {
+        $url = $this->getConfigurationUrl();
+        $request = array();
+
+        $this->setConfig(
+            array(
+                'method'                => 'get',
+                'request-content-type'  => 'json',
+                'response-content-type' => 'json',
+                'api-success-status'    => 'name',
+                'url'                   => $url,
+                'request'               => $request
+            )
+        );
+
+        return $this->query();
     }
 
     /**

@@ -117,10 +117,16 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
     protected $token;
 
     /**
-     * @var Varien_Object
-     * An object which saved all the response we got from the payment provider
+     * @var array
+     * An array which saved all the response we got from the payment provider
      */
     protected $request;
+
+    /**
+     * @var array
+     * Configuration fetched from the Latitude finance API
+     */
+    protected $configuration;
 
     public function __construct()
     {
@@ -135,11 +141,13 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         $this->init_form_fields();
         $this->init_settings();
 
-        $this->title = $this->get_option('title');
-        $this->description = $this->get_option('description');
-        $this->min_order_total = $this->get_option('min_order_total', 20);
-        $this->max_order_total = $this->get_option('max_order_total');
-        $this->environment     = $this->get_option('environment', MageBinary_BinaryPay_Method_Abstract::ENVIRONMENT_DEVELOPMENT);
+        // Environment must be set before get the gateway object
+        $this->environment     = $this->get_option('environment', self::ENVIRONMENT_DEVELOPMENT);
+        $this->configuration   = $this->get_gateway()->configuration();
+        $this->title           = $this->get_option('title', ucfirst(wc_latitudefinance_get_array_data('name', $this->configuration, $this->id)));
+        $this->description     = $this->get_option('description', wc_latitudefinance_get_array_data('description', $this->configuration));
+        $this->min_order_total = $this->get_option('min_order_total', wc_latitudefinance_get_array_data('minimumAmount', $this->configuration, 20));
+        $this->max_order_total = $this->get_option('max_order_total', wc_latitudefinance_get_array_data('maximumAmount', $this->configuration, 1500));
         $this->currency_code   = get_woocommerce_currency();
         $this->credentials     = $this->get_credentials();
 
@@ -217,17 +225,22 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
             'description' => array(
                 'title'         => __('Customer Message', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'          => 'textarea',
-                'default'       => ''
+                'default'       => __($this->description, 'woocommerce-payment-gateway-latitudefinance'),
+                'value'         => __($this->description, 'woocommerce-payment-gateway-latitudefinance'),
+                'readonly'     => true
             ),
             'min_order_total' => array(
                 'title'     => __('Minimum Order Total', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'      => 'text',
-                'default'   => '200'
+                'value'     => $this->min_order_total,
+                'default'   => $this->min_order_total,
+                'readonly'  => true
             ),
             'max_order_total' => array(
                 'title'     => __('Maximum Order Total', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'      => 'text',
-                'default'   => ''
+                'value'     => $this->max_order_total,
+                'default'   => $this->max_order_total
             ),
             'debug_mode' => array(
                 'title'   => esc_html__('Debug Mode', 'woocommerce-payment-gateway-latitudefinance'),
@@ -440,18 +453,19 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
 
         $products = [];
         foreach ($items as $_item) {
-            $_item = new Varien_Object($_item);
+            if (!isset($_item['data'])) {
+                throw new Exception('"data" must be defined in the item array.');
+            }
             $_product = ($_item['data'] instanceof WC_Product_Simple) ? $_item['data']->get_data() : $_item['data']->get_parent_data();
-            $_product = new Varien_Object($_product);
             $product_price = ($isTaxIncluded) ? wc_get_price_including_tax($_item['data']) : wc_get_price_excluding_tax($_item['data']);
             $product_line_item = [
-                'name'          => $_product->getData('title') ?: $_product->getData('name'),
+                'name'          => wc_latitudefinance_get_array_data('title', $_product) ?: wc_latitudefinance_get_array_data('name', $_product),
                 'price' => [
                     'amount'    => $product_price,
                     'currency'  => $this->currency_code
                 ],
-                'sku'           => $_product->getData('sku'),
-                'quantity'      => $_item->getData('quantity'),
+                'sku'           => wc_latitudefinance_get_array_data('sku', $_product),
+                'quantity'      => wc_latitudefinance_get_array_data('quantity', $_item, 0),
                 'taxIncluded'   => (int) $isTaxIncluded
             ];
             array_push($products, $product_line_item);
