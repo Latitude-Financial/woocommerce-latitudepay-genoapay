@@ -126,7 +126,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      * @var array
      * Configuration fetched from the Latitude finance API
      */
-    protected $configuration;
+    protected $configuration = [];
 
     public function __construct()
     {
@@ -143,7 +143,9 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
 
         // Environment must be set before get the gateway object
         $this->environment     = $this->get_option('environment', self::ENVIRONMENT_DEVELOPMENT);
-        $this->configuration   = $this->get_gateway()->configuration();
+        if ($this->get_option('sandbox_public_key') &&  $this->get_option('sandbox_private_key') || $this->get_option('public_key') && $this->get_option('private_key')) {
+            $this->configuration   = $this->get_gateway()->configuration();
+        }
         $this->title           = $this->get_option('title', ucfirst(wc_latitudefinance_get_array_data('name', $this->configuration, $this->id)));
         $this->description     = $this->get_option('description', wc_latitudefinance_get_array_data('description', $this->configuration));
         $this->min_order_total = $this->get_option('min_order_total', wc_latitudefinance_get_array_data('minimumAmount', $this->configuration, 20));
@@ -330,8 +332,8 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
                 $private_key = $this->get_option('sandbox_private_key');
                 break;
             case self::ENVIRONMENT_PRODUCTION:
-                $public_key = $this->get_option('sandbox_public_key');
-                $private_key = $this->get_option('sandbox_private_key');
+                $public_key = $this->get_option('public_key');
+                $private_key = $this->get_option('private_key');
                 break;
             default:
                 throw new Exception('xxxxxxx');
