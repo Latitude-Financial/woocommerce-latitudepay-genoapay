@@ -8,6 +8,7 @@
  * Author URI: https://magebinary.com/
  * Text Domain: woocommerce-payment-gateway-latitudefinance
  * Domain Path: /i18n/languages/
+ * License: Apache-2.0
  *
  * @package LatitudeFinance
  */
