@@ -143,9 +143,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
 
         // Environment must be set before get the gateway object
         $this->environment     = $this->get_option('environment', self::ENVIRONMENT_DEVELOPMENT);
-        if ($this->get_option('sandbox_public_key') &&  $this->get_option('sandbox_private_key') || $this->get_option('public_key') && $this->get_option('private_key')) {
-            $this->configuration   = $this->get_gateway()->configuration();
-        }
+        $this->configuration   = $this->get_configuration();
         $this->title           = $this->get_option('title', ucfirst(wc_latitudefinance_get_array_data('name', $this->configuration, $this->id)));
         $this->description     = $this->get_option('description', wc_latitudefinance_get_array_data('description', $this->configuration));
         $this->min_order_total = $this->get_option('min_order_total', wc_latitudefinance_get_array_data('minimumAmount', $this->configuration, 20));
@@ -154,6 +152,27 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         $this->credentials     = $this->get_credentials();
 
         $this->add_hooks();
+    }
+
+    /**
+     * get_configuration
+     * Get the configuration setting from Genopay/Latitypay API
+     */
+    public function get_configuration()
+    {
+        if (empty($this->configuration)) {
+            /**
+             * Only get the configuration when the sandbox or production environment has been set correctly
+             */
+            if ($this->get_option('sandbox_public_key') &&  $this->get_option('sandbox_private_key') || $this->get_option('public_key') && $this->get_option('private_key')) {
+                $configuration = $this->get_gateway()->configuration();
+            } else {
+                throw new WP_Error('You will have enter the public and private key to get configuration from the LatitudeFinance API remotely.');
+            }
+
+            return $configuration;
+        }
+        return $this->configuration;
     }
 
     /**

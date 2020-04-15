@@ -4,4 +4,4 @@ Description: An online ecommerce payment solution
 Version: 0.0.1
 Author: MageBinary
 Author URI: https://magebinary.com/
-License: Apache-2.0
+License: GPLv2

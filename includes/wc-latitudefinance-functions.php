@@ -105,7 +105,7 @@ function wc_latitudefinance_show_product_checkout_gateways() {
 
         if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
             wc_latitudefinance_get_template('product/payment.php', array(
-                'gateway' => $gateway
+                'gateway' => $gateway,
             ));
         }
     }
@@ -126,6 +126,39 @@ function wc_latitudefinance_include_extra_scripts()
             if (is_product() || is_checkout()) {
                 wp_register_style('woocommerce-payment-gateway-latitudefinance-' . $id, $file);
                 wp_enqueue_style('woocommerce-payment-gateway-latitudefinance-' . $id);
+            }
+
+            /**
+             * is cart page
+             */
+            if (is_cart()) {
+                wp_register_style('woocommerce-payment-gateway-latitudefinance-cart', WC_LATITUDEPAY_ASSETS . '/css/common.css');
+                wp_enqueue_style('woocommerce-payment-gateway-latitudefinance-cart');
+            }
+        }
+    }
+}
+
+/**
+ * @since 1.0.0
+ * @package LatitudeFinance/Functions
+ */
+function wc_latitudefinance_show_payment_options()
+{
+    $gateways = array();
+    foreach (WC()->payment_gateways()->get_available_payment_gateways() as $id => $gateway) {
+        $gateways[$id] = $gateway;
+        if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
+            $configuration = $gateway->get_configuration();
+            $gatewayName = ucfirst(wc_latitudefinance_get_array_data('title', $configuration, $gateway->get_id()));
+            $minAmount = wc_latitudefinance_get_array_data('minimumAmount', $configuration, 20);
+            $maxAmount = wc_latitudefinance_get_array_data('maximumAmount', $configuration, 1500);
+            $message = __('Note: If the cart total amount is less than ' . $minAmount . ' or greater than ' . $maxAmount . ' then you will not be able to proceed the checkout with ' . $gatewayName);
+            if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
+                wc_latitudefinance_get_template('cart/payment.php', array(
+                    'gateway' => $gateway,
+                    'message' => $message
+                ));
             }
         }
     }

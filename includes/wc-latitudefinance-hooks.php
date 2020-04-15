@@ -34,6 +34,7 @@ add_filter('woocommerce_payment_gateways', 'wc_latitudefinance_payment_gateways'
  * Template hooks
  */
 add_action('woocommerce_before_add_to_cart_button', 'wc_latitudefinance_show_product_checkout_gateways');
+add_action('woocommerce_after_cart_table', 'wc_latitudefinance_show_payment_options');
 
 /**
  * Include extra CSS and Javascript files
