@@ -145,8 +145,8 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         $this->environment     = $this->get_option('environment', self::ENVIRONMENT_DEVELOPMENT);
 
 
-
-        $this->update_configuration_options();
+        //@TODO need to run this when admin update the config hook.
+        //$this->update_configuration_options();
 
         $this->title           = $this->get_option('title', ucfirst(wc_latitudefinance_get_array_data('name', $this->configuration, $this->id)));
         $this->description     = $this->get_option('description', wc_latitudefinance_get_array_data('description', $this->configuration));
@@ -163,6 +163,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      * Update options value based on the config api endpoint.
      * This function triggers even on the frontend, it slows down the fontend performance
      * So we only run it on the backend.
+     * Needs to run it in a different hook.
     */
     public function update_configuration_options() {
         //TODO: Check if the options has been updated before.
