@@ -164,6 +164,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      * This function triggers even on the frontend, it slows down the fontend performance
      * So we only run it on the backend.
      * Needs to run it in a different hook.
+     * ISSUE: this function is calling side wide and createing performance issue.
     */
     public function update_configuration_options() {
         //TODO: Check if the options has been updated before.
