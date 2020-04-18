@@ -27,6 +27,7 @@
 
 /**
  * Add custom payment gateway to Woocommerce payment gateways
+ * @todo : this line somehow breaks my order page.
  */
 add_filter('woocommerce_payment_gateways', 'wc_latitudefinance_payment_gateways');
 

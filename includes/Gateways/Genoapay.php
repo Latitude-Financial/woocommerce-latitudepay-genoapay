@@ -62,6 +62,7 @@ class Genoapay extends BinaryPay
                 'api-error-message-field' => 'error'
             )
         );
+
         $this->getToken();
     }
 
@@ -130,7 +131,7 @@ class Genoapay extends BinaryPay
                 break;
             case 'sandbox':
             case 'development':
-                $url = 'https://sandbox-api.genoapay.com/';
+                $url = 'https://api.uat.genoapay.com/';
                 break;
         }
 

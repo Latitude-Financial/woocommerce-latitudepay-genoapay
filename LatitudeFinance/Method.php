@@ -143,15 +143,39 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
 
         // Environment must be set before get the gateway object
         $this->environment     = $this->get_option('environment', self::ENVIRONMENT_DEVELOPMENT);
-        $this->configuration   = $this->get_configuration();
+
+
+
+        $this->update_configuration_options();
+
         $this->title           = $this->get_option('title', ucfirst(wc_latitudefinance_get_array_data('name', $this->configuration, $this->id)));
         $this->description     = $this->get_option('description', wc_latitudefinance_get_array_data('description', $this->configuration));
         $this->min_order_total = $this->get_option('min_order_total', wc_latitudefinance_get_array_data('minimumAmount', $this->configuration, 20));
         $this->max_order_total = $this->get_option('max_order_total', wc_latitudefinance_get_array_data('maximumAmount', $this->configuration, 1500));
+
         $this->currency_code   = get_woocommerce_currency();
         $this->credentials     = $this->get_credentials();
 
         $this->add_hooks();
+    }
+    /**
+     * update_configuration_options
+     * Update options value based on the config api endpoint.
+     * This function triggers even on the frontend, it slows down the fontend performance
+     * So we only run it on the backend.
+    */
+    public function update_configuration_options() {
+        //TODO: Check if the options has been updated before.
+        //check keywords. It is checked by admin atm.
+        if (!is_admin() || !$this->get_configuration() ) {
+            return;
+        }
+
+        $this->update_option('title', ucfirst(wc_latitudefinance_get_array_data('name', $this->configuration, $this->id)));
+        $this->update_option('description', wc_latitudefinance_get_array_data('description', $this->configuration));
+        $this->update_option('min_order_total', wc_latitudefinance_get_array_data('minimumAmount', $this->configuration, 20));
+        $this->update_option('max_order_total', wc_latitudefinance_get_array_data('maximumAmount', $this->configuration, 1500));
+
     }
 
     /**
@@ -160,19 +184,24 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      */
     public function get_configuration()
     {
-        if (empty($this->configuration)) {
+        $gateway = $this->get_gateway();
+
+        if (empty($this->configuration) && !empty($gateway)) {
             /**
              * Only get the configuration when the sandbox or production environment has been set correctly
              */
-            if ($this->get_option('sandbox_public_key') &&  $this->get_option('sandbox_private_key') || $this->get_option('public_key') && $this->get_option('private_key')) {
-                $configuration = $this->get_gateway()->configuration();
-            } else {
-                throw new WP_Error('You will have enter the public and private key to get configuration from the LatitudeFinance API remotely.');
+            if ($this->get_option('sandbox_public_key') &&
+                $this->get_option('sandbox_private_key')
+                ||
+                $this->get_option('public_key')
+                && $this->get_option('private_key')
+            ) {
+                $this->configuration = $gateway->configuration();
+                return true;
             }
 
-            return $configuration;
         }
-        return $this->configuration;
+        return false;
     }
 
     /**
@@ -234,7 +263,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
                 'title'     => __('Enable/Disable', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'      => 'checkbox',
                 'label'     => __('Enable', 'woocommerce-payment-gateway-latitudefinance'),
-                'default'   => 'yes'
+                'default'   => 'no'
             ),
             'title' => array(
                 'title'         => __('Title', 'woocommerce-payment-gateway-latitudefinance'),
@@ -329,9 +358,37 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      */
     public function get_gateway()
     {
-        $className = (isset(explode('_', $this->id)[1])) ? ucfirst(explode('_', $this->id)[1]) : ucfirst($this->id);
-        $gateway = BinaryPay::getGateway($className, $this->get_credentials());
-        return $gateway;
+        //Sometimes the internet connections to the server or other stuff may not be able to connect
+        //to the API or wrong API key might break the entire payment page without exception handling.
+        try {
+            $className = (isset(explode('_', $this->id)[1])) ? ucfirst(explode('_', $this->id)[1]) : ucfirst($this->id);
+            $gateway = BinaryPay::getGateway($className, $this->get_credentials());
+            return $gateway;
+
+        } catch (BinaryPay_Exception $e) {
+            //TODO: log here.
+            //
+            $this->add_admin_error_message($className .': '. $e->getMessage() );
+        } catch (Exception $e) {
+            //TODO: log here.
+        }
+
+    }
+
+    public function add_admin_error_message($message)
+    {
+        if (!is_admin()) {
+            return;
+        }
+        WC_Admin_Settings::add_error($message);
+    }
+
+    public function add_admin_success_message($message)
+    {
+        if (!is_admin()) {
+            return;
+        }
+        WC_Admin_Settings::add_message($message);
     }
 
     /**

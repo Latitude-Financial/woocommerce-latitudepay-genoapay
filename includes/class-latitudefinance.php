@@ -193,6 +193,7 @@ abstract class BinaryPay extends Base implements GatewayInterface
                 $response = $this->_http->post($apiUrl, $args);
                 break;
         }
+
         $response = $this->validate($response);
         return $response;
     }

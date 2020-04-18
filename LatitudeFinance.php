@@ -12,16 +12,15 @@
  *
  * @package LatitudeFinance
  */
-
 defined( 'ABSPATH' ) || exit;
-
 define('WC_LATITUDEPAY_PATH', plugin_dir_path ( __FILE__ ));
 define('WC_LATITUDEPAY_ASSETS', plugin_dir_url( __FILE__ ) . 'assets/');
 define('WC_LATITUDEPAY_TEMPLATES', plugin_dir_url( __FILE__ ) . 'templates/');
 define('WC_LATITUDEPAY_PLUGIN_NAME', plugin_basename ( __FILE__ ));
 
 add_action('plugins_loaded', 'wc_latitudepay_init', 11);
-function wc_latitudepay_init() {
+
+function wc_latitudepay_init()
+{
     require_once(WC_LATITUDEPAY_PATH . 'includes/autoload.php');
-    require_once(WC_LATITUDEPAY_PATH . 'includes/class-latitudefinance.php');
 }
