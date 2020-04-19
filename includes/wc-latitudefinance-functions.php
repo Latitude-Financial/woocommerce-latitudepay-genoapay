@@ -140,29 +140,30 @@ function wc_latitudefinance_include_extra_scripts()
 }
 
 /**
- * @since 1.0.0
+ * @see https://jira.magebinary.com/browse/SP-2545
+ * [GenoaPay] Remove shopping cart message (note). (Note: If the cart total amount is less than 20 or greater than 1500 then you will not be able to proceed the checkout with Latitudepay)
  * @package LatitudeFinance/Functions
  */
-function wc_latitudefinance_show_payment_options()
-{
-    $gateways = array();
-    foreach (WC()->payment_gateways()->get_available_payment_gateways() as $id => $gateway) {
-        $gateways[$id] = $gateway;
-        if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
-            $configuration = $gateway->get_configuration();
-            $gatewayName = ucfirst(wc_latitudefinance_get_array_data('title', $configuration, $gateway->get_id()));
-            $minAmount = wc_latitudefinance_get_array_data('minimumAmount', $configuration, 20);
-            $maxAmount = wc_latitudefinance_get_array_data('maximumAmount', $configuration, 1500);
-            $message = __('Note: If the cart total amount is less than ' . $minAmount . ' or greater than ' . $maxAmount . ' then you will not be able to proceed the checkout with ' . $gatewayName);
-            if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
-                wc_latitudefinance_get_template('cart/payment.php', array(
-                    'gateway' => $gateway,
-                    'message' => $message
-                ));
-            }
-        }
-    }
-}
+// function wc_latitudefinance_show_payment_options()
+// {
+//     $gateways = array();
+//     foreach (WC()->payment_gateways()->get_available_payment_gateways() as $id => $gateway) {
+//         $gateways[$id] = $gateway;
+//         if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
+//             $configuration = $gateway->get_configuration();
+//             $gatewayName = ucfirst(wc_latitudefinance_get_array_data('title', $configuration, $gateway->get_id()));
+//             $minAmount = wc_latitudefinance_get_array_data('minimumAmount', $configuration, 20);
+//             $maxAmount = wc_latitudefinance_get_array_data('maximumAmount', $configuration, 1500);
+//             $message = __('Note: If the cart total amount is less than ' . $minAmount . ' or greater than ' . $maxAmount . ' then you will not be able to proceed the checkout with ' . $gatewayName);
+//             if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
+//                 wc_latitudefinance_get_template('cart/payment.php', array(
+//                     'gateway' => $gateway,
+//                     'message' => $message
+//                 ));
+//             }
+//         }
+//     }
+// }
 
 /**
  * @since 1.0.0
