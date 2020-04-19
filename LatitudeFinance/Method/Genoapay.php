@@ -177,19 +177,4 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
         return true;
     }
 
-    /**
-     * Process payment
-     * After investigation this step is after the order has been placed
-     * Therefore we should handle the response then continue to run this function
-     */
-    public function process_payment($order_id)
-    {
-        // save the order id, and handle the order creation in the callback action base on the Latitude response
-        $this->get_checkout_session()->set('order_id', $order_id);
-        // Return thankyou redirect
-        return array(
-            'result'    => 'success',
-            'redirect'  => $this->get_purchase_url()
-        );
-    }
 }
