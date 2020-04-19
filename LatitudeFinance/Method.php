@@ -128,6 +128,11 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      */
     protected $configuration = [];
 
+    /**
+     * @var boolean
+     */
+    // protected $debug = true;
+
     public function __construct()
     {
         $this->has_fields = true;
@@ -215,18 +220,23 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
     {
         $request = $this->request;
         $result = wc_latitudefinance_get_array_data('result', $request);
+        $message = wc_latitudefinance_get_array_data('message', $request, '');
+
         switch ($result) {
             case BinaryPay_Variable::STATUS_COMPLETED:
                 $this->order_status = self::PROCESSING_ORDER_STATUS;
-                $this->order_comment = __('Payment received', 'woocommerce-payment-gateway-latitudefinance');
-                // send invoice email
+                $this->order_comment = __($message, 'woocommerce-payment-gateway-latitudefinance');
                 break;
             case BinaryPay_Variable::STATUS_UNKNOWN:
                 $this->order_status = self::FAILED_ORDER_STATUS;
-                $this->order_comment = __('Payment failed', 'woocommerce-payment-gateway-latitudefinance');
+                $this->order_comment = __($message, 'woocommerce-payment-gateway-latitudefinance');
                 break;
             default:
-                # code...
+                /**
+                 * @todo Need more tests for this code
+                 */
+                $this->order_status = self::FAILED_ORDER_STATUS;
+                $this->order_comment = __($message, 'woocommerce-payment-gateway-latitudefinance');
                 break;
         }
         return $this;
