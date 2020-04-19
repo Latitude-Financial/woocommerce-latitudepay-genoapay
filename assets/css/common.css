@@ -12,3 +12,8 @@
     border: 1px solid transparent;
     border-radius: .25rem;
 }
+
+.lp-modal-close {
+	background: #fff;
+    color: black;
+}

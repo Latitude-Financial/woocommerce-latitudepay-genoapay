@@ -35,12 +35,6 @@ function wc_latitudefinance_payment_gateways($gateways) {
     return array_merge($gateways, latitudefinance()->get_payment_gateways());
 }
 
-function get_http_response_code($url) {
-    $headers = get_headers($url);
-    var_dump($headers);die();
-    return substr($headers[0], 9, 3);
-}
-
 /**
  *
  * @since 1.0.0
@@ -123,7 +117,7 @@ function wc_latitudefinance_include_extra_scripts()
             // enqueue the files only if it meets the following condition
             // 1. is product page
             // 2. OR is checkout page
-            if (is_product() || is_checkout()) {
+            if (is_product() || is_checkout() || is_cart()) {
                 wp_register_style('woocommerce-payment-gateway-latitudefinance-' . $id, $file);
                 wp_enqueue_style('woocommerce-payment-gateway-latitudefinance-' . $id);
             }
@@ -144,26 +138,38 @@ function wc_latitudefinance_include_extra_scripts()
  * [GenoaPay] Remove shopping cart message (note). (Note: If the cart total amount is less than 20 or greater than 1500 then you will not be able to proceed the checkout with Latitudepay)
  * @package LatitudeFinance/Functions
  */
-// function wc_latitudefinance_show_payment_options()
-// {
-//     $gateways = array();
-//     foreach (WC()->payment_gateways()->get_available_payment_gateways() as $id => $gateway) {
-//         $gateways[$id] = $gateway;
-//         if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
-//             $configuration = $gateway->get_configuration();
-//             $gatewayName = ucfirst(wc_latitudefinance_get_array_data('title', $configuration, $gateway->get_id()));
-//             $minAmount = wc_latitudefinance_get_array_data('minimumAmount', $configuration, 20);
-//             $maxAmount = wc_latitudefinance_get_array_data('maximumAmount', $configuration, 1500);
-//             $message = __('Note: If the cart total amount is less than ' . $minAmount . ' or greater than ' . $maxAmount . ' then you will not be able to proceed the checkout with ' . $gatewayName);
-//             if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
-//                 wc_latitudefinance_get_template('cart/payment.php', array(
-//                     'gateway' => $gateway,
-//                     'message' => $message
-//                 ));
-//             }
-//         }
-//     }
-// }
+function wc_latitudefinance_show_payment_options()
+{
+    $gateways = array();
+    $cartTotal = WC()->cart->total;
+
+    //Check cart total is not empty.
+    if (!$cartTotal) {
+        return;
+    }
+
+    foreach (WC()->payment_gateways()->get_available_payment_gateways() as $id => $gateway) {
+        $gateways[$id] = $gateway;
+        if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
+
+            //Check if it is supported by the gateway.
+            if (!in_array($cartTotal,
+                    range ($gateway->get_option('min_order_total'), $gateway->get_option('max_order_total'))
+                    )
+                )
+            {
+                continue;
+            }
+
+            if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
+                wc_latitudefinance_get_template('cart/payment.php', array(
+                    'gateway' => $gateway,
+                    'cart' => WC()->cart
+                ));
+            }
+        }
+    }
+}
 
 /**
  * @since 1.0.0

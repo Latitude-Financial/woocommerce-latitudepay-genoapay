@@ -222,21 +222,21 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         //$request is response lol.
         $order = $this->get_order();
         $request = $this->request;
-        $message = '';
-
+        $message = wc_latitudefinance_get_array_data('message', $request);
         $result = wc_latitudefinance_get_array_data('result', $request);
-
-        if (is_array($request)) {
-            $message = sprintf(__('Payment was successful via %3$s. Amount: %1$s. Payment ID: %2$s', 'woocommerce-payment-gateway-latitudefinance'),
-                wc_price($order->get_total(), array(
-                    'currency' => $order->get_currency()
-                )
-            ), $request['token'], str_replace('_return_action', '', $request['wc-api']));
-        }
 
         switch ($result) {
             case BinaryPay_Variable::STATUS_COMPLETED:
                 $this->order_status = self::PROCESSING_ORDER_STATUS;
+
+                if (is_array($request)) {
+                    $message = sprintf(__('Payment was successful via %3$s. Amount: %1$s. Payment ID: %2$s', 'woocommerce-payment-gateway-latitudefinance'),
+                        wc_price($order->get_total(), array(
+                            'currency' => $order->get_currency()
+                        )
+                    ), wc_latitudefinance_get_array_data('token', $request), str_replace('_return_action', '', wc_latitudefinance_get_array_data('wc-api', $request)));
+                }
+
                 $this->order_comment = __($message, 'woocommerce-payment-gateway-latitudefinance');
                 break;
             case BinaryPay_Variable::STATUS_UNKNOWN:
@@ -875,6 +875,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
 
     /**
      * process_refund
+     * @todo : BinaryPay::log($e->getMessage(), true, 'woocommerce-genoapay.log'); extension wide.
      */
     public function process_refund($order_id, $amount = null, $reason = '')
     {
@@ -901,7 +902,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
             $response = $gateway->refund($refund);
             $order->update_meta_data('_transaction_status', $response['status']);
             $order->add_order_note (
-                sprintf(__('Refund successful in GenoaPay. Amount: %1$s. Refund ID: %2$s', 'woocommerce-payment-gateway-latitudefinance'),
+                sprintf(__('Refund successful. Amount: %1$s. Refund ID: %2$s', 'woocommerce-payment-gateway-latitudefinance'),
                 wc_price($amount, array(
                     'currency' => $order->get_currency()
                 )
