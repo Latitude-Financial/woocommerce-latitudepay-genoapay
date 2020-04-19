@@ -30,10 +30,12 @@ if ( ! class_exists( 'WooCommerce' ) )
     return;
 }
 
+
+
 function woocommerce_missing_wc_notice()
 {
     /* translators: 1. URL link. */
-    echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'This plugin requires WooCommerce to be installed and active. You can download %s here.', 'woocommerce-gateway-stripe' ), '<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>' ) . '</strong></p></div>';
+    echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'This plugin requires WooCommerce to be installed and active. You can download %s here.', 'woocommerce-payment-gateway-latitudefinance' ), '<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>' ) . '</strong></p></div>';
 }
 
 if (!function_exists('latitudefinance'))
@@ -101,6 +103,7 @@ class WC_LatitudeFinance_Manager
      * Functionality that is included only if WC is active.
      */
     public function woocommerce_init() {
+
 
         /**
          * Libs @TODO:Tidy. before SPL
@@ -177,4 +180,6 @@ class WC_LatitudeFinance_Manager
 
         return $gateway;
     }
+
+
 }

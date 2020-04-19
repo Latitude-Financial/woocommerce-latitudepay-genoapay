@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: LatitudeFinance
+ * Plugin Name: WooCommerce Latitude Pay & Genoa Pay Integrations
  * Plugin URI: https://www.latitudefinancial.com.au/
- * Description: An online ecommerce payment solution
- * Version: 0.0.1
+ * Description: WooCommerce Latitude Pay & Genoa Pay Plugin supports both gateways. Genoa Pay option is enabled is enabled when store currency is NZD. Latitude Pay is enabled when store currency is AUD.
+ * Version: 1.0.1
  * Author: MageBinary
  * Author URI: https://magebinary.com/
  * Text Domain: woocommerce-payment-gateway-latitudefinance
@@ -18,9 +18,25 @@ define('WC_LATITUDEPAY_ASSETS', plugin_dir_url( __FILE__ ) . 'assets/');
 define('WC_LATITUDEPAY_TEMPLATES', plugin_dir_url( __FILE__ ) . 'templates/');
 define('WC_LATITUDEPAY_PLUGIN_NAME', plugin_basename ( __FILE__ ));
 
-add_action('plugins_loaded', 'wc_latitudepay_init', 11);
 
 function wc_latitudepay_init()
 {
     require_once(WC_LATITUDEPAY_PATH . 'includes/autoload.php');
 }
+
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'plugin_action_links');
+
+/**
+ * Adds plugin action links.
+ */
+
+function plugin_action_links( $links ) {
+    $plugin_links = array(
+        '<a href="admin.php?page=wc-settings&tab=checkout">' . esc_html__( 'Settings', 'woocommerce-payment-gateway-latitudefinance' ) . '</a>',
+        '<a href="">' . esc_html__( 'Docs', 'woocommerce-payment-gateway-latitudefinance' ) . '</a>',
+        '<a href="">' . esc_html__( 'Support', 'woocommerce-payment-gateway-latitudefinance' ) . '</a>',
+    );
+    return array_merge( $plugin_links, $links );
+}
+
+add_action('plugins_loaded', 'wc_latitudepay_init', 11);
