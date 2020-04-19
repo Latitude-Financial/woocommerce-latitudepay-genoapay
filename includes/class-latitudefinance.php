@@ -140,7 +140,6 @@ abstract class BinaryPay extends Base implements GatewayInterface
             $gateway = new $gateway($credential);
 
             return $gateway;
-
         } else {
             throw new Exception('Cannot find gateway ' . $gateway);
         }

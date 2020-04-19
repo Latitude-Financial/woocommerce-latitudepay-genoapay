@@ -360,21 +360,25 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      */
     public function get_gateway()
     {
-        //Sometimes the internet connections to the server or other stuff may not be able to connect
-        //to the API or wrong API key might break the entire payment page without exception handling.
+        // Sometimes the internet connections to the server or other stuff may not be able to connect
+        // to the API or wrong API key might break the entire payment page without exception handling.
+        /**
+         * @todo: checkout why it is not logging the backtrace when error thrown
+         */
         try {
             $className = (isset(explode('_', $this->id)[1])) ? ucfirst(explode('_', $this->id)[1]) : ucfirst($this->id);
             $gateway = BinaryPay::getGateway($className, $this->get_credentials());
-            return $gateway;
-
         } catch (BinaryPay_Exception $e) {
-            //TODO: log here.
-            //
-            $this->add_admin_error_message($className .': '. $e->getMessage() );
+            $this->add_admin_error_message($className .': '. $e->getMessage());
+            BinaryPay::log($e->getMessage(), true, 'woocommerce-latitude-finance.log');
         } catch (Exception $e) {
-            //TODO: log here.
+            BinaryPay::log($e->getMessage(), true, 'woocommerce-latitude-finance.log');
         }
 
+        if (!$gateway) {
+            throw new Exception(__('Failed to initialize the payment gateway. Please contact the merchant for more information'));
+        }
+        return $gateway;
     }
 
     public function add_admin_error_message($message)
