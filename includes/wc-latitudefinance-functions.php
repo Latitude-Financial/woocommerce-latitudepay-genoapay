@@ -153,7 +153,7 @@ function wc_latitudefinance_show_payment_options()
         if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
 
             //Check if it is supported by the gateway.
-            if (!in_array($cartTotal,
+            if (!in_array(floor($cartTotal),
                     range ($gateway->get_option('min_order_total'), $gateway->get_option('max_order_total'))
                     )
                 )
