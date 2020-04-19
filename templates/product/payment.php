@@ -36,7 +36,7 @@
         <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="width:200px; height:40px"/>
     </a>
     <strong style="font-size: 12px">
-        <p>10 interest free payments from <?php echo wc_price($price / 10) ?></p>
+        <p>or <?php echo wc_price($price / 10) ?> for 10 interest free payments via <?php echo $gateway->get_method_title() ?>.</p>
     </strong>
 
     <?php include($modalFile) ?>

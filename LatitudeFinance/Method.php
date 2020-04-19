@@ -174,10 +174,10 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
                  ->process_response()
                  ->process_order();
         } catch (BinaryPay_Exception $e) {
-            wc_add_notice($e->getMessage(), 'error', $request->getData());
+            wc_add_notice($e->getMessage(), 'error', $request);
             wp_redirect($this->redirect_url);
         }catch (InvalidArgumentException $e) {
-            wc_add_notice($e->getMessage(), 'error', $request->getData());
+            wc_add_notice($e->getMessage(), 'error', $request);
             wp_redirect($this->redirect_url);
         }
     }
@@ -203,10 +203,11 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         }
 
         if (!$token || wc_latitudefinance_get_array_data('token', $request) !== $token) {
-            $this->redirect_url = WC()->cart->get_cart_url();
+            $this->redirect_url = wc_get_cart_url();
             $session->set('order_id', null);
             /**
              * @todo If debug then output the request in to the log file
+             *       Should also save the orders.
              */
             throw new BinaryPay_Exception(__("You are not allowed to access the return handler directly. If you want to know more about this error message, please contact the us.",'woocommerce-payment-gateway-latitudefinance'));
         }
@@ -218,9 +219,20 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
      */
     protected function process_response()
     {
+        //$request is response lol.
+        $order = $this->get_order();
         $request = $this->request;
+        $message = '';
+
         $result = wc_latitudefinance_get_array_data('result', $request);
-        $message = wc_latitudefinance_get_array_data('message', $request, '');
+
+        if (is_array($request)) {
+            $message = sprintf(__('Payment was successful via %3$s. Amount: %1$s. Payment ID: %2$s', 'woocommerce-payment-gateway-latitudefinance'),
+                wc_price($order->get_total(), array(
+                    'currency' => $order->get_currency()
+                )
+            ), $request['token'], str_replace('_return_action', '', $request['wc-api']));
+        }
 
         switch ($result) {
             case BinaryPay_Variable::STATUS_COMPLETED:
@@ -230,6 +242,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
             case BinaryPay_Variable::STATUS_UNKNOWN:
                 $this->order_status = self::FAILED_ORDER_STATUS;
                 $this->order_comment = __($message, 'woocommerce-payment-gateway-latitudefinance');
+                BinaryPay::log($request);
                 break;
             default:
                 /**
@@ -242,11 +255,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         return $this;
     }
 
-    /**
-     * process_order
-     */
-    protected function process_order()
-    {
+    protected function get_order() {
         $order_id = $this->get_checkout_session()->get('order_id');
 
         // If the order id in the session has been cleared out, then do nothing to update the order
@@ -254,7 +263,16 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
             return;
         }
         // order object
-        $order = wc_get_order($order_id);
+        return $order = wc_get_order($order_id);
+    }
+
+    /**
+     * process_order
+     */
+    protected function process_order()
+    {
+        // order object
+        $order = $this->get_order();
         $token = wc_latitudefinance_get_array_data('token', $this->request);
 
         // Mark as on-hold (we're awaiting the payment)
@@ -801,5 +819,98 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
     {
         parent::process_admin_options();
         $this->update_configuration_options();
+    }
+
+
+    public function get_purchase_url()
+    {
+        try {
+            $session    = $this->get_checkout_session();
+            $gateway    = $this->get_gateway();
+            $reference  = $this->get_reference_number();
+            $amount     = $this->get_amount();
+            $cart       = WC()->cart;
+            $customer   = $cart->get_customer();
+
+            $payment = array(
+                BinaryPay_Variable::REFERENCE                => (string) $reference,
+                BinaryPay_Variable::AMOUNT                   => $amount,
+                BinaryPay_Variable::CURRENCY                 => $this->currency_code ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::RETURN_URL               => home_url() . $this->return_url,
+                BinaryPay_Variable::MOBILENUMBER             => $customer->get_billing_phone() ?: '0210123456',
+                BinaryPay_Variable::EMAIL                    => $customer->get_billing_email(),
+                BinaryPay_Variable::FIRSTNAME                => $customer->get_billing_first_name() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::SURNAME                  => $customer->get_billing_last_name() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::SHIPPING_ADDRESS         => $customer->get_shipping_address() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::SHIPPING_COUNTRY_CODE    => $customer->get_shipping_country() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::SHIPPING_POSTCODE        => $customer->get_shipping_postcode() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::SHIPPING_SUBURB          => $customer->get_shipping_state() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::SHIPPING_CITY            => $customer->get_shipping_city() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::BILLING_ADDRESS          => $this->get_billing_address() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::BILLING_COUNTRY_CODE     => $customer->get_billing_country() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::BILLING_POSTCODE         => $customer->get_billing_postcode() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::BILLING_SUBURB           => $customer->get_billing_state() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::BILLING_CITY             => $customer->get_billing_city() ?: self::DEFAULT_VALUE,
+                BinaryPay_Variable::TAX_AMOUNT               => array_sum($cart->get_taxes()),
+                BinaryPay_Variable::PRODUCTS                 => $this->get_quote_products(),
+                BinaryPay_Variable::SHIPPING_LINES           => [
+                    $this->get_shipping_data()
+                ]
+            );
+
+            $response       = $gateway->purchase($payment);
+            $purchaseUrl    = wc_latitudefinance_get_array_data('paymentUrl', $response);
+            // Save token into the session
+            $this->get_checkout_session()->set('purchase_token', wc_latitudefinance_get_array_data('token', $response));
+        } catch (BinaryPay_Exception $e) {
+            BinaryPay::log($e->getMessage(), true, 'woocommerce-genoapay.log');
+            throw new Exception($e->getMessage());
+        } catch (Exception $e) {
+            $message = $e->getMessage() ?: 'Something massively went wrong. Please try again. If the problem still exists, please contact us';
+            BinaryPay::log($message, true, 'woocommerce-genoapay.log');
+            throw new Exception($message);
+        }
+        return $purchaseUrl;
+    }
+
+    /**
+     * process_refund
+     */
+    public function process_refund($order_id, $amount = null, $reason = '')
+    {
+        $gateway = $this->get_gateway();
+        $order = wc_get_order($order_id);
+        $transaction_id = $order->get_transaction_id();
+
+        /**
+         * @todo support to add refund reason via wordpress backend
+         */
+        $refund = array(
+             BinaryPay_Variable::PURCHASE_TOKEN  => $transaction_id,
+             BinaryPay_Variable::CURRENCY        => $this->currency_code,
+             BinaryPay_Variable::AMOUNT          => $amount,
+             BinaryPay_Variable::REFERENCE       => $order->get_id(),
+             BinaryPay_Variable::REASON          => '',
+             BinaryPay_Variable::PASSWORD        => $this->credentials['password']
+        );
+
+        try {
+            if (empty($transaction_id)) {
+                throw new InvalidArgumentException(sprintf(__ ('The transaction ID for order %1$s is blank. A refund cannot be processed unless there is a valid transaction associated with the order.', 'woocommerce-payment-gateway-latitudefinance' ), $order_id ));
+            }
+            $response = $gateway->refund($refund);
+            $order->update_meta_data('_transaction_status', $response['status']);
+            $order->add_order_note (
+                sprintf(__('Refund successful in GenoaPay. Amount: %1$s. Refund ID: %2$s', 'woocommerce-payment-gateway-latitudefinance'),
+                wc_price($amount, array(
+                    'currency' => $order->get_currency()
+                )
+            ), $response['refundId']));
+            $order->save();
+        } catch (Exception $e) {
+            BinaryPay::log($e->getMessage(), true, 'woocommerce-genoapay.log');
+            return new WP_Error('refund-error', sprintf(__('Exception thrown while issuing refund. Reason: %1$s Exception class: %2$s', 'woocommerce-payment-gateway-latitudefinance'), $e->getMessage(), get_class($e)));
+        }
+        return true;
     }
 }
