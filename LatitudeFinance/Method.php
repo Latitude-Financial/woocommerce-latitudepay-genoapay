@@ -158,6 +158,108 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
 
         $this->add_hooks();
     }
+
+    public function return_action()
+    {
+        // save request
+        $this->request = $_GET;
+        try {
+            // process the order depends on the request
+            $this->validate_response()
+                 ->process_response()
+                 ->process_order();
+        } catch (BinaryPay_Exception $e) {
+            wc_add_notice($e->getMessage(), 'error', $request->getData());
+            wp_redirect($this->redirect_url);
+        }catch (InvalidArgumentException $e) {
+            wc_add_notice($e->getMessage(), 'error', $request->getData());
+            wp_redirect($this->redirect_url);
+        }
+    }
+
+    /**
+     * validate_response
+     */
+    public function validate_response()
+    {
+        $request = $this->request;
+
+        if (!$request) {
+            throw new InvalidArgumentException(__('Request object cannot be empty!', 'woocommerce-payment-gateway-latitudefinance'));
+        }
+
+        $session = $this->get_checkout_session();
+        $token = $session->get('purchase_token');
+        // Unset session after use
+        $session->set('purchase_token', null);
+
+        if (!$this->return_action_name || $this->return_action_name !== wc_latitudefinance_get_array_data('wc-api', $request)) {
+            throw new BinaryPay_Exception(__('The return action handler is not valid for the request.', 'woocommerce-payment-gateway-latitudefinance'));
+        }
+
+        if (!$token || wc_latitudefinance_get_array_data('token', $request) !== $token) {
+            $this->redirect_url = WC()->cart->get_cart_url();
+            $session->set('order_id', null);
+            /**
+             * @todo If debug then output the request in to the log file
+             */
+            throw new BinaryPay_Exception(__("You are not allowed to access the return handler directly. If you want to know more about this error message, please contact the us.",'woocommerce-payment-gateway-latitudefinance'));
+        }
+        return $this;
+    }
+
+    /**
+     * process_response
+     */
+    protected function process_response()
+    {
+        $request = $this->request;
+        $result = wc_latitudefinance_get_array_data('result', $request);
+        switch ($result) {
+            case BinaryPay_Variable::STATUS_COMPLETED:
+                $this->order_status = self::PROCESSING_ORDER_STATUS;
+                $this->order_comment = __('Payment received', 'woocommerce-payment-gateway-latitudefinance');
+                // send invoice email
+                break;
+            case BinaryPay_Variable::STATUS_UNKNOWN:
+                $this->order_status = self::FAILED_ORDER_STATUS;
+                $this->order_comment = __('Payment failed', 'woocommerce-payment-gateway-latitudefinance');
+                break;
+            default:
+                # code...
+                break;
+        }
+        return $this;
+    }
+
+    /**
+     * process_order
+     */
+    protected function process_order()
+    {
+        $order_id = $this->get_checkout_session()->get('order_id');
+
+        // If the order id in the session has been cleared out, then do nothing to update the order
+        if (!$order_id) {
+            return;
+        }
+        // order object
+        $order = wc_get_order($order_id);
+        $token = wc_latitudefinance_get_array_data('token', $this->request);
+
+        // Mark as on-hold (we're awaiting the payment)
+        $order->update_status($this->order_status, $this->order_comment);
+        // Reduce stock levels
+        $order->reduce_order_stock();
+        $order->set_transaction_id($token);
+        $order->save();
+        // Remove cart
+        WC()->cart->empty_cart();
+        // Redirect
+        wp_redirect($this->get_return_url($order));
+    }
+
+
     /**
      * update_configuration_options
      * Update options value based on the config api endpoint.
@@ -173,11 +275,29 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
             return;
         }
 
+        BinaryPay::log($this->configuration);
+
         $this->update_option('title', ucfirst(wc_latitudefinance_get_array_data('name', $this->configuration, $this->id)));
         $this->update_option('description', wc_latitudefinance_get_array_data('description', $this->configuration));
         $this->update_option('min_order_total', wc_latitudefinance_get_array_data('minimumAmount', $this->configuration, 20));
         $this->update_option('max_order_total', wc_latitudefinance_get_array_data('maximumAmount', $this->configuration, 1500));
 
+    }
+
+    /**
+     * Process payment
+     * After investigation this step is after the order has been placed
+     * Therefore we should handle the response then continue to run this function
+     */
+    public function process_payment($order_id)
+    {
+        // save the order id, and handle the order creation in the callback action base on the Latitude response
+        $this->get_checkout_session()->set('order_id', $order_id);
+        // Return thankyou redirect
+        return array(
+            'result'    => 'success',
+            'redirect'  => $this->get_purchase_url()
+        );
     }
 
     /**
@@ -188,21 +308,28 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
     {
         $gateway = $this->get_gateway();
 
+        //shit fix -> get it once only.
+        if (count($this->configuration) > 0) {
+            return true;
+        }
+
         if (empty($this->configuration) && !empty($gateway)) {
+
             /**
              * Only get the configuration when the sandbox or production environment has been set correctly
              */
-            if ($this->get_option('sandbox_public_key') &&
-                $this->get_option('sandbox_private_key')
+            if (($this->get_option('sandbox_public_key') &&
+                $this->get_option('sandbox_private_key'))
                 ||
-                $this->get_option('public_key')
-                && $this->get_option('private_key')
+                ($this->get_option('public_key')
+                && $this->get_option('private_key'))
             ) {
                 $this->configuration = $gateway->configuration();
                 return true;
             }
 
         }
+
         return false;
     }
 
@@ -658,5 +785,11 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
          * Include extra CSS and Javascript files
          */
         // add_action('wp_enqueue_scripts', array($this, 'include_extra_scripts'));
+    }
+
+    public function process_admin_options()
+    {
+        parent::process_admin_options();
+        $this->update_configuration_options();
     }
 }
