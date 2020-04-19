@@ -1,4 +1,4 @@
-Plugin Name: LatitudeFinance
+Plugin Name: Latitude Finance Integration
 Plugin URI: https://www.latitudefinancial.com.au/
 Description: An online ecommerce payment solution
 Version: 0.0.1
