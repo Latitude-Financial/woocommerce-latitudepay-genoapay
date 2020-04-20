@@ -434,20 +434,26 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
                 'type'          => 'textarea',
                 'default'       => __($this->description, 'woocommerce-payment-gateway-latitudefinance'),
                 'value'         => __($this->description, 'woocommerce-payment-gateway-latitudefinance'),
-                'readonly'     => true
+                'readonly'      => true,
+                'disabled'      => true,
+                'desc_tip'      => 'This option can be set from your account portal. When the Save Changes button is clicked, this option will update automatically.'
             ),
             'min_order_total' => array(
                 'title'     => __('Minimum Order Total', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'      => 'text',
                 'value'     => $this->min_order_total,
                 'default'   => $this->min_order_total,
-                'readonly'  => true
+                'readonly'  => true,
+                'disabled'  => true,
+                'desc_tip'  => 'This option can be set from your account portal. When the Save Changes button is clicked, this option will update automatically.'
             ),
             'max_order_total' => array(
                 'title'     => __('Maximum Order Total', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'      => 'text',
                 'value'     => $this->max_order_total,
-                'default'   => $this->max_order_total
+                'default'   => $this->max_order_total,
+                'disabled'  => true,
+                'desc_tip'  => 'This option can be set from your account portal. When the Save Changes button is clicked, this option will update automatically.'
             ),
             'debug_mode' => array(
                 'title'   => esc_html__('Debug Mode', 'woocommerce-payment-gateway-latitudefinance'),
