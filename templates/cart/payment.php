@@ -7,11 +7,11 @@
 <div style="margin-top: 15px; " class="<?php echo $containerClass ?>">
     <a href="javascript: void(0)" id="<?php echo $gateway->get_id() ?>-popup">
     		<strong style="font-size: 12px;float: left;padding:12px;">
-        	or 10 payments of <?php echo wc_price($price / 10) ?> interest-free with
+        	or 10 interest free payments starting from <?php echo wc_price($price / 10) ?> with
     		</strong>
 	        <span style="float:left;">
-	            <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="max-width:180px;float: left;"/>
-	            <p style="text-align: center; font-size:10px;">What's this?</p>
+	            <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="width:180px;float: left;"/>
+	            <p style="text-align: right; font-size:10px;">What's this?</p>
 	        <span>
     </a>
     <?php include($modalFile) ?>
