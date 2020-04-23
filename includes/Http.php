@@ -110,7 +110,13 @@ class BinaryPay_Http
         $httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $response = array('status' => $httpStatus, 'body' => $response);
         /*TODO: TIDY*/
-        if (true) {
+
+        $debug = false;
+        if(isset($this->_config['debug'])) {
+            $debug = $this->_config['debug'];
+        }
+
+        if ($debug) {
             $info = "======DEBUG INFO STARTS======\n";
             $info .= "REQUEST:\n";
             $info .= "\n".curl_getinfo($curl, CURLINFO_HEADER_OUT);

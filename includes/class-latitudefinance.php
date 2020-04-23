@@ -100,8 +100,9 @@ abstract class BinaryPay extends Base implements GatewayInterface
 
     public function prepare()
     {
-        $this->_http   = new BinaryPay_Http($this->getConfig());
-        $this->_http->setHeader($this->getHeader());
+        $http = new BinaryPay_Http($this->getConfig());
+        $http->setHeader($this->getHeader());
+        return $http;
     }
 
 
@@ -163,7 +164,7 @@ abstract class BinaryPay extends Base implements GatewayInterface
         $args = $this->getConfig('request');
         $this->verifyKeys($this->createSignature(), $args);
         $apiUrl = $this->getConfig('url');
-        $this->prepare();
+        $http = $this->prepare();
 
         /* Request content type*/
         switch ($this->getConfig('request-content-type')) {
@@ -180,16 +181,16 @@ abstract class BinaryPay extends Base implements GatewayInterface
 
         switch ($this->getConfig('method')) {
             case 'put':
-                $response = $this->_http->put($apiUrl, $args);
+                $response = $http->put($apiUrl, $args);
                 break;
             case 'delete':
-                $response = $this->_http->delete($apiUrl, $args);
+                $response = $http->delete($apiUrl, $args);
                 break;
             case 'get':
-                $response = $this->_http->get($apiUrl, $args);
+                $response = $http->get($apiUrl, $args);
                 break;
             default:
-                $response = $this->_http->post($apiUrl, $args);
+                $response = $http->post($apiUrl, $args);
                 break;
         }
 

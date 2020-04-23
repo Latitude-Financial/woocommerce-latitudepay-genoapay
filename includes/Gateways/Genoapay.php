@@ -42,7 +42,7 @@ class Genoapay extends BinaryPay
     /**
      * @var boolean
      */
-    protected $_debug = true;
+    protected $_debug = false;
 
     public function __construct($credential = array())
     {
@@ -284,7 +284,7 @@ class Genoapay extends BinaryPay
             $info .= "Signature:\n";
             $info .=  $signature. PHP_EOL;
             $info .="====== DEBUG INFO ENDS ========\n\n\n";
-            BinaryPay::log($info);
+            //BinaryPay::log($info);
         }
 
         $this->setConfig(

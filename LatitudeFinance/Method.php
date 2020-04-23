@@ -242,7 +242,6 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
             case BinaryPay_Variable::STATUS_UNKNOWN:
                 $this->order_status = self::FAILED_ORDER_STATUS;
                 $this->order_comment = __($message, 'woocommerce-payment-gateway-latitudefinance');
-                BinaryPay::log($request);
                 break;
             default:
                 /**
@@ -302,9 +301,6 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         if (!is_admin() || !$this->get_configuration() ) {
             return;
         }
-
-        BinaryPay::log($this->configuration);
-
         $this->update_option('title', ucfirst(wc_latitudefinance_get_array_data('name', $this->configuration, $this->id)));
         $this->update_option('description', wc_latitudefinance_get_array_data('description', $this->configuration));
         $this->update_option('min_order_total', wc_latitudefinance_get_array_data('minimumAmount', $this->configuration, 20));
@@ -459,7 +455,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
                 'title'   => esc_html__('Debug Mode', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'    => 'select',
                 /* translators: Placeholders: %1$s - <a> tag, %2$s - </a> tag */
-                'desc'    => sprintf(esc_html__('Show Detailed Error Messages and API requests/responses on the checkout page and/or save them to the %1$sdebug log%2$s', 'woocommerce-payment-gateway-latitudefinance' ), '<a href="' . 'xxxxx' . '">', '</a>'),
+                'desc'    => sprintf(esc_html__('Show Detailed Error Messages and API requests/responses on the checkout page and/or save them to the %1$sdebug log%2$s', 'woocommerce-payment-gateway-latitudefinance' ), '<a href="' . '#link' . '">', '</a>'),
                 'default' => self::DEBUG_MODE_OFF,
                 'options' => array(
                     self::DEBUG_MODE_OFF      => esc_html__('Off', 'woocommerce-payment-gateway-latitudefinance'),
@@ -539,6 +535,12 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         if (!$gateway) {
             throw new Exception(__('Failed to initialize the payment gateway. Please contact the merchant for more information'));
         }
+
+        //log everything
+        if($this->get_option('debug_mode') == self::DEBUG_MODE_LOG) {
+            $gateway->setConfig(['debug' => true]);
+        }
+
         return $gateway;
     }
 
@@ -579,7 +581,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
                 $private_key = $this->get_option('private_key');
                 break;
             default:
-                throw new Exception('xxxxxxx');
+                throw new Exception('No gateway found');
                 break;
         }
 
@@ -715,6 +717,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
             ];
             array_push($products, $product_line_item);
         }
+
         return $products;
     }
 
@@ -740,10 +743,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         $shipping_method = current(WC()->session->get('chosen_shipping_methods'));
         switch ($shipping_method) {
             case 'flat_rate:1':
-                $shipping_method = "flatrate";
-                break;
-            default:
-                # code...
+                $shipping_method = "flat_rate";
                 break;
         }
         return $shipping_method;
@@ -756,7 +756,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
     protected function get_shipping_data()
     {
         $shippingDetail = [
-            'carrier' => $this->get_carrier_method_name() ?: self::DEFAULT_VALUE,
+            'carrier' => $this->get_carrier_method_name() ?: 'flat_rate',
             'price' => [
                 'amount' => WC()->cart->get_shipping_total(),
                 'currency' => $this->currency_code
@@ -837,6 +837,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
             $amount     = $this->get_amount();
             $cart       = WC()->cart;
             $customer   = $cart->get_customer();
+            $shipping   = $this->get_shipping_data();
 
             $payment = array(
                 BinaryPay_Variable::REFERENCE                => (string) $reference,
@@ -859,12 +860,11 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
                 BinaryPay_Variable::BILLING_CITY             => $customer->get_billing_city() ?: self::DEFAULT_VALUE,
                 BinaryPay_Variable::TAX_AMOUNT               => array_sum($cart->get_taxes()),
                 BinaryPay_Variable::PRODUCTS                 => $this->get_quote_products(),
-                BinaryPay_Variable::SHIPPING_LINES           => [
-                    $this->get_shipping_data()
-                ]
+                BinaryPay_Variable::SHIPPING_LINES           => [$shipping]
             );
 
             $response       = $gateway->purchase($payment);
+
             $purchaseUrl    = wc_latitudefinance_get_array_data('paymentUrl', $response);
             // Save token into the session
             $this->get_checkout_session()->set('purchase_token', wc_latitudefinance_get_array_data('token', $response));
