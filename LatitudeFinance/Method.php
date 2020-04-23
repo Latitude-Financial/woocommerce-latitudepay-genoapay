@@ -474,7 +474,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
                         /* translators: environment as in a software environment (test/production) */
                         'title'    => esc_html__('Environment', 'woocommerce-payment-gateway-latitudefinance'),
                         'type'     => 'select',
-                        'default'  => self::ENVIRONMENT_SANDBOX,  // default to first defined environment
+                        'default'  => self::ENVIRONMENT_PRODUCTION,  // default to first defined environment
                         'desc_tip' => esc_html__('Select the gateway environment to use for transactions.', 'woocommerce-payment-gateway-latitudefinance'),
                         'options'  => $this->get_environments(),
                     )
@@ -613,26 +613,26 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
             ),
             // production
             'public_key' => array(
-                'title'    => __('Public Key', 'woocommerce-payment-gateway-latitudefinance'),
+                'title'    => __('API Key', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'     => 'text',
                 'class'    => 'environment-field production-field',
                 'desc_tip' => __('The Public Key for your GenoaPay account.', 'woocommerce-payment-gateway-latitudefinance'),
             ),
             'private_key' => array(
-                'title'    => __('Private Key', 'woocommerce-payment-gateway-latitudefinance'),
+                'title'    => __('API Secret', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'     => 'text',
                 'class'    => 'environment-field production-field',
                 'desc_tip' => __('The Private Key for your GenoaPay account.', 'woocommerce-payment-gateway-latitudefinance'),
             ),
             // sandbox
             'sandbox_public_key' => array(
-                'title'    => __('Sandbox Public Key', 'woocommerce-payment-gateway-latitudefinance'),
+                'title'    => __('Sandbox API Key', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'     => 'text',
                 'class'    => 'environment-field sandbox-field',
                 'desc_tip' => __('The Public Key for your GenoaPay sandbox account.', 'woocommerce-payment-gateway-latitudefinance'),
             ),
             'sandbox_private_key' => array(
-                'title'    => __('Sandbox Private Key', 'woocommerce-payment-gateway-latitudefinance'),
+                'title'    => __('Sandbox API Secret', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'     => 'text',
                 'class'    => 'environment-field sandbox-field',
                 'desc_tip' => __('The Private Key for your GenoaPay sandbox account.', 'woocommerce-payment-gateway-latitudefinance'),
