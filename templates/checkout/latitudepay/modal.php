@@ -135,7 +135,7 @@
             // prevent default
             event.preventDefault();
             event.stopImmediatePropagation();
-            //document.body.appendChild(popup);
+            document.body.appendChild(popup);
             // popup the latitudepay HTML
             openPopup(popup);
         });

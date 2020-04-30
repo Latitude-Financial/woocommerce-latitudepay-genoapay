@@ -73,7 +73,7 @@
             // prevent default
             event.preventDefault();
             event.stopImmediatePropagation();
-
+            document.body.appendChild(popup);
             // popup the genoapay HTML
             openPopup(popup);
         });

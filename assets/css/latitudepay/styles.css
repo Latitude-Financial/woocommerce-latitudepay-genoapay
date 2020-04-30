@@ -62,7 +62,9 @@
     height: 40px;
     position: absolute;
     right: 0;
-    top: 0
+    top: 0;
+    background:#fff !important;
+    color:black;
 }
 .lp-close-container:hover {
     cursor: pointer
