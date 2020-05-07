@@ -527,13 +527,14 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
             $gateway = BinaryPay::getGateway($className, $this->get_credentials());
         } catch (BinaryPay_Exception $e) {
             $this->add_admin_error_message($className .': '. $e->getMessage());
-            BinaryPay::log($e->getMessage(), true, 'woocommerce-latitude-finance.log');
+            // BinaryPay::log($e->getMessage(), true, 'woocommerce-latitude-finance.log');
         } catch (Exception $e) {
             BinaryPay::log($e->getMessage(), true, 'woocommerce-latitude-finance.log');
         }
 
-        if (!$gateway) {
-            throw new Exception(__('Failed to initialize the payment gateway. Please contact the merchant for more information'));
+        if (!isset($gateway)) {
+            $this->add_admin_error_message('Failed to initialize the payment gateway. Please contact the merchant for more information');
+            return;
         }
 
         //log everything
@@ -607,8 +608,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
                 'title'       => __('Merchant Account Info', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'        => 'title',
                 'description' => sprintf(
-                    esc_html__('Enter additional merchant account IDs if you do not want to use your GenoaPay account default. %1$sLearn more about merchant account IDs%2$s', 'woocommerce-payment-gateway-latitudefinance' ),
-                    '<a href="' . esc_url( "latitudefinance()->get_documentation_url()" ). '#merchant-account-ids' . '">', '&nbsp;&rarr;</a>'
+                    esc_html__('Please enter merchant account to use the payment gateway.', 'woocommerce-payment-gateway-latitudefinance' )
                 ),
             ),
             // production
