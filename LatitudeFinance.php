@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: WooCommerce Latitude Pay & Genoa Pay Integrations
+ * Plugin Name: WooCommerce LatitudePay & GenoaPay Integrations
  * Plugin URI: https://www.latitudefinancial.com.au/
  * Description: WooCommerce LatitudePay & Genoapay plugin supports both plugins. Genoapay is enabled if the store Currency is NZD and LatitudePay is enabled if the store currency is AUD.
  * Version: 1.0.1
