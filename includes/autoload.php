@@ -74,34 +74,24 @@ class WC_LatitudeFinance_Manager
         WC_LatitudeFinance_Method_Latitudepay::class
     ];
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->woocommerce_init();
-        // add_action('plugins_loaded', array($this,
-        //     'plugins_loaded'
-        // ), 10);
     }
 
-    public static function instance() {
+    public static function instance()
+    {
         if (!self::$instance) {
             self::$instance = new self ();
         }
         return self::$instance;
     }
 
-
-    // private function add_hooks() {
-    //     add_action('woocommerce_init', 'woocommerce_init', 10);
-    //     $this->woocommerce_init();
-
-    //     // add_action('plugins_loaded', array($this,
-    //     //     'admin_includes'
-    //     // ), 20);
-    // }
-
     /**
      * Functionality that is included only if WC is active.
      */
-    public function woocommerce_init() {
+    public function woocommerce_init()
+    {
 
         /**
          * Libs @TODO:Tidy. before SPL
