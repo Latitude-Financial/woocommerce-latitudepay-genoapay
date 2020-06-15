@@ -1,5 +1,5 @@
 .lp-modal-container {
-    z-index: 10000;
+    z-index: 15000;
     position: fixed;
     top: 0;
     left: 0;
@@ -28,7 +28,8 @@
 .lp-content {
     overflow-y: auto;
     max-height: calc(100vh - 30px);
-    border-radius: 5px
+    border-radius: 5px;
+    overflow: hidden;
 }
 .lp-block {
     padding: 0 15px

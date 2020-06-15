@@ -27,15 +27,15 @@
 
 defined( 'ABSPATH' ) || exit;
 
-if (!class_exists('MageBinary_BinaryPay_Method_Abstract')) {
+if (!class_exists('WC_LatitudeFinance_Method_Abstract')) {
     return;
 }
 
 /**
- * @see when I extend from the 'MageBinary_BinaryPay_Method_Genoapay' the Woocommerce is not recognize
+ * @see when I extend from the 'WC_LatitudeFinance_Method_Genoapay' the Woocommerce is not recognize
  * @todo remove the duplication of the code
  */
-class MageBinary_BinaryPay_Method_Latitudepay extends MageBinary_BinaryPay_Method_Abstract
+class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Abstract
 {
     /**
      * @var string
@@ -45,7 +45,7 @@ class MageBinary_BinaryPay_Method_Latitudepay extends MageBinary_BinaryPay_Metho
     /**
      * @var string
      */
-    protected $gateway_class = 'MageBinary_BinaryPay_Method_Latitudepay';
+    protected $gateway_class = 'WC_LatitudeFinance_Method_Latitudepay';
 
     /**
      * @var string
@@ -61,7 +61,7 @@ class MageBinary_BinaryPay_Method_Latitudepay extends MageBinary_BinaryPay_Metho
 
     public function __construct()
     {
-        $this->id                   = MageBinary_BinaryPay_Model_Config::LATITUDEPAY;
+        $this->id                   = 'latitudepay';
         $this->template             = 'latitudepay/info.php';
         $this->default_title        = __('LatitudePay', 'woocommerce-payment-gateway-latitudefinance');
         $this->order_button_text    = __('Proceed with LatitudePay', 'woocommerce-payment-gateway-latitudefinance');

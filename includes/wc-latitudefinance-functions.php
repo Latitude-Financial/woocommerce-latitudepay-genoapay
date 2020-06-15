@@ -32,7 +32,7 @@
  * @param array $gateways
  */
 function wc_latitudefinance_payment_gateways($gateways) {
-    return array_merge($gateways, latitudefinance()->get_payment_gateways());
+    return array_merge($gateways, wc_latitudefinance()->get_payment_gateways());
 }
 
 /**
@@ -53,7 +53,7 @@ function wc_latitudefinance_spam_bot_field() {
  * @param array $args
  */
 function wc_latitudefinance_get_template($template_name, $args = array()) {
-    return wc_get_template($template_name, $args, latitudefinance()->template_path(), latitudefinance()->plugin_path() . 'templates/');
+    return wc_get_template($template_name, $args, wc_latitudefinance()->template_path(), wc_latitudefinance()->plugin_path() . 'templates/');
 }
 
 /**
@@ -72,7 +72,7 @@ function wc_latitudefinance_hidden_field($key, $class = '') {
  *
  * @since 1.0.0
  * @package LatitudeFinance/Functions
- * @param MageBinary_BinaryPay_Method_Abstract $gateway
+ * @param WC_LatitudeFinance_Method_Abstract $gateway
  */
 function wc_latitudefinance_nonce_field($gateway, $value = '') {
     wc_latitudefinance_hidden_field($gateway->nonce_key, 'wc-latitudefinance-payment-nonce');
@@ -82,7 +82,7 @@ function wc_latitudefinance_nonce_field($gateway, $value = '') {
  *
  * @since 1.0.0
  * @package LatitudeFinance/Functions
- * @param MageBinary_BinaryPay_Method_Abstract $gateway
+ * @param WC_LatitudeFinance_Method_Abstract $gateway
  */
 function wc_latitudefinance_device_data_field($gateway) {
     wc_latitudefinance_hidden_field($gateway->device_data_key, 'wc-latitudefinance-device-data');
@@ -128,6 +128,38 @@ function wc_latitudefinance_include_extra_scripts()
             if (is_cart()) {
                 wp_register_style('woocommerce-payment-gateway-latitudefinance-cart', WC_LATITUDEPAY_ASSETS . '/css/common.css');
                 wp_enqueue_style('woocommerce-payment-gateway-latitudefinance-cart');
+            }
+        }
+    }
+}
+
+function wc_latitudefinance_show_payment_banners() {
+    $gateways = array();
+    $cartTotal = WC()->cart->total;
+
+    //Check cart total is not empty.
+    if (!$cartTotal) {
+        return;
+    }
+
+    foreach (WC()->payment_gateways()->get_available_payment_gateways() as $id => $gateway) {
+        $gateways[$id] = $gateway;
+        if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
+
+            //Check if it is supported by the gateway.
+            if (!in_array(floor($cartTotal),
+                    range ($gateway->get_option('min_order_total'), $gateway->get_option('max_order_total'))
+                    )
+                )
+            {
+                continue;
+            }
+
+            if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
+                wc_latitudefinance_get_template('cart/payment.php', array(
+                    'gateway' => $gateway,
+                    'cart' => WC()->cart
+                ));
             }
         }
     }

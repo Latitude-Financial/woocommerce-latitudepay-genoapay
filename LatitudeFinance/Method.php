@@ -24,14 +24,13 @@
 * @copyright   Copyright (c) 2020 LatitudeFinance (https://www.latitudefinancial.com.au/)
 * @license     http://www.apache.org/licenses/LICENSE-2.0
 */
-
 defined( 'ABSPATH' ) || exit;
 
 if (!class_exists('WC_Payment_Gateway')) {
     return;
 }
 
-abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
+abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 {
     /**
      * @var string
@@ -81,7 +80,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
     const FAILED_ORDER_STATUS = 'failed';
 
     /**
-     * @var MageBinary_BinaryPay_Method_Abstract
+     * @var WC_LatitudeFinance_Method_Abstract
      */
     public $gateway;
 
@@ -525,6 +524,7 @@ abstract class MageBinary_BinaryPay_Method_Abstract extends WC_Payment_Gateway
         try {
             $className = (isset(explode('_', $this->id)[1])) ? ucfirst(explode('_', $this->id)[1]) : ucfirst($this->id);
             $gateway = BinaryPay::getGateway($className, $this->get_credentials());
+
         } catch (BinaryPay_Exception $e) {
             $this->add_admin_error_message($className .': '. $e->getMessage());
             // BinaryPay::log($e->getMessage(), true, 'woocommerce-latitude-finance.log');

@@ -34,13 +34,14 @@ add_filter('woocommerce_payment_gateways', 'wc_latitudefinance_payment_gateways'
 /**
  * Template hooks
  */
-add_action( 'woocommerce_single_product_summary', 'wc_latitudefinance_show_product_checkout_gateways', 11 ); 
+add_action( 'woocommerce_single_product_summary', 'wc_latitudefinance_show_product_checkout_gateways', 11 );
 
 /**
  * @see https://jira.magebinary.com/browse/SP-2545
  * [GenoaPay] Remove shopping cart message (note). (Note: If the cart total amount is less than 20 or greater than 1500 then you will not be able to proceed the checkout with Latitudepay)
  */
 add_action('woocommerce_after_cart_totals', 'wc_latitudefinance_show_payment_options');
+//add_action('woocommerce_before_single_product', 'wc_latitudefinance_show_payment_banners');
 
 /**
  * Include extra CSS and Javascript files

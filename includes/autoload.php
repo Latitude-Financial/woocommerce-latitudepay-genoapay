@@ -26,19 +26,18 @@
 */
 if ( ! class_exists( 'WooCommerce' ) )
 {
-    add_action( 'admin_notices', 'woocommerce_missing_wc_notice' );
+    add_action( 'admin_notices', 'wc_latitudepay_missing_wc_notice' );
     return;
 }
 
 
-
-function woocommerce_missing_wc_notice()
+function wc_latitudepay_missing_wc_notice()
 {
     /* translators: 1. URL link. */
     echo '<div class="error"><p><strong>' . sprintf( esc_html__( 'This plugin requires WooCommerce to be installed and active. You can download %s here.', 'woocommerce-payment-gateway-latitudefinance' ), '<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>' ) . '</strong></p></div>';
 }
 
-if (!function_exists('latitudefinance'))
+if (!function_exists('wc_latitudefinance'))
 {
     /**
      * Returns the main instance of BinaryPay for WooCommerce
@@ -47,14 +46,14 @@ if (!function_exists('latitudefinance'))
      * @package BinaryPay
      * @return WC_LatitudeFinance_Manager
      */
-    function latitudefinance() {
+    function wc_latitudefinance() {
         return WC_LatitudeFinance_Manager::instance();
     }
 
     /**
      * create singleton instance of WC_LatitudeFinance_Manager
      */
-    latitudefinance();
+    wc_latitudefinance();
 }
 
 
@@ -71,8 +70,8 @@ class WC_LatitudeFinance_Manager
      * @var array
      */
     public static $gateways = [
-        MageBinary_BinaryPay_Method_Genoapay::class,
-        MageBinary_BinaryPay_Method_Latitudepay::class
+        WC_LatitudeFinance_Method_Genoapay::class,
+        WC_LatitudeFinance_Method_Latitudepay::class
     ];
 
     public function __construct() {
@@ -104,16 +103,14 @@ class WC_LatitudeFinance_Manager
      */
     public function woocommerce_init() {
 
-
         /**
          * Libs @TODO:Tidy. before SPL
          */
-        require_once(WC_LATITUDEPAY_PATH . 'includes/Variable.php');
-        require_once(WC_LATITUDEPAY_PATH . 'includes/GatewayInterface.php');
-        require_once(WC_LATITUDEPAY_PATH . 'includes/Base.php');
-        require_once(WC_LATITUDEPAY_PATH . 'includes/Exception.php');
-        require_once(WC_LATITUDEPAY_PATH . 'includes/Http.php');
-        require_once(WC_LATITUDEPAY_PATH . 'includes/Config.php');
+        require_once(WC_LATITUDEPAY_PATH . 'includes/Libs/Variable.php');
+        require_once(WC_LATITUDEPAY_PATH . 'includes/Libs/GatewayInterface.php');
+        require_once(WC_LATITUDEPAY_PATH . 'includes/Libs/Base.php');
+        require_once(WC_LATITUDEPAY_PATH . 'includes/Libs/Exception.php');
+        require_once(WC_LATITUDEPAY_PATH . 'includes/Libs/Http.php');
 
         require_once(WC_LATITUDEPAY_PATH . 'includes/class-latitudefinance.php');
 
@@ -171,10 +168,10 @@ class WC_LatitudeFinance_Manager
         $gateway = array();
         switch (get_woocommerce_currency()) {
             case 'NZD':
-                $gateway[] = MageBinary_BinaryPay_Method_Genoapay::class;
+                $gateway[] = WC_LatitudeFinance_Method_Genoapay::class;
                 break;
             case 'AUD':
-                $gateway[] =  MageBinary_BinaryPay_Method_Latitudepay::class;
+                $gateway[] =  WC_LatitudeFinance_Method_Latitudepay::class;
                 break;
         }
 

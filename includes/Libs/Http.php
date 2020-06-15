@@ -25,7 +25,7 @@
 * @license     http://www.apache.org/licenses/LICENSE-2.0
 */
 
-class BinaryPay_Http
+class WC_LatitudeFinance_Http
 {
     const HTTP_REQUEST_GET      = 'GET';
     const HTTP_REQUEST_POST     = 'POST';

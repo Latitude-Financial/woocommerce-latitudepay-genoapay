@@ -25,7 +25,7 @@
 * @license     http://www.apache.org/licenses/LICENSE-2.0
 */
 
-abstract class BinaryPay extends Base implements GatewayInterface
+abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInterface
 {
     private $_http;
 
@@ -100,7 +100,7 @@ abstract class BinaryPay extends Base implements GatewayInterface
 
     public function prepare()
     {
-        $http = new BinaryPay_Http($this->getConfig());
+        $http = new WC_LatitudeFinance_Http($this->getConfig());
         $http->setHeader($this->getHeader());
         return $http;
     }
@@ -230,28 +230,6 @@ abstract class BinaryPay extends Base implements GatewayInterface
 
         $args = array_diff_key($args, array_flip($keys));
         return $args;
-    }
-
-    public function isUrlValid($url)
-    {
-        if (empty($url) || filter_var($url, FILTER_VALIDATE_URL) === false) {
-            throw new BinaryPay_Exception('Your domain name is not valid!', 'MAG0001');
-        }
-
-        $opts = array('http' =>
-          array(
-            'timeout' => 10
-          )
-        );
-
-        $context = stream_context_create($opts);
-        @$page = file_get_contents($url, false, $context);
-
-        if ($page === false) {
-            throw new BinaryPay_Exception('Your server could not be reached!', 'MAG0002');
-        }
-
-        return (!$page === false) ? true : false;
     }
 
     public function validate($response)

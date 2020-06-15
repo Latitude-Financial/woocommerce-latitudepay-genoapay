@@ -25,7 +25,7 @@
 * @license     http://www.apache.org/licenses/LICENSE-2.0
 */
 
-class Base
+class WC_LatitudeFinance_Base
 {
     /**
      * $_attributes

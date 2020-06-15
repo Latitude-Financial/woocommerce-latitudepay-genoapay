@@ -25,11 +25,13 @@
 * @license     http://www.apache.org/licenses/LICENSE-2.0
 */
 
-if (!class_exists('MageBinary_BinaryPay_Method_Abstract')) {
+if (!class_exists('WC_LatitudeFinance_Method_Abstract')) {
     return;
 }
 
-class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_Abstract
+
+
+class WC_LatitudeFinance_Method_Genoapay extends WC_LatitudeFinance_Method_Abstract
 {
     /**
      * @var string
@@ -39,7 +41,7 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
     /**
      * @var string
      */
-    protected $gateway_class = 'MageBinary_BinaryPay_Method_Genoapay';
+    protected $gateway_class = 'WC_LatitudeFinance_Method_Genoapay';
 
     /**
      * @var string
@@ -53,7 +55,7 @@ class MageBinary_BinaryPay_Method_Genoapay extends MageBinary_BinaryPay_Method_A
 
     public function __construct()
     {
-        $this->id                   = MageBinary_BinaryPay_Model_Config::GENOAPAY;
+        $this->id                   = 'genoapay';
         $this->template             = 'genoapay/info.php';
         $this->default_title        = __('GenoaPay', 'woocommerce-payment-gateway-latitudefinance');
         $this->order_button_text    = __('Proceed with GenoaPay', 'woocommerce-payment-gateway-latitudefinance');
