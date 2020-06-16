@@ -1,1 +1,0 @@
-isUrlValid function is not used anyware. Removed.

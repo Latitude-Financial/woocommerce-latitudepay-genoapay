@@ -24,6 +24,9 @@
 * @copyright   Copyright (c) 2020 LatitudeFinance (https://www.latitudefinancial.com.au/)
 * @license     http://www.apache.org/licenses/LICENSE-2.0
 */
+if (class_exists('BinaryPay')) {
+    return;
+}
 
 abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInterface
 {

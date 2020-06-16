@@ -1,19 +1,31 @@
-<?php if ($cart) : ?>
-    <?php
-        $price = $cart->total;
-        $containerClass = "wc-latitudefinance-" . $gateway->get_id() . "-container";
-        $modalFile = __DIR__ . DIRECTORY_SEPARATOR . "../checkout/" . $gateway->get_id() . DIRECTORY_SEPARATOR . "modal.php";
-    ?>
-<div style="margin-top: 15px; " class="<?php echo $containerClass ?>">
-    <a href="javascript: void(0)" id="<?php echo $gateway->get_id() ?>-popup">
-    		<strong style="font-size: 12px;float: left;padding:12px;">
-        	or 10 interest free payments starting from <?php echo wc_price($price / 10) ?> with
-    		</strong>
-	        <span style="float:left;">
-	            <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="width:180px;float: left;"/>
-	            <p style="text-align: right; font-size:10px;">What's this?</p>
-	        <span>
+<?php
+    $price = $cart->total;
+    $containerClass = "wc-latitudefinance-" . $gateway->get_id() . "-container";
+    $modalFile = __DIR__ . DIRECTORY_SEPARATOR . "../checkout/" . $gateway->get_id() . DIRECTORY_SEPARATOR . "modal.php";
+
+    if ($price < 20 || $price > 1500) {
+       $paymentInfo = "Available now.";
+    }
+
+    if ($price > 20 && $price < 1500) {
+       $weekly = $price / 10;
+       $paymentInfo = "10 weekly payments of <strong>$${weekly}</strong>";
+    }
+
+
+    $color = $gateway->get_id() == "latitudepay" ? "rgb(57, 112, 255)" : "rgb(49, 181, 156)";
+
+?>
+<div style="display: inline-block; padding: 15px; padding-left:0px;" class="<?php echo $containerClass ?>">
+    <a style="text-decoration: none;" href="javascript: void(0)" id="<?php echo $gateway->get_id() ?>-popup">
+        <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="float: left; padding-right: 15px; max-width: 200px; padding-bottom: 7px;padding-top: 7px;"/>
+
+        <span style="font-size: 15px;padding-right: 4px;color: rgb(46, 46, 46);">
+            <?php echo $paymentInfo; ?>
+        </span>
+
+        <span style="color: <?php echo $color; ?>; font-weight: bold; font-size:13px;">learn more</span>
     </a>
+
     <?php include($modalFile) ?>
 </div>
-<?php endif ?>

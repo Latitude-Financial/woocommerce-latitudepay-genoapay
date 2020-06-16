@@ -25,11 +25,22 @@
 * @license     http://www.apache.org/licenses/LICENSE-2.0
 */
 $gateway->output_checkout_fields();
-$orderTotal = WC()->cart->total;
+$price = WC()->cart->total;
+
+    if ($price < 20 || $price > 1500) {
+       $paymentInfo = "Available now.";
+    }
+
+    if ($price > 20 && $price < 1500) {
+       $weekly = $price / 10;
+       $paymentInfo = "10 weekly payments of <strong>$${weekly}</strong>";
+    }
+
+
 ?>
 <div class="wc-binarypay-genoapay-container">
     <strong style="font-size: 12px">
-        <p>10 interest free payments from <?php echo wc_price($orderTotal / 10)  ?></p>
+        <p><?php echo $paymentInfo; ?></p>
     </strong>
 
     <?php include("modal.php"); ?>

@@ -30,18 +30,44 @@
         $price = $product->get_price();
         $containerClass = "wc-latitudefinance-" . $gateway->get_id() . "-container";
         $modalFile = __DIR__ . DIRECTORY_SEPARATOR . "../checkout/" . $gateway->get_id() . DIRECTORY_SEPARATOR . "modal.php";
+
+        if ($price < 20 || $price > 1500) {
+           $paymentInfo = "Available now.";
+        }
+
+        if ($price > 20 && $price < 1500) {
+           $weekly = $price / 10;
+           $paymentInfo = "10 weekly payments of <strong>$${weekly}</strong>";
+        }
+
+
+        $color = $gateway->get_id() == "latitudepay" ? "rgb(57, 112, 255)" : "rgb(49, 181, 156)";
+
     ?>
-<div style="display: inline-block;" class="<?php echo $containerClass ?>">
-    <a href="javascript: void(0)" id="<?php echo $gateway->get_id() ?>-popup">
-        <strong style="float: left;font-size: 12px;">
-        or 10 interest free payments starting from <?php echo wc_price($price / 10) ?> with
-        </strong>
-        <span style="padding: 5px;">
-            <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="max-width:200px;"/>
-            <p style="text-align: right;font-size:10px;">What's this?</p>
-        <span>
+<div style="display: inline-block; padding: 5px;" class="<?php echo $containerClass ?>">
+    <a style="text-decoration: none;" href="javascript: void(0)" id="<?php echo $gateway->get_id() ?>-popup">
+        <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="float: left; padding-right: 15px; max-width: 125px; padding-bottom: 7px;"/>
+
+        <span style="font-size: 15px;padding-right: 4px;color: rgb(46, 46, 46);">
+            <?php echo $paymentInfo; ?>
+        </span>
+
+        <span style="color: <?php echo $color; ?>; font-weight: bold; font-size:13px;">learn more</span>
     </a>
 
     <?php include($modalFile) ?>
 </div>
 <?php endif ?>
+
+
+
+
+<!-- <div class="lp-pdp-container" style="background:#fff; padding: 10px;cursor: pointer;">
+            <a herf="javascript:void(0)" onclick="LP_showModal()" id="latitudepay-popup">
+                <img style="float: left; padding-top: 7px;padding-right: 8px;; max-width: 145px;" src="https://latitude.magebinary.co.nz/wp-content/plugins/woocommerce-payment-gateway-latitudefinance/assets/latitudepay.svg">
+                <span style="font-size: 15px;padding-right: 4px;color: rgb(46, 46, 46);">
+                Shop now. 10 weekly payments of <strong>$10</strong>
+                </span>
+                <span style="color: rgb(57, 112, 255); font-weight: bold; font-size:13px;">learn more</span>
+            </a>
+        </div> -->
