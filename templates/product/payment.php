@@ -46,7 +46,7 @@
     ?>
 <div style="display: inline-block; padding: 5px;" class="<?php echo $containerClass ?>">
     <a style="text-decoration: none;" href="javascript: void(0)" id="<?php echo $gateway->get_id() ?>-popup">
-        <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="float: left; padding-right: 15px; max-width: 125px; padding-bottom: 7px;"/>
+        <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="float: left; padding-right: 15px; max-width: 150px; padding-bottom: 7px; padding-top: 3px;"/>
 
         <span style="font-size: 15px;padding-right: 4px;color: rgb(46, 46, 46);">
             <?php echo $paymentInfo; ?>
@@ -58,16 +58,3 @@
     <?php include($modalFile) ?>
 </div>
 <?php endif ?>
-
-
-
-
-<!-- <div class="lp-pdp-container" style="background:#fff; padding: 10px;cursor: pointer;">
-            <a herf="javascript:void(0)" onclick="LP_showModal()" id="latitudepay-popup">
-                <img style="float: left; padding-top: 7px;padding-right: 8px;; max-width: 145px;" src="https://latitude.magebinary.co.nz/wp-content/plugins/woocommerce-payment-gateway-latitudefinance/assets/latitudepay.svg">
-                <span style="font-size: 15px;padding-right: 4px;color: rgb(46, 46, 46);">
-                Shop now. 10 weekly payments of <strong>$10</strong>
-                </span>
-                <span style="color: rgb(57, 112, 255); font-weight: bold; font-size:13px;">learn more</span>
-            </a>
-        </div> -->
