@@ -27,14 +27,12 @@
 $gateway->output_checkout_fields();
 $price = WC()->cart->total;
 
-    if ($price < 20 || $price > 1500) {
-       $paymentInfo = "Available now.";
-    }
+$paymentInfo = "Available now.";
 
-    if ($price > 20 && $price < 1500) {
-       $weekly = $price / 10;
-       $paymentInfo = "10 weekly payments of <strong>$${weekly}</strong>";
-    }
+if ($price >= 20 && $price <= 1500) {
+   $weekly = $price / 10;
+   $paymentInfo = "10 weekly payments of <strong>$${weekly}</strong>";
+}
 
 ?>
 <div class="wc-binarypay-latitude-container">

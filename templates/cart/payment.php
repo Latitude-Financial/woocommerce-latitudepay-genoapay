@@ -3,15 +3,12 @@
     $containerClass = "wc-latitudefinance-" . $gateway->get_id() . "-container";
     $modalFile = __DIR__ . DIRECTORY_SEPARATOR . "../checkout/" . $gateway->get_id() . DIRECTORY_SEPARATOR . "modal.php";
 
-    if ($price < 20 || $price > 1500) {
-       $paymentInfo = "Available now.";
-    }
+    $paymentInfo = "Available now.";
 
-    if ($price > 20 && $price < 1500) {
+    if ($price >= 20 && $price <= 1500) {
        $weekly = $price / 10;
        $paymentInfo = "10 weekly payments of <strong>$${weekly}</strong>";
     }
-
 
     $color = $gateway->get_id() == "latitudepay" ? "rgb(57, 112, 255)" : "rgb(49, 181, 156)";
 
