@@ -43,10 +43,12 @@
 
         $color = $gateway->get_id() == "latitudepay" ? "rgb(57, 112, 255)" : "rgb(49, 181, 156)";
 
+        $paddings = $gateway->get_id() == "latitudepay" ? "padding-right: 15px; max-width: 150px; padding-bottom: 7px; padding-top: 3px;" : "padding-right: 15px; max-width: 125px; padding-bottom: 7px;";
+
     ?>
 <div style="display: inline-block; padding: 5px;" class="<?php echo $containerClass ?>">
     <a style="text-decoration: none;" href="javascript: void(0)" id="<?php echo $gateway->get_id() ?>-popup">
-        <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="float: left; padding-right: 15px; max-width: 150px; padding-bottom: 7px; padding-top: 3px;"/>
+        <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="float: left; <?php echo $paddings; ?>"/>
 
         <span style="font-size: 15px;padding-right: 4px;color: rgb(46, 46, 46);">
             <?php echo $paymentInfo; ?>
