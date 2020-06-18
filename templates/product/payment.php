@@ -44,7 +44,7 @@
     ?>
 <div style="display: inline-block; padding: 5px;" class="<?php echo $containerClass ?>">
     <a style="text-decoration: none;display: flex;" href="javascript: void(0)" id="<?php echo $gateway->get_id() ?>-popup">
-        <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="float: left;padding-right: 5px; max-width: 150px;"/>
+        <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="float: left;padding-right: 5px; max-width: 100px;"/>
 
         <span style="font-size: 15px;padding-right: 5px;color: rgb(46, 46, 46);">
             <?php echo $paymentInfo; ?>
