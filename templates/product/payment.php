@@ -38,7 +38,6 @@
            $paymentInfo = "10 weekly payments of <strong>$${weekly}</strong>";
         }
 
-
         $color = $gateway->get_id() == "latitudepay" ? "rgb(57, 112, 255)" : "rgb(49, 181, 156)";
 
     ?>
