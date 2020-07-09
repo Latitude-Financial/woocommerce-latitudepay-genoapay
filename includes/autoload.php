@@ -96,16 +96,30 @@ class WC_LatitudeFinance_Manager
         /**
          * Libs @TODO:Tidy. before SPL
          */
-        require_once(WC_LATITUDEPAY_PATH . 'includes/Libs/Variable.php');
+        if (!class_exists('BinaryPay')) {
+            require_once(WC_LATITUDEPAY_PATH . 'includes/Libs/Variable.php');
+        }
+
         require_once(WC_LATITUDEPAY_PATH . 'includes/Libs/GatewayInterface.php');
         require_once(WC_LATITUDEPAY_PATH . 'includes/Libs/Base.php');
+
+        if (!class_exists('BinaryPay_Exception')) {
         require_once(WC_LATITUDEPAY_PATH . 'includes/Libs/Exception.php');
+        }
+
         require_once(WC_LATITUDEPAY_PATH . 'includes/Libs/Http.php');
 
+        if (!class_exists('BinaryPay')) {
         require_once(WC_LATITUDEPAY_PATH . 'includes/class-latitudefinance.php');
+        }
 
-        require_once(WC_LATITUDEPAY_PATH . 'includes/Gateways/Genoapay.php');
-        require_once(WC_LATITUDEPAY_PATH . 'includes/Gateways/Latitudepay.php');
+        if (!class_exists('Genoapay')) {
+            require_once(WC_LATITUDEPAY_PATH . 'includes/Gateways/Genoapay.php');
+        }
+
+        if (!class_exists('Latitudepay')) {
+            require_once(WC_LATITUDEPAY_PATH . 'includes/Gateways/Latitudepay.php');
+        }
 
         /**
          * Functions

@@ -179,7 +179,8 @@ class WC_LatitudeFinance_Base
     {
         //https://stackoverflow.com/questions/42981409/php7-1-json-encode-float-issue/43056278
         if (version_compare(phpversion(), '7.1', '>=')) {
-            ini_set( 'serialize_precision', -1 );
+            ini_set('precision', 14 );
+            ini_set('serialize_precision', -1 );
         }
         return empty($variable) ? '' : json_encode($variable, JSON_UNESCAPED_SLASHES);
     }
