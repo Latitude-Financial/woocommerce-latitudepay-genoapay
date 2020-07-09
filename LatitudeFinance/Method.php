@@ -202,7 +202,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
         }
 
         if (!$token) {
-            $this->redirect_url = wc_get_cart_url();
+            $this->redirect_url = wc_get_checkout_url();
             $session->set('order_id', null);
             /**
              * @todo If debug then output the request in to the log file
