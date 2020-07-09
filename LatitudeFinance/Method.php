@@ -170,8 +170,8 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
         try {
             // process the order depends on the request
             $this->validate_response()
-                  ->process_response();
-            //      ->process_order();
+                  ->process_response()
+                  ->process_order();
         } catch (BinaryPay_Exception $e) {
             wc_add_notice($e->getMessage(), 'error', $request);
             wp_redirect($this->redirect_url);
@@ -208,7 +208,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
              * @todo If debug then output the request in to the log file
              *       Should also save the orders.
              */
-            throw new BinaryPay_Exception(__("You are not allowed to access the return handler directly. If you want to know more about this error message, please contact the us.",'woocommerce-payment-gateway-latitudefinance'));
+            throw new BinaryPay_Exception(__("You are not allowed to access the return handler directly. If you want to know more about this error message, please contact us.",'woocommerce-payment-gateway-latitudefinance'));
         }
         return $this;
     }
