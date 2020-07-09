@@ -244,7 +244,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 break;
 
             case BinaryPay_Variable::STATUS_FAILED:
-                $this->redirect_url = wc_get_cart_url();
+                $this->redirect_url = wc_get_checkout_url();
                 throw new BinaryPay_Exception(__($message,'woocommerce-payment-gateway-latitudefinance'));
                 break;
             default:
