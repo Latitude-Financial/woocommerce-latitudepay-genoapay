@@ -170,8 +170,8 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
         try {
             // process the order depends on the request
             $this->validate_response()
-                 ->process_response()
-                 ->process_order();
+                  ->process_response();
+            //      ->process_order();
         } catch (BinaryPay_Exception $e) {
             wc_add_notice($e->getMessage(), 'error', $request);
             wp_redirect($this->redirect_url);
@@ -201,7 +201,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             throw new BinaryPay_Exception(__('The return action handler is not valid for the request.', 'woocommerce-payment-gateway-latitudefinance'));
         }
 
-        if (!$token || wc_latitudefinance_get_array_data('token', $request) !== $token) {
+        if (!$token) {
             $this->redirect_url = wc_get_cart_url();
             $session->set('order_id', null);
             /**
@@ -241,6 +241,11 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             case BinaryPay_Variable::STATUS_UNKNOWN:
                 $this->order_status = self::FAILED_ORDER_STATUS;
                 $this->order_comment = __($message, 'woocommerce-payment-gateway-latitudefinance');
+                break;
+
+            case BinaryPay_Variable::STATUS_FAILED:
+                $this->redirect_url = wc_get_cart_url();
+                throw new BinaryPay_Exception(__($message,'woocommerce-payment-gateway-latitudefinance'));
                 break;
             default:
                 /**
