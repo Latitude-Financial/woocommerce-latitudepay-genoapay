@@ -25,11 +25,6 @@
 * @license     http://www.apache.org/licenses/LICENSE-2.0
 */
 ?>
-<?php if (is_checkout()): ?>
-    <a href="javascript: void(0)" id="latitudepay-popup">
-        <img style="margin-top: 10px" src="<?php echo WC_LATITUDEPAY_ASSETS . "latitudepay.svg" ?>" />
-    </a>
-<?php endif ?>
 
 <div class="lp-modal-container" id="lp-modal-container" style="display: none;">
     <div class="lp-modal">

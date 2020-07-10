@@ -27,16 +27,38 @@
 
     $description = $gateway->get_description();
     wc_latitudefinance_spam_bot_field();
+    $color = $gateway->get_id() == "latitudepay" ? "rgb(57, 112, 255)" : "rgb(49, 181, 156)";
+    $modalFile = __DIR__ . DIRECTORY_SEPARATOR . "../checkout/" . $gateway->get_id() . DIRECTORY_SEPARATOR . "modal.php";
+    $paymentInfo = "Available now.";
+    $price = WC()->cart->total;
+
+    if ($price >= 20 && $price <= 1500) {
+       $weekly = $price / 10;
+       $paymentInfo = "10 weekly payments of <strong style='color:${color}'>$${weekly}</strong>";
+    }
+
 ?>
 <div class="wc-latitudefinance-payment-gateway">
     <?php
         wc_latitudefinance_nonce_field($gateway);
         wc_latitudefinance_device_data_field($gateway);
-        if ($description) {
-            echo wpautop(wptexturize($description));
-        }
     ?>
-    <div class="wc-latitudefinance-new-payment-method-container" style="<?php $has_methods ? printf('display: none') : printf('')?>">
-        <?php wc_latitudefinance_get_template('checkout/' . $gateway->template, array('gateway' => $gateway))?>
+
+        <div class="wc-latitudefinance-new-payment-method-container" style="<?php $has_methods ? printf('display: none') : printf('')?>">
+        <div style="margin:10px 0px;">
+
+                <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="padding-right: 5px; max-width: 110px;padding-bottom:15px;"/>
+                <p style="font-weight: 700; line-height: 24px;">Shop now pay later.
+                    <a href="javascript: void(0)" id="<?php echo $gateway->get_id() ?>-popup">
+                        <span style="text-decoration: underline; marigin-left: 5px; color: <?php echo $color; ?>">Learn More</span>
+                    </a>
+                </p>
+
+                <p><?php echo $paymentInfo; ?></p>
+
+            <?php include($modalFile) ?>
+        </div>
+
+        <p style="font-size: 22px; color:<?php echo $color; ?>; font-weight: 600; margin-bottom: 20px">No interest.<span style="text-decoration: underline; margin-left: 5px;">Ever.</span></p>
     </div>
 </div>
