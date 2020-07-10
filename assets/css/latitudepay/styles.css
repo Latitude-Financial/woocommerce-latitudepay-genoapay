@@ -29,7 +29,6 @@
     overflow-y: auto;
     max-height: calc(100vh - 30px);
     border-radius: 5px;
-    overflow: hidden;
 }
 .lp-block {
     padding: 0 15px
@@ -123,7 +122,7 @@
     line-height: 21px
 }
 .lp-requirements-list li:after {
-    content: url(../img/lp_tick.png);
+    content: url(../../latitudepay/lp_tick.png);
     position: absolute;
     left: 0;
     top: 2px;
