@@ -235,7 +235,7 @@ class Genoapay extends BinaryPay
         $url = $this->getPurchaseUrl();
         $request = array(
             'totalAmount' => array(
-                'amount'        => $args[BinaryPay_Variable::AMOUNT],
+                'amount'        => round($args[BinaryPay_Variable::AMOUNT], 2),
                 'currency'      => $args[BinaryPay_Variable::CURRENCY]
             ),
             'returnUrls' => array(
@@ -265,7 +265,7 @@ class Genoapay extends BinaryPay
             ],
             "products" => $args[BinaryPay_Variable::PRODUCTS],
             "taxAmount" => [
-                "amount" => $args[BinaryPay_Variable::TAX_AMOUNT],
+                "amount" => round($args[BinaryPay_Variable::TAX_AMOUNT], 2),
                 "currency" => $args[BinaryPay_Variable::CURRENCY]
             ],
             "shippingLines" => $args[BinaryPay_Variable::SHIPPING_LINES]
@@ -312,7 +312,7 @@ class Genoapay extends BinaryPay
 
         $request = [
             'amount' => [
-                'amount'    => $args[BinaryPay_Variable::AMOUNT],
+                'amount'    => round($args[BinaryPay_Variable::AMOUNT], 2),
                 'currency'  => $args[BinaryPay_Variable::CURRENCY]
             ],
             'reason'        => $args[BinaryPay_Variable::REASON],

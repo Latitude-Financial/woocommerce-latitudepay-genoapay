@@ -166,12 +166,11 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
     public function return_action()
     {
         // save request
-        $this->request = $_GET;
+        $this->request = $_GET; 
         try {
             // process the order depends on the request
             $this->validate_response()
-                  ->process_response()
-                  ->process_order();
+                  ->process_response();
         } catch (BinaryPay_Exception $e) {
             wc_add_notice($e->getMessage(), 'error', $request);
             wp_redirect($this->redirect_url);
@@ -237,6 +236,8 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 }
 
                 $this->order_comment = __($message, 'woocommerce-payment-gateway-latitudefinance');
+                $this->process_order();
+
                 break;
             case BinaryPay_Variable::STATUS_UNKNOWN:
                 $this->order_status = self::FAILED_ORDER_STATUS;
@@ -713,7 +714,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             $product_line_item = [
                 'name'          => wc_latitudefinance_get_array_data('title', $_product) ?: wc_latitudefinance_get_array_data('name', $_product),
                 'price' => [
-                    'amount'    => $product_price,
+                    'amount'    => round($product_price, 2),
                     'currency'  => $this->currency_code
                 ],
                 'sku'           => wc_latitudefinance_get_array_data('sku', $_product),
