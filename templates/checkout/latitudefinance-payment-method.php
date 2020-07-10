@@ -50,7 +50,7 @@
                 <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="padding-right: 5px; max-width: 110px;padding-bottom:15px;"/>
                 <p style="font-weight: 700; line-height: 24px;">Shop now pay later.
                     <a href="javascript: void(0)" id="<?php echo $gateway->get_id() ?>-popup">
-                        <span style="text-decoration: underline; marigin-left: 5px; color: <?php echo $color; ?>">Learn More</span>
+                        <span style="font-size:13px;text-decoration: underline; marigin-left: 5px; color: <?php echo $color; ?>">Learn More</span>
                     </a>
                 </p>
 
