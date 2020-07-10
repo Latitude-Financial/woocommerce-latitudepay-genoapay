@@ -246,7 +246,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 
             case BinaryPay_Variable::STATUS_FAILED:
                 $this->redirect_url = wc_get_checkout_url();
-                throw new BinaryPay_Exception(__($message,'woocommerce-payment-gateway-latitudefinance'));
+                throw new BinaryPay_Exception(__("your purchase has been cancelled.",'woocommerce-payment-gateway-latitudefinance'));
                 break;
             default:
                 /**
