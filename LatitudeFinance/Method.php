@@ -449,12 +449,12 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 'desc_tip'  => 'This option can be set from your account portal. When the Save Changes button is clicked, this option will update automatically.'
             ),
             'max_order_total' => array(
-                'title'     => __('Maximum Order Total', 'woocommerce-payment-gateway-latitudefinance'),
+                'title'     => __('', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'      => 'text',
                 'value'     => $this->max_order_total,
                 'default'   => $this->max_order_total,
                 'disabled'  => true,
-                'desc_tip'  => 'This option can be set from your account portal. When the Save Changes button is clicked, this option will update automatically.'
+                'css'       => 'display:none'
             ),
             'debug_mode' => array(
                 'title'   => esc_html__('Debug Mode', 'woocommerce-payment-gateway-latitudefinance'),
@@ -659,7 +659,6 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 
     public function get_environments(){
         return array(
-            self::ENVIRONMENT_DEVELOPMENT => __('Development', 'woocommerce-payment-gateway-latitudefinance'),
             self::ENVIRONMENT_SANDBOX     => __('Sandbox', 'woocommerce-payment-gateway-latitudefinance'),
             self::ENVIRONMENT_PRODUCTION  => __('Production', 'woocommerce-payment-gateway-latitudefinance'),
         );
