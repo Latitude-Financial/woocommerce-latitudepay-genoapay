@@ -34,7 +34,7 @@
         $paymentInfo = "Available now.";
 
         if ($price >= 20 && $price <= 1500) {
-           $weekly = $price / 10;
+           $weekly = number_format(round($price / 10, 2), 2);
            $paymentInfo = "10 weekly payments of <strong>$${weekly}</strong>";
         }
 

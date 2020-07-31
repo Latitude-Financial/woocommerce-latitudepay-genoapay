@@ -33,7 +33,7 @@
     $price = WC()->cart->total;
 
     if ($price >= 20 && $price <= 1500) {
-       $weekly = $price / 10;
+       $weekly = number_format(round($price / 10, 2), 2);
        $paymentInfo = "10 weekly payments of <strong style='color:${color}'>$${weekly}</strong>";
     }
 
