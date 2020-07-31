@@ -12,14 +12,14 @@ Requires PHP: 5.6
 LatitudePay/Genoapay BNPL payment plugin for WooCommerce provides a seamless integration between your store and LatitudePay in Australia or Genoapay in New Zealand . LatitudePay is enabled automatically if the currency is set as Australian Dollars and Genoapay is enabled if the currency is set as New Zealand Dollars. It also enables the price point snippets on product display pages. There are zero surprises with LatitudePay & Genoapay. It does what it says on the box: 10 weekly payments instead of all at once. No interest, and no waiting for your purchases.
 
 == Frequently Asked Questions ==
-
-
 = where do I find more information about LatitudePay and Genoapay? =
 
 Please visit the official websites below for more information.
-LatitudePay (Australia) (https://latitudepay.com) [https://latitudepay.com]
-Genoapay (New Zealand) (https://genoapay.com) [https://genoapay.com]
+[LatitudePay (Australia)](https://latitudepay.com)
+[Genoapay (New Zealand)](https://genoapay.com)
 
 = What do I do if I need help? =
 
-Please send your integration related issues to (integrationsupport@latitudefinancial.com) [integrationsupport@latitudefinancial.com]
+Please send your integration related issues to [Integration Support](mailto:integrationsupport@latitudefinancial.com)
+
+
