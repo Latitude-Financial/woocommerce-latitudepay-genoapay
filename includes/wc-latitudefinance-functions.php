@@ -145,12 +145,12 @@ function wc_latitudefinance_show_payment_banners() {
     foreach (WC()->payment_gateways()->get_available_payment_gateways() as $id => $gateway) {
         $gateways[$id] = $gateway;
         if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
-	    $min = floor($gateway->get_option('min_order_total'));
-            $max = floor($gateway->get_option('max_order_total'));
+	      $min = floor($gateway->get_option('min_order_total'));
+        $max = floor($gateway->get_option('max_order_total'));
             //Check if it is supported by the gateway.
-	    if ($cartTotal < $min || $cartTotal > $max) {
+	      if ($cartTotal < $min || $cartTotal > $max) {
                 continue;
-            }
+        }
 
             if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
                 wc_latitudefinance_get_template('cart/payment.php', array(
@@ -182,12 +182,11 @@ function wc_latitudefinance_show_payment_options()
         if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
 
             //Check if it is supported by the gateway.
-            if (!in_array(floor($cartTotal),
-                    range ($gateway->get_option('min_order_total'), $gateway->get_option('max_order_total'))
-                    )
-                )
-            {
-                continue;
+            $min = floor($gateway->get_option('min_order_total'));
+            $max = floor($gateway->get_option('max_order_total'));
+                //Check if it is supported by the gateway.
+    	      if ($cartTotal < $min || $cartTotal > $max) {
+                    continue;
             }
 
             if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
