@@ -1,7 +1,7 @@
 === LatitudePay & Genoapay Integrations for WooCommerce ===
 Plugin URI: https://www.latitudefinancial.com.au/
 Description: An online ecommerce payment solution
-Version: 1.9.9
+Version: 2.0.0
 License: GPLv2
 Requires at least: 4.4
 Tested up to: 5.4
@@ -23,3 +23,11 @@ Please visit the official websites below for more information.
 Please send your integration related issues to [Integration Support](mailto:integrationsupport@latitudefinancial.com)
 
 
+== Changelog ==
+
+= 2.0 =
+
+* Performance improvements.
+* Fixed shopping cart errors in some installations.
+* Chnaged min & max comparation methods.
+* Use get_data for all product types.
