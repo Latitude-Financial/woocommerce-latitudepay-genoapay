@@ -708,7 +708,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             if (!isset($_item['data'])) {
                 throw new Exception('"data" must be defined in the item array.');
             }
-            $_product = ($_item['data'] instanceof WC_Product_Simple) ? $_item['data']->get_data() : $_item['data']->get_parent_data();
+            $_product = $_item['data']->get_data();
             $product_price = ($isTaxIncluded) ? wc_get_price_including_tax($_item['data']) : wc_get_price_excluding_tax($_item['data']);
             $product_line_item = [
                 'name'          => wc_latitudefinance_get_array_data('title', $_product) ?: wc_latitudefinance_get_array_data('name', $_product),
