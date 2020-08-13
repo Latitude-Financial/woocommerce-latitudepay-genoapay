@@ -29,5 +29,5 @@ Please send your integration related issues to [Integration Support](mailto:inte
 
 * Performance improvements.
 * Fixed shopping cart errors in some installations.
-* Chnaged min & max comparation methods.
+* Changed min & max comparation methods.
 * Use get_data for all product types.
