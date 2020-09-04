@@ -643,6 +643,54 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 'class'    => 'environment-field sandbox-field',
                 'desc_tip' => __('The Private Key for your GenoaPay sandbox account.', 'woocommerce-payment-gateway-latitudefinance'),
             ),
+            'individual_snippet_enabled' => array(
+                'title'    => __('Payment Info on Individual Product Pages', 'woocommerce-payment-gateway-latitudefinance'),
+                'type'     => 'checkbox',
+                'class'    => 'environment-field sandbox-field',
+                'description' => esc_html__('Enable to display Laybuy elements on individual product pages.', 'woocommerce-payment-gateway-latitudefinance'),
+                'default'  => 'yes'
+            ),
+            'snippet_product_page_position' => array(
+                'title'    => __('Product Price breakdown Position', 'woocommerce-payment-gateway-latitudefinance'),
+                'type'     => 'select',
+                'class'    => 'environment-field sandbox-field',
+                'description' => __('Select where on the Product page you would like the breakdown to display, see <a href="https://www.businessbloomer.com/woocommerce-visual-hook-guide-single-product-page/">here</a> for a visual guide.', 'woocommerce-payment-gateway-latitudefinance'),
+                'options' => array(
+                    'woocommerce_before_single_product' => 'woocommerce_before_single_product',
+                    'woocommerce_before_single_product_summary' => 'woocommerce_before_single_product_summary',
+                    'woocommerce_single_product_summary' => 'woocommerce_single_product_summary',
+                    'woocommerce_before_add_to_cart_form' => 'woocommerce_before_add_to_cart_form',
+                    'woocommerce_before_variations_form' => 'woocommerce_before_variations_form',
+                    'woocommerce_product_thumbnails' => 'woocommerce_product_thumbnails (may not work)',
+                    'woocommerce_before_add_to_cart_button' => 'woocommerce_before_add_to_cart_button',
+                    'woocommerce_before_single_variation' => 'woocommerce_before_single_variation',
+                    'woocommerce_single_variation' => 'woocommerce_single_variation',
+                    'woocommerce_after_single_variation' => 'woocommerce_after_single_variation',
+                    'woocommerce_after_add_to_cart_button' => 'woocommerce_after_add_to_cart_button',
+                    'woocommerce_after_variations_form' => 'woocommerce_after_variations_form',
+                    'woocommerce_after_add_to_cart_form' => 'woocommerce_after_add_to_cart_form',
+                    'woocommerce_product_meta_start' => 'woocommerce_product_meta_start',
+                    'woocommerce_product_meta_end' => 'woocommerce_product_meta_end',
+                    'woocommerce_share' => 'woocommerce_share',
+                    'woocommerce_after_single_product_summary' => 'woocommerce_after_single_product_summary',
+                    'woocommerce_after_single_product' => 'woocommerce_after_single_product'
+                ),
+                'default' => 'woocommerce_single_product_summary'
+            ),
+            'snippet_product_page_hook_priority' => array(
+                'title'    => __('Product Price Breakdown Hook Priority', 'woocommerce-payment-gateway-latitudefinance'),
+                'type'     => 'number',
+                'class'    => 'environment-field sandbox-field',
+                'description' => esc_html__('Choose hook priority for the product price breakdown hook, default is 11.', 'woocommerce-payment-gateway-latitudefinance'),
+                'default'  => 11
+            ),
+            'cart_page_snippet_enabled' => array(
+                'title'    => __('Payment Info on Cart Page', 'woocommerce-payment-gateway-latitudefinance'),
+                'type'     => 'checkbox',
+                'class'    => 'environment-field sandbox-field',
+                'description' => esc_html__('Enable to display Laybuy elements on cart page.', 'woocommerce-payment-gateway-latitudefinance'),
+                'default'  => 'yes'
+            )
         );
     }
 
