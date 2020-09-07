@@ -6,7 +6,7 @@
     left: 0;
     background-color: #000;
     opacity: 0.5;
-    z-index: 3000;
+    z-index: 9999999999;
 }
 
 .g-info-modal::before {
@@ -55,7 +55,7 @@
     padding: 0;
     margin: 0;
     text-align: center;
-    color: #ffffff;
+    color: #ffffff !important;
     display: block;
     font-size: 22px;
     font-weight: 500;
@@ -64,6 +64,7 @@
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
     margin: 15px;
+    color: #666 !important;
 }
 .g-infomodal-card {
     width: auto;
@@ -189,4 +190,8 @@
     .g-infomodal-list li {
         width: 50%;
     }
+}
+
+.g-infomodal-terms a {
+    color: #00AB8E !important;
 }

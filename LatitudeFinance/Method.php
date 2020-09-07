@@ -172,10 +172,10 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             $this->validate_response()
                   ->process_response();
         } catch (BinaryPay_Exception $e) {
-            wc_add_notice($e->getMessage(), 'error', $request);
+            wc_add_notice($e->getMessage(), 'error', $this->request);
             wp_redirect($this->redirect_url);
         }catch (InvalidArgumentException $e) {
-            wc_add_notice($e->getMessage(), 'error', $request);
+            wc_add_notice($e->getMessage(), 'error', $this->request);
             wp_redirect($this->redirect_url);
         }
     }
@@ -719,6 +719,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
     /**
      * get_reference_number - get next order Id by last order id, to fix webpayment multiple increment id number bugs
      * @return integer
+     * @throws Exception
      */
     protected function get_reference_number()
     {
@@ -726,7 +727,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
         $order_id = $session->get('order_id');
 
         if (empty($order_id)) {
-            throw new WP_Error('Cannot identify the current order id number to process the payment.');
+            throw new Exception('Cannot identify the current order id number to process the payment.');
         }
 
         return $order_id;

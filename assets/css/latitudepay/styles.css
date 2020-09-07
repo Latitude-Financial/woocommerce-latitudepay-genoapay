@@ -1,5 +1,5 @@
 .lp-modal-container {
-    z-index: 15000;
+    z-index: 9999999999;
     position: fixed;
     top: 0;
     left: 0;
