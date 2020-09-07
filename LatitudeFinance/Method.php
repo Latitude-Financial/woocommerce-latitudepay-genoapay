@@ -647,7 +647,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 'title'    => __('Payment Info on Individual Product Pages', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'     => 'checkbox',
                 'class'    => 'environment-field sandbox-field',
-                'description' => esc_html__('Enable to display Laybuy elements on individual product pages.', 'woocommerce-payment-gateway-latitudefinance'),
+                'description' => esc_html__(sprintf('Enable to display %s elements on individual product pages.', self::getPaymentConfig('title', 'Genoapay')), 'woocommerce-payment-gateway-latitudefinance'),
                 'default'  => 'yes'
             ),
             'snippet_product_page_position' => array(
@@ -688,7 +688,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 'title'    => __('Payment Info on Cart Page', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'     => 'checkbox',
                 'class'    => 'environment-field sandbox-field',
-                'description' => esc_html__('Enable to display Laybuy elements on cart page.', 'woocommerce-payment-gateway-latitudefinance'),
+                'description' => esc_html__(sprintf('Enable to display %s elements on cart page.', self::getPaymentConfig('title', 'Genoapay')), 'woocommerce-payment-gateway-latitudefinance'),
                 'default'  => 'yes'
             )
         );
@@ -972,5 +972,16 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             return new WP_Error('refund-error', sprintf(__('Exception thrown while issuing refund. Reason: %1$s Exception class: %2$s', 'woocommerce-payment-gateway-latitudefinance'), $e->getMessage(), get_class($e)));
         }
         return true;
+    }
+    
+    public static function getPaymentConfig($key = null, $default = null) {
+        $paymentConfig = get_option('woocommerce_genoapay_settings');
+        if (!$paymentConfig) {
+            return $default;
+        }
+        if ($key) {
+            return isset($paymentConfig[$key]) ? $paymentConfig[$key] : $default;
+        }
+        return $paymentConfig;
     }
 }
