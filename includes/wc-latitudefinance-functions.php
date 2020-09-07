@@ -112,7 +112,7 @@ function wc_latitudefinance_show_product_checkout_gateways() {
 function wc_latitudefinance_include_extra_scripts()
 {
     foreach (WC()->payment_gateways()->get_available_payment_gateways() as $id => $gateway) {
-        if ($id) {
+        if ($id && in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
             $file = WC_LATITUDEPAY_ASSETS . '/css/' . $id . '/styles.css';
             // enqueue the files only if it meets the following condition
             // 1. is product page
