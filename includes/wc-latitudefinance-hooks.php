@@ -24,32 +24,44 @@
 * @copyright   Copyright (c) 2020 LatitudeFinance (https://www.latitudefinancial.com.au/)
 * @license     http://www.apache.org/licenses/LICENSE-2.0
 */
-if (!class_exists('WC_LatitudeFinance_Method_Abstract')) {
-    require_once(WC_LATITUDEPAY_PATH . 'LatitudeFinance/Method.php');
-}
 
 /**
  * Add custom payment gateway to Woocommerce payment gateways
  * @todo : this line somehow breaks my order page.
  */
 add_filter('woocommerce_payment_gateways', 'wc_latitudefinance_payment_gateways');
-/**
- * Template hooks
- */
-if (WC_LatitudeFinance_Method_Abstract::getPaymentConfig('individual_snippet_enabled', 'yes') === 'yes') {
-    add_action( WC_LatitudeFinance_Method_Abstract::getPaymentConfig('snippet_product_page_position', 'woocommerce_single_product_summary'), 'wc_latitudefinance_show_product_checkout_gateways', WC_LatitudeFinance_Method_Abstract::getPaymentConfig('snippet_product_page_hook_priority', 11) );
-}
-
-if (WC_LatitudeFinance_Method_Abstract::getPaymentConfig('cart_page_snippet_enabled', 'yes') === 'yes') {
+if ($gateway = get_gateway()) {
     /**
-     * @see https://jira.magebinary.com/browse/SP-2545
-     * [GenoaPay] Remove shopping cart message (note). (Note: If the cart total amount is less than 20 or greater than 1500 then you will not be able to proceed the checkout with Latitudepay)
+     * Template hooks
      */
-    add_action('woocommerce_proceed_to_checkout', 'wc_latitudefinance_show_payment_options');
+    if ($gateway->get_option('individual_snippet_enabled', 'yes') === 'yes') {
+        add_action( $gateway->get_option('snippet_product_page_position', 'woocommerce_single_product_summary'), 'wc_latitudefinance_show_product_checkout_gateways', $gateway->get_option('snippet_product_page_hook_priority', 11) );
+    }
+
+    if ($gateway->get_option('cart_page_snippet_enabled', 'yes') === 'yes') {
+        /**
+         * @see https://jira.magebinary.com/browse/SP-2545
+         * [GenoaPay] Remove shopping cart message (note). (Note: If the cart total amount is less than 20 or greater than 1500 then you will not be able to proceed the checkout with Latitudepay)
+         */
+        add_action('woocommerce_proceed_to_checkout', 'wc_latitudefinance_show_payment_options');
+    }
+    /**
+     * Include extra CSS and Javascript files
+     */
+    add_action('wp_enqueue_scripts', 'wc_latitudefinance_include_extra_scripts');
 }
-//add_action('woocommerce_before_single_product', 'wc_latitudefinance_show_payment_banners');
 
 /**
- * Include extra CSS and Javascript files
+ * Get current activated payment gateway
+ * @return mixed|null
  */
-add_action('wp_enqueue_scripts', 'wc_latitudefinance_include_extra_scripts');
+function get_gateway() {
+    $paymentGateways = WC()->payment_gateways()->get_available_payment_gateways();
+    $currentGateway = null;
+    foreach ($paymentGateways as $gateway) {
+        if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
+            return $gateway;
+        }
+    }
+    return null;
+}
