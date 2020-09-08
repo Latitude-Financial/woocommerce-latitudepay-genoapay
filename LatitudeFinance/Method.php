@@ -400,12 +400,15 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
      * Payment field
      */
     public function payment_fields() {
-        /**
-         * Pass in gateway object
-         */
-        wc_latitudefinance_get_template('checkout/latitudefinance-payment-method.php', array(
-            'gateway' => $this
-        ));
+        if ($this->get_option('checkout_page_snippet_enabled', 'yes') === 'yes') {
+            /**
+             * Pass in gateway object
+             */
+            wc_latitudefinance_get_template('checkout/latitudefinance-payment-method.php', array(
+                'gateway' => $this
+            ));
+        }
+
     }
 
     /**
@@ -688,6 +691,13 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 'type'     => 'checkbox',
                 'class'    => 'environment-field sandbox-field',
                 'description' => esc_html__(sprintf('Enable to display %s elements on cart page.', $this->get_option('title', 'Genoapay')), 'woocommerce-payment-gateway-latitudefinance'),
+                'default'  => 'yes'
+            ),
+            'checkout_page_snippet_enabled' => array(
+                'title'    => __('Payment Info on Checkout Page', 'woocommerce-payment-gateway-latitudefinance'),
+                'type'     => 'checkbox',
+                'class'    => 'environment-field sandbox-field',
+                'description' => esc_html__(sprintf('Enable to display %s elements on checkout page.', $this->get_option('title', 'Genoapay')), 'woocommerce-payment-gateway-latitudefinance'),
                 'default'  => 'yes'
             )
         );
