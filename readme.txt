@@ -38,5 +38,5 @@ Please send your integration related issues to [Integration Support](mailto:inte
 
 = 2.0.3 =
 
-* Add configurations to toggle payment snippets at product and cart pages
+* Add configurations to toggle (opt-in / opt-out) payment snippets at product and cart pages
 * Fix style issue on Genoapay popup
