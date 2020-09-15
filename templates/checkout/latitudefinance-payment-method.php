@@ -31,6 +31,8 @@
     $modalFile = __DIR__ . DIRECTORY_SEPARATOR . "../checkout/" . $gateway->get_id() . DIRECTORY_SEPARATOR . "modal.php";
     $paymentInfo = "Available now.";
     $price = WC()->cart->total;
+    $saved_methods = wc_get_customer_saved_methods_list( get_current_user_id() );
+    $has_methods   = (bool) $saved_methods;
 
     if ($price >= 20 && $price <= 1500) {
        $weekly = number_format(round($price / 10, 2), 2);
