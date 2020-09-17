@@ -89,6 +89,23 @@ function wc_latitudefinance_device_data_field($gateway) {
 }
 
 /**
+ * Check the current configuration to get the right place and display the payment snippet
+ */
+function wc_latitudefinance_show_snippet_in_product_page () {
+    foreach (WC()->payment_gateways()->get_available_payment_gateways() as $id => $gateway) {
+        $gateways[$id] = $gateway;
+        if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
+            if ($gateway->get_option('individual_snippet_enabled', 'yes') === 'yes') {
+                add_action(
+                    $gateway->get_option('snippet_product_page_position', 'woocommerce_single_product_summary'),
+                    'wc_latitudefinance_show_product_checkout_gateways', $gateway->get_option('snippet_product_page_hook_priority', 11)
+                );
+            }
+        }
+    }
+}
+
+/**
  * @since 1.0.0
  * @package LatitudeFinance/Functions
  */
@@ -190,10 +207,12 @@ function wc_latitudefinance_show_payment_options()
             }
 
             if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
-                wc_latitudefinance_get_template('cart/payment.php', array(
-                    'gateway' => $gateway,
-                    'cart' => WC()->cart
-                ));
+                if ($gateway->get_option('cart_page_snippet_enabled', 'yes') === 'yes') {
+                    wc_latitudefinance_get_template('cart/payment.php', array(
+                        'gateway' => $gateway,
+                        'cart' => WC()->cart
+                    ));
+                }
             }
         }
     }

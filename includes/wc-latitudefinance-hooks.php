@@ -31,41 +31,8 @@
  */
 add_filter('woocommerce_payment_gateways', 'wc_latitudefinance_payment_gateways');
 
-add_action('woocommerce_init', 'wc_latitudefinance_after_wc_init');
-function wc_latitudefinance_after_wc_init() {
-    if ($gateway = wc_latitudefinance_get_current_gateway()) {
-        /**
-         * Template hooks
-         */
-        if ($gateway->get_option('individual_snippet_enabled', 'yes') === 'yes') {
-            add_action( $gateway->get_option('snippet_product_page_position', 'woocommerce_single_product_summary'), 'wc_latitudefinance_show_product_checkout_gateways', $gateway->get_option('snippet_product_page_hook_priority', 11) );
-        }
-
-        if ($gateway->get_option('cart_page_snippet_enabled', 'yes') === 'yes') {
-            /**
-             * @see https://jira.magebinary.com/browse/SP-2545
-             * [GenoaPay] Remove shopping cart message (note). (Note: If the cart total amount is less than 20 or greater than 1500 then you will not be able to proceed the checkout with Latitudepay)
-             */
-            add_action('woocommerce_proceed_to_checkout', 'wc_latitudefinance_show_payment_options');
-        }
-        /**
-         * Include extra CSS and Javascript files
-         */
-        add_action('wp_enqueue_scripts', 'wc_latitudefinance_include_extra_scripts');
-    }
-}
-
-/**
- * Get current activated payment gateway
- * @return mixed|null
- */
-function wc_latitudefinance_get_current_gateway() {
-    $paymentGateways = WC()->payment_gateways()->get_available_payment_gateways();
-    $currentGateway = null;
-    foreach ($paymentGateways as $gateway) {
-        if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
-            return $gateway;
-        }
-    }
-    return null;
+add_action('woocommerce_proceed_to_checkout', 'wc_latitudefinance_show_payment_options');
+add_action('wp_enqueue_scripts', 'wc_latitudefinance_include_extra_scripts');
+foreach (array_keys(WC_LatitudeFinance_Method_Abstract::WOOCOMMERCE_PRODUCT_PAGE_POSITIONS) as $hook) {
+    add_action($hook, 'wc_latitudefinance_show_snippet_in_product_page');
 }

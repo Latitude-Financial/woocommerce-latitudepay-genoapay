@@ -80,6 +80,30 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
     const FAILED_ORDER_STATUS = 'failed';
 
     /**
+     * List of available hooks inside product page
+     */
+    const WOOCOMMERCE_PRODUCT_PAGE_POSITIONS = array(
+        'woocommerce_before_single_product' => 'woocommerce_before_single_product',
+        'woocommerce_before_single_product_summary' => 'woocommerce_before_single_product_summary',
+        'woocommerce_single_product_summary' => 'woocommerce_single_product_summary',
+        'woocommerce_before_add_to_cart_form' => 'woocommerce_before_add_to_cart_form',
+        'woocommerce_before_variations_form' => 'woocommerce_before_variations_form',
+        'woocommerce_product_thumbnails' => 'woocommerce_product_thumbnails (may not work)',
+        'woocommerce_before_add_to_cart_button' => 'woocommerce_before_add_to_cart_button',
+        'woocommerce_before_single_variation' => 'woocommerce_before_single_variation',
+        'woocommerce_single_variation' => 'woocommerce_single_variation',
+        'woocommerce_after_single_variation' => 'woocommerce_after_single_variation',
+        'woocommerce_after_add_to_cart_button' => 'woocommerce_after_add_to_cart_button',
+        'woocommerce_after_variations_form' => 'woocommerce_after_variations_form',
+        'woocommerce_after_add_to_cart_form' => 'woocommerce_after_add_to_cart_form',
+        'woocommerce_product_meta_start' => 'woocommerce_product_meta_start',
+        'woocommerce_product_meta_end' => 'woocommerce_product_meta_end',
+        'woocommerce_share' => 'woocommerce_share',
+        'woocommerce_after_single_product_summary' => 'woocommerce_after_single_product_summary',
+        'woocommerce_after_single_product' => 'woocommerce_after_single_product'
+    );
+
+    /**
      * @var WC_LatitudeFinance_Method_Abstract
      */
     public $gateway;
@@ -657,26 +681,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 'type'     => 'select',
                 'class'    => 'environment-field sandbox-field',
                 'description' => __('Select where on the Product page you would like the breakdown to display, see <a href="https://www.businessbloomer.com/woocommerce-visual-hook-guide-single-product-page/">here</a> for a visual guide.', 'woocommerce-payment-gateway-latitudefinance'),
-                'options' => array(
-                    'woocommerce_before_single_product' => 'woocommerce_before_single_product',
-                    'woocommerce_before_single_product_summary' => 'woocommerce_before_single_product_summary',
-                    'woocommerce_single_product_summary' => 'woocommerce_single_product_summary',
-                    'woocommerce_before_add_to_cart_form' => 'woocommerce_before_add_to_cart_form',
-                    'woocommerce_before_variations_form' => 'woocommerce_before_variations_form',
-                    'woocommerce_product_thumbnails' => 'woocommerce_product_thumbnails (may not work)',
-                    'woocommerce_before_add_to_cart_button' => 'woocommerce_before_add_to_cart_button',
-                    'woocommerce_before_single_variation' => 'woocommerce_before_single_variation',
-                    'woocommerce_single_variation' => 'woocommerce_single_variation',
-                    'woocommerce_after_single_variation' => 'woocommerce_after_single_variation',
-                    'woocommerce_after_add_to_cart_button' => 'woocommerce_after_add_to_cart_button',
-                    'woocommerce_after_variations_form' => 'woocommerce_after_variations_form',
-                    'woocommerce_after_add_to_cart_form' => 'woocommerce_after_add_to_cart_form',
-                    'woocommerce_product_meta_start' => 'woocommerce_product_meta_start',
-                    'woocommerce_product_meta_end' => 'woocommerce_product_meta_end',
-                    'woocommerce_share' => 'woocommerce_share',
-                    'woocommerce_after_single_product_summary' => 'woocommerce_after_single_product_summary',
-                    'woocommerce_after_single_product' => 'woocommerce_after_single_product'
-                ),
+                'options' => self::WOOCOMMERCE_PRODUCT_PAGE_POSITIONS,
                 'default' => 'woocommerce_single_product_summary'
             ),
             'snippet_product_page_hook_priority' => array(

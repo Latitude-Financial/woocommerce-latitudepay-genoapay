@@ -121,11 +121,7 @@ class WC_LatitudeFinance_Manager
             require_once(WC_LATITUDEPAY_PATH . 'includes/Gateways/Latitudepay.php');
         }
 
-        /**
-         * Functions
-         */
-        include_once WC_LATITUDEPAY_PATH . '/includes/wc-latitudefinance-functions.php';
-        include_once WC_LATITUDEPAY_PATH . '/includes/wc-latitudefinance-hooks.php';
+
 
         /**
          * Settings
@@ -138,6 +134,11 @@ class WC_LatitudeFinance_Manager
         include_once WC_LATITUDEPAY_PATH . '/LatitudeFinance/Method/Genoapay.php';
         include_once WC_LATITUDEPAY_PATH . '/LatitudeFinance/Method/Latitudepay.php';
 
+        /**
+         * Functions
+         */
+        include_once WC_LATITUDEPAY_PATH . '/includes/wc-latitudefinance-functions.php';
+        include_once WC_LATITUDEPAY_PATH . '/includes/wc-latitudefinance-hooks.php';
         /**
          * Assign gateways into plugin
          */
