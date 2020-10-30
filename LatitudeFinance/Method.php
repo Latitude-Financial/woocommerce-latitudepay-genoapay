@@ -774,7 +774,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             $_product = $_item['data']->get_data();
             $product_price = ($isTaxIncluded) ? wc_get_price_including_tax($_item['data']) : wc_get_price_excluding_tax($_item['data']);
             $product_line_item = [
-                'name'          => wc_latitudefinance_get_array_data('title', $_product) ?: wc_latitudefinance_get_array_data('name', $_product),
+                'name'          => wc_latitudefinance_get_array_data('title', $_product) ?: str_replace('"', "", wc_latitudefinance_get_array_data('name', $_product)),
                 'price' => [
                     'amount'    => round($product_price, 2),
                     'currency'  => $this->currency_code
