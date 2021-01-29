@@ -130,7 +130,7 @@ class WC_LatitudeFinance_Base
             $newKey = @explode('_', $key);
             array_walk($newKey, create_function('&$v', '$v = ucwords($v);'));
             $newKey = @implode('', $newKey);
-            $newKey{0} = strtolower($newKey{0});
+            $newKey[0] = strtolower($newKey[0]);
             if (!is_array($val)) {
                 $camelCaseArray[$newKey] = $val;
             } else {
