@@ -4,7 +4,7 @@ Description: An online ecommerce payment solution
 Version: 2.0.8
 License: GPLv2
 Requires at least: 4.4
-Tested up to: 5.4
+Tested up to: 5.7
 Stable tag: 4.5.0
 Requires PHP: 5.6
 
