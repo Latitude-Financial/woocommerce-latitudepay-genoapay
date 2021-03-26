@@ -484,31 +484,42 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 'css'       => 'display:none'
             ),
             'debug_mode' => array(
-                'title'   => esc_html__('Debug Mode', 'woocommerce-payment-gateway-latitudefinance'),
-                'type'    => 'select',
+                'title' => esc_html__('Debug Mode', 'woocommerce-payment-gateway-latitudefinance'),
+                'type' => 'select',
                 /* translators: Placeholders: %1$s - <a> tag, %2$s - </a> tag */
-                'desc'    => sprintf(esc_html__('Show Detailed Error Messages and API requests/responses on the checkout page and/or save them to the %1$sdebug log%2$s', 'woocommerce-payment-gateway-latitudefinance' ), '<a href="' . '#link' . '">', '</a>'),
+                'desc' => sprintf(esc_html__('Show Detailed Error Messages and API requests/responses on the checkout page and/or save them to the %1$sdebug log%2$s',
+                    'woocommerce-payment-gateway-latitudefinance'), '<a href="' . '#link' . '">', '</a>'),
                 'default' => self::DEBUG_MODE_OFF,
                 'options' => array(
-                    self::DEBUG_MODE_OFF      => esc_html__('Off', 'woocommerce-payment-gateway-latitudefinance'),
-                    self::DEBUG_MODE_LOG      => esc_html__('Save to Log', 'woocommerce-payment-gateway-latitudefinance'),
+                    self::DEBUG_MODE_OFF => esc_html__('Off', 'woocommerce-payment-gateway-latitudefinance'),
+                    self::DEBUG_MODE_LOG => esc_html__('Save to Log', 'woocommerce-payment-gateway-latitudefinance'),
                 )
             )
         );
 
+        if ($this->get_id() === WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY) {
+            $this->form_fields['lpay_plus_enabled'] = [
+                'title' => __('Enable LatitudePay+', 'woocommerce-payment-gateway-latitudefinance'),
+                'type' => 'checkbox',
+                'label' => __('Enable LatitudePay+', 'woocommerce-payment-gateway-latitudefinance'),
+                'default' => 'no'
+            ];
+        }
+
         // add unique method fields added by concrete gateway class
         $gateway_form_fields = $this->get_gateway_form_fields();
-        $this->form_fields = array_merge( $this->form_fields, $gateway_form_fields );
+        $this->form_fields = array_merge($this->form_fields, $gateway_form_fields);
 
         if (count($this->get_environments()) > 1) {
             $this->form_fields = $this->add_form_fields($this->form_fields, 'description', array(
                     'environment' => array(
                         /* translators: environment as in a software environment (test/production) */
-                        'title'    => esc_html__('Environment', 'woocommerce-payment-gateway-latitudefinance'),
-                        'type'     => 'select',
-                        'default'  => self::ENVIRONMENT_PRODUCTION,  // default to first defined environment
-                        'desc_tip' => esc_html__('Select the gateway environment to use for transactions.', 'woocommerce-payment-gateway-latitudefinance'),
-                        'options'  => $this->get_environments(),
+                        'title' => esc_html__('Environment', 'woocommerce-payment-gateway-latitudefinance'),
+                        'type' => 'select',
+                        'default' => self::ENVIRONMENT_PRODUCTION,  // default to first defined environment
+                        'desc_tip' => esc_html__('Select the gateway environment to use for transactions.',
+                            'woocommerce-payment-gateway-latitudefinance'),
+                        'options' => $this->get_environments(),
                     )
                 )
             );

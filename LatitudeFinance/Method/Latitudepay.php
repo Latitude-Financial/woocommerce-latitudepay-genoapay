@@ -37,6 +37,8 @@ if (!class_exists('WC_LatitudeFinance_Method_Abstract')) {
  */
 class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Abstract
 {
+    const METHOD_LATITUDEPAY = 'latitudepay';
+
     /**
      * @var string
      */
@@ -61,7 +63,7 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
 
     public function __construct()
     {
-        $this->id                   = 'latitudepay';
+        $this->id                   = self::METHOD_LATITUDEPAY;
         $this->template             = 'latitudepay/info.php';
         $this->default_title        = __('LatitudePay', 'woocommerce-payment-gateway-latitudefinance');
         $this->order_button_text    = __('Proceed with LatitudePay', 'woocommerce-payment-gateway-latitudefinance');
