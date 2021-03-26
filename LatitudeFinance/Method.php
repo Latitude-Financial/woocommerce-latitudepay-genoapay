@@ -395,7 +395,11 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             foreach ($gateways as $index => $gateway) {
                 if ($gateway instanceof $this->gateway_class) {
                     $orderTotal = WC()->cart->total;
-                    if ($orderTotal > $this->max_order_total && $this->max_order_total || $orderTotal < $this->min_order_total && !is_null($this->min_order_total)) {
+                    if (
+                        ($this->max_order_total && $orderTotal > $this->max_order_total) ||
+                        (!is_null($this->min_order_total) && $orderTotal < $this->min_order_total)) {
+                        unset($gateways[$index]);
+                    } elseif ($gateway->id === WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY && $orderTotal <= 1500) {
                         unset($gateways[$index]);
                     }
                 }
