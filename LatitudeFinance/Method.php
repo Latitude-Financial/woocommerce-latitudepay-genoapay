@@ -395,7 +395,11 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             foreach ($gateways as $index => $gateway) {
                 if ($gateway instanceof $this->gateway_class) {
                     $orderTotal = WC()->cart->total;
-                    if ($orderTotal > $this->max_order_total && $this->max_order_total || $orderTotal < $this->min_order_total && !is_null($this->min_order_total)) {
+                    if (
+                        ($this->max_order_total && $orderTotal > $this->max_order_total) ||
+                        (!is_null($this->min_order_total) && $orderTotal < $this->min_order_total)) {
+                        unset($gateways[$index]);
+                    } elseif ($gateway->id === WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY && $orderTotal <= 1500) {
                         unset($gateways[$index]);
                     }
                 }
@@ -450,6 +454,13 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 'label'     => __('Enable', 'woocommerce-payment-gateway-latitudefinance'),
                 'default'   => 'no'
             ),
+            'lpay_plus_enabled' => array(
+                'title' => __('Enable LatitudePay+', 'woocommerce-payment-gateway-latitudefinance'),
+                'type' => 'checkbox',
+                'label' => __('Enable LatitudePay+', 'woocommerce-payment-gateway-latitudefinance'),
+                'default' => 'yes',
+                'disabled'      => $this->get_id() !== WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY,
+            ),
             'title' => array(
                 'title'         => __('Title', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'          => 'text',
@@ -496,15 +507,6 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 )
             )
         );
-
-        if ($this->get_id() === WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY) {
-            $this->form_fields['lpay_plus_enabled'] = [
-                'title' => __('Enable LatitudePay+', 'woocommerce-payment-gateway-latitudefinance'),
-                'type' => 'checkbox',
-                'label' => __('Enable LatitudePay+', 'woocommerce-payment-gateway-latitudefinance'),
-                'default' => 'no'
-            ];
-        }
 
         // add unique method fields added by concrete gateway class
         $gateway_form_fields = $this->get_gateway_form_fields();
