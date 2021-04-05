@@ -39,14 +39,9 @@ class Genoapay extends BinaryPay
     const STATUS_ACCESS_DENIED = 403;
     const STATUS_INTERNAL_SERVER_ERROR = 500;
 
-    /**
-     * @var boolean
-     */
-    protected $_debug = false;
-
-    public function __construct($credential = array())
+    public function __construct($credential = array(), $debug = false)
     {
-        parent::__construct($credential);
+        parent::__construct($credential, $debug);
         $this->setConfig(
             array(
                 'api-error-status' => array(
@@ -277,14 +272,14 @@ class Genoapay extends BinaryPay
         // Clean implode buffer
         $this->gluedString = '';
 
-        if ($this->_debug) {
+        if ($this->getConfig('debug')) {
             $info = "====== DEBUG INFO STARTS ======\n";
-            $info .= "Recursive Implode:\n";
+            $info .= "Purchase request data:\n";
             $info .= $this->recursiveImplode($request, '', true) . "\n\n";
             $info .= "Signature:\n";
             $info .=  $signature. PHP_EOL;
             $info .="====== DEBUG INFO ENDS ========\n\n\n";
-            //BinaryPay::log($info);
+            BinaryPay::log($info);
         }
 
         $this->setConfig(
@@ -322,6 +317,14 @@ class Genoapay extends BinaryPay
         // Clean implode buffer
         $this->gluedString = '';
 
+        if ($this->getConfig('debug')) {
+            $info = "====== DEBUG INFO STARTS ======\n";
+            $info .= "Return request data:\n";
+            $info .= $this->recursiveImplode($request, '', true) . "\n\n";
+            $info .="====== DEBUG INFO ENDS ========\n\n\n";
+            BinaryPay::log($info);
+        }
+
         $this->setConfig(array(
             'method'                => 'post',
             'request-content-type'  => 'json',
@@ -336,7 +339,7 @@ class Genoapay extends BinaryPay
     /**
      * retrieve
      * @param  array  $args
-     * @return response
+     * @return array
      */
     public function retrieve(array $args)
     {

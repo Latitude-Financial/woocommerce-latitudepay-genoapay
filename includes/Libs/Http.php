@@ -99,13 +99,6 @@ class WC_LatitudeFinance_Http
             curl_setopt($curl, CURLOPT_POSTFIELDS, $requestBody);
         }
 
-        /* Adding SSL support with setConfig. It must comes with CA string */
-        /* @TODO: This might still need some work in the future.           */
-        // if (isset($this->_config['ssl']) && isset($this->_config['ssl-ca'])) {
-        //     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
-        //     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
-        //     curl_setopt($curl, CURLOPT_CAINFO, $this->_config['ssl-ca']);
-        // }
         $response   = curl_exec($curl);
         $httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $response = array('status' => $httpStatus, 'body' => $response);
@@ -124,7 +117,7 @@ class WC_LatitudeFinance_Http
             $info .= "RESPONSE:\n";
             $info .= json_encode($response) ."\n\n";
             $info .="======DEBUG INFO ENDS========\n\n\n";
-            BinaryPay::log($info);
+            BinaryPay::log($info, true, 'woocommerce-latitude-finance.log');
         }
         curl_close($curl);
         return $response;

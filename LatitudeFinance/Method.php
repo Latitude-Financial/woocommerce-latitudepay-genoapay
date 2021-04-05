@@ -399,8 +399,16 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                         ($this->max_order_total && $orderTotal > $this->max_order_total) ||
                         (!is_null($this->min_order_total) && $orderTotal < $this->min_order_total)) {
                         unset($gateways[$index]);
-                    } elseif ($gateway->id === WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY && $orderTotal <= 1500) {
-                        unset($gateways[$index]);
+                    } elseif ($gateway->id === WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY) {
+                        if (
+                            $gateway->settings &&
+                            is_array($gateway->settings) &&
+                            isset($gateway->settings['lpay_plus_enabled']) &&
+                            $gateway->settings['lpay_plus_enabled'] === 'yes' &
+                            $orderTotal <= 1500
+                        ) {
+                            unset($gateways[$index]);
+                        }
                     }
                 }
             }
@@ -552,23 +560,14 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
     }
 
     /**
-     * getGateway
-     *
      * Get specific Api
-     * @param  string $gateway
-     * @param  array $credential
-     * @return Object
+     * @return mixed|void
      */
     public function get_gateway()
     {
-        // Sometimes the internet connections to the server or other stuff may not be able to connect
-        // to the API or wrong API key might break the entire payment page without exception handling.
-        /**
-         * @todo: checkout why it is not logging the backtrace when error thrown
-         */
         try {
             $className = (isset(explode('_', $this->id)[1])) ? ucfirst(explode('_', $this->id)[1]) : ucfirst($this->id);
-            $gateway = BinaryPay::getGateway($className, $this->get_credentials());
+            $gateway = BinaryPay::getGateway($className, $this->get_credentials(), $this->get_option('debug_mode') === self::DEBUG_MODE_LOG);
 
         } catch (BinaryPay_Exception $e) {
             $this->add_admin_error_message($className .': '. $e->getMessage());
@@ -580,11 +579,6 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
         if (!isset($gateway)) {
             $this->add_admin_error_message('Failed to initialize the payment gateway. Please contact the merchant for more information');
             return;
-        }
-
-        //log everything
-        if($this->get_option('debug_mode') == self::DEBUG_MODE_LOG) {
-            $gateway->setConfig(['debug' => true]);
         }
 
         return $gateway;
@@ -607,15 +601,13 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
     }
 
     /**
-     * retrieve PostPassword from database
-     *
-     * @param int $storeId
-     *
-     * @return string
+     * Build credentials data array
+     * @return array
+     * @throws Exception
      */
     public function get_credentials()
     {
-        $public_key = $private_key = '';
+        $private_key = '';
         switch ($this->environment) {
             case self::ENVIRONMENT_SANDBOX:
             case self::ENVIRONMENT_DEVELOPMENT:
@@ -628,16 +620,14 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 break;
             default:
                 throw new Exception('No gateway found');
-                break;
         }
 
-        $credentials = array(
-            'username'      => $public_key,
-            'password'      => $private_key,
-            'environment'   => $this->environment,
-            'accountId'     => $this->get_option('account_id')
+        return array(
+            'username' => $public_key,
+            'password' => $private_key,
+            'environment' => $this->environment,
+            'accountId' => $this->get_option('account_id')
         );
-        return $credentials;
     }
 
     /**
