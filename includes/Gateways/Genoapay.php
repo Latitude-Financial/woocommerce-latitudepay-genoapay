@@ -272,16 +272,6 @@ class Genoapay extends BinaryPay
         // Clean implode buffer
         $this->gluedString = '';
 
-        if ($this->getConfig('debug')) {
-            $info = "====== DEBUG INFO STARTS ======\n";
-            $info .= "Purchase request data:\n";
-            $info .= $this->recursiveImplode($request, '', true) . "\n\n";
-            $info .= "Signature:\n";
-            $info .=  $signature. PHP_EOL;
-            $info .="====== DEBUG INFO ENDS ========\n\n\n";
-            BinaryPay::log($info);
-        }
-
         $this->setConfig(
             array(
                 'method'                => 'post',

@@ -395,24 +395,28 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             foreach ($gateways as $index => $gateway) {
                 if ($gateway instanceof $this->gateway_class) {
                     $orderTotal = WC()->cart->total;
-                    if (
-                        ($this->max_order_total && $orderTotal > $this->max_order_total) ||
-                        (!is_null($this->min_order_total) && $orderTotal < $this->min_order_total)) {
-                        unset($gateways[$index]);
-                    } elseif ($gateway->id === WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY) {
+                    if ($gateway->id === WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY) {
                         if (
                             $gateway->settings &&
                             is_array($gateway->settings) &&
-                            isset($gateway->settings['lpay_plus_enabled']) &&
-                            $gateway->settings['lpay_plus_enabled'] === 'yes' &
-                            $orderTotal <= 1500
+                            (
+                                !isset($gateway->settings['lpay_plus_enabled']) ||
+                                $gateway->settings['lpay_plus_enabled'] === 'no'
+                            )
                         ) {
+                            // In the case tha LPay+ is not enabled
+                            if (!$this->_isValidOrderAmount($orderTotal)) {
+                                unset($gateways[$index]);
+                            }
+                        }
+                    } else {
+                        if (!$this->_isValidOrderAmount($orderTotal)) {
                             unset($gateways[$index]);
                         }
                     }
+                    }
                 }
             }
-        }
         return $gateways;
     }
 
@@ -987,13 +991,35 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             $order->add_order_note (
                 sprintf(__('Refund successful. Amount: %1$s. Refund ID: %2$s', 'woocommerce-payment-gateway-latitudefinance'),
                 wc_price($amount, array(
-                    'currency' => $order->get_currency()
-                )
-            ), $response['refundId']));
+                        'currency' => $order->get_currency()
+                    )
+                ), $response['refundId']));
             $order->save();
         } catch (Exception $e) {
             BinaryPay::log($e->getMessage(), true, 'woocommerce-genoapay.log');
-            return new WP_Error('refund-error', sprintf(__('Exception thrown while issuing refund. Reason: %1$s Exception class: %2$s', 'woocommerce-payment-gateway-latitudefinance'), $e->getMessage(), get_class($e)));
+            return new WP_Error('refund-error',
+                sprintf(__('Exception thrown while issuing refund. Reason: %1$s Exception class: %2$s',
+                    'woocommerce-payment-gateway-latitudefinance'), $e->getMessage(), get_class($e)));
+        }
+        return true;
+    }
+
+    /**
+     * Check if orderTotal is valid
+     * @param $orderTotal
+     * @return bool
+     */
+    private function _isValidOrderAmount($orderTotal)
+    {
+        if ($this->max_order_total && $this->min_order_total) {
+            return $orderTotal >= $this->min_order_total && $orderTotal <= $this->max_order_total;
+        }
+        if ($this->max_order_total && !$this->min_order_total) {
+            return $orderTotal <= $this->max_order_total;
+        }
+
+        if (!$this->max_order_total && $this->min_order_total) {
+            return $orderTotal >= $this->min_order_total;
         }
         return true;
     }

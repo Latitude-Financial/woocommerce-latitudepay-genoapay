@@ -130,7 +130,7 @@ function wc_latitudefinance_include_extra_scripts()
 {
     foreach (WC()->payment_gateways()->get_available_payment_gateways() as $id => $gateway) {
         if ($id && in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
-            $file = WC_LATITUDEPAY_ASSETS . '/css/' . $id . '/styles.css';
+            $file = WC_LATITUDEPAY_ASSETS . 'css/' . $id . '/styles.css';
             // enqueue the files only if it meets the following condition
             // 1. is product page
             // 2. OR is checkout page
@@ -143,7 +143,8 @@ function wc_latitudefinance_include_extra_scripts()
              * is cart page
              */
             if (is_cart()) {
-                wp_register_style('woocommerce-payment-gateway-latitudefinance-cart', WC_LATITUDEPAY_ASSETS . '/css/common.css');
+                wp_register_style('woocommerce-payment-gateway-latitudefinance-cart',
+                    WC_LATITUDEPAY_ASSETS . 'css/common.css');
                 wp_enqueue_style('woocommerce-payment-gateway-latitudefinance-cart');
             }
         }
@@ -199,11 +200,15 @@ function wc_latitudefinance_show_payment_options()
         if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
 
             //Check if it is supported by the gateway.
-            $min = floor($gateway->get_option('min_order_total'));
-            $max = floor($gateway->get_option('max_order_total'));
+            if (
+                !isset($gateway->settings['lpay_plus_enabled']) || $gateway->settings['lpay_plus_enabled'] === 'no'
+            ) {
+                $min = floor($gateway->get_option('min_order_total'));
+                $max = floor($gateway->get_option('max_order_total'));
                 //Check if it is supported by the gateway.
-    	      if ($cartTotal < $min || $cartTotal > $max) {
+                if ($cartTotal < $min || $cartTotal > $max) {
                     continue;
+                }
             }
 
             if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {

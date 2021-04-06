@@ -391,25 +391,16 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
             $file       = fopen($logFile, "a+");
             $contents   = fread($file, filesize($logFile) + 1);
 
-            // Write any type of messages to the log file
-            ob_start();
-            print_r($message);
-            $result    = ob_get_clean();
-
             // Add timestamp
             $timestamp = date("Y/m/d----h:i:sa\n");
-            $result    = $timestamp . $result;
+            $result    = $timestamp . $message;
 
             // Add new line before dump data
             $contents = (strlen($contents) > 1) ?  "\n" . $result : $result;
 
             if ($debug) {
-                debug_print_backtrace();
-                $result    = ob_get_clean();
                 $contents .= "\n" . $result;
             }
-
-            if (ob_get_length()) ob_end_clean();
 
             fwrite($file, $contents);
 
