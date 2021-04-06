@@ -30,12 +30,7 @@
         </div>
     <?php elseif($gateway->id === WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY): ?>
         <div style="display: inline-block; padding: 5px;" class="<?php echo $containerClass ?>">
-            <?php
-            $isLPayPlusEnabled = isset($gateway->settings['lpay_plus_enabled']) && $gateway->settings['lpay_plus_enabled'] === 'yes';
-            $snippetPath = $isLPayPlusEnabled ? 'LatitudePayPlusSnippet.svg' : 'snippet.svg';
-            ?>
-            <img src="https://images.latitudepayapps.com/<?php echo $snippetPath; ?>?amount=<?php echo $price; ?>"  alt="<?php echo $gateway->get_title(); ?>"/>
-            <script src="https://images.latitudepayapps.com/util.js?lpay_plus=<?php echo $isLPayPlusEnabled ? '1' : '0'; ?>"></script>
+            <?php echo $gateway->show_payment_snippet($price); ?>
         </div>
     <?php endif; ?>
 <?php endif; ?>

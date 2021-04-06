@@ -95,4 +95,18 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
         parent::add_hooks();
     }
 
+    /**
+     * Show payment snippet and modal from images API
+     * @param $price
+     * @param false $fullBlock
+     * @return string
+     */
+    public function show_payment_snippet($price, $fullBlock = false) {
+        $lpaySnippetPath = __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/lpay.php';
+        $isLPayPlusEnabled = isset($this->settings['lpay_plus_enabled']) && $this->settings['lpay_plus_enabled'] === 'yes' ? '1' : '0';
+        $snippetPath = $isLPayPlusEnabled ? 'LatitudePayPlusSnippet.svg' : 'snippet.svg';
+        $title = $this->title;
+        include $lpaySnippetPath;
+    }
+
 }

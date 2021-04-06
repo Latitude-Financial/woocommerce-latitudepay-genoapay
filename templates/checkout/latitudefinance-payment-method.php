@@ -53,11 +53,8 @@
         <div class="wc-latitudefinance-new-payment-method-container" style="<?php $has_methods ? printf('display: none') : printf('')?>">
             <?php if($gateway->id === WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY): ?>
                 <?php
-                    $isLPayPlusEnabled = isset($gateway->settings['lpay_plus_enabled']) && $gateway->settings['lpay_plus_enabled'] === 'yes';
-                    $snippetPath = $isLPayPlusEnabled ? 'LatitudePayPlusSnippet.svg' : 'snippet.svg';
+                    echo $gateway->show_payment_snippet($price, true);
                 ?>
-                <img src="https://images.latitudepayapps.com/<?php echo $snippetPath; ?>?amount=<?php echo $price; ?>&full_block=1"  alt="<?php echo $gateway->get_title(); ?>"/>
-                <script src="https://images.latitudepayapps.com/util.js?lpay_plus=<?php echo $isLPayPlusEnabled ? '1' : '0'; ?>"></script>
             <?php else: ?>
                 <div style="margin:10px 0px;">
 
