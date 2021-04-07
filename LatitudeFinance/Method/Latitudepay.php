@@ -37,7 +37,15 @@ if (!class_exists('WC_LatitudeFinance_Method_Abstract')) {
  */
 class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Abstract
 {
+    /**
+     * @var string
+     */
     const METHOD_LATITUDEPAY = 'latitudepay';
+
+    /**
+     * @var string
+     */
+    const IMAGES_API_URL = 'https://images.latitudepayapps.com/';
 
     /**
      * @var string
@@ -59,8 +67,24 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
      */
     protected $return_action_name = 'latitudepay_return_action';
 
+    /**
+     * @var float
+     */
+    private $amount = 0.00;
 
+    /**
+     * @var bool
+     */
+    private $isFullBlock = false;
 
+    /**
+     * @var bool
+     */
+    private $isLpayPlusEnabled;
+
+    /**
+     * WC_LatitudeFinance_Method_Latitudepay constructor.
+     */
     public function __construct()
     {
         $this->id                   = self::METHOD_LATITUDEPAY;
@@ -81,6 +105,7 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
          */
         $this->method_description   = __('Available to AU residents who are 18 years old and over and have a valid debit or credit card.', 'woocommerce-payment-gateway-latitudefinance');
         parent::__construct();
+        $this->isLpayPlusEnabled = isset($this->settings['lpay_plus_enabled']) && $this->settings['lpay_plus_enabled'] === 'yes';
     }
 
     /**
@@ -101,12 +126,67 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
      * @param false $fullBlock
      * @return string
      */
-    public function show_payment_snippet($price, $fullBlock = false) {
-        $lpaySnippetPath = __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/lpay.php';
-        $isLPayPlusEnabled = isset($this->settings['lpay_plus_enabled']) && $this->settings['lpay_plus_enabled'] === 'yes' ? '1' : '0';
-        $snippetPath = $isLPayPlusEnabled ? 'LatitudePayPlusSnippet.svg' : 'snippet.svg';
-        $title = $this->title;
-        include $lpaySnippetPath;
+    public function generate_snippet_html() {
+        include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/lpay.php';
     }
 
+    /**
+     * @return string
+     */
+    public function getTitle() {
+        return $this->title;
+    }
+
+    /**
+     * @param $flag
+     * @return $this
+     */
+    public function setIsFullBlock($flag) {
+        $this->isFullBlock = $flag;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFullBlock() {
+        return $this->isFullBlock;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLpayPlusEnabled() {
+        return $this->isLpayPlusEnabled;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSnippetPath() {
+        return $this->isLpayPlusEnabled ? 'LatitudePayPlusSnippet.svg' : 'snippet.svg';
+    }
+
+    /**
+     * @return string
+     */
+    public function getImagesApiUrl() {
+        return self::IMAGES_API_URL;
+    }
+
+    /**
+     * @param $amount
+     * @return $this
+     */
+    public function setAmount($amount) {
+        $this->amount = $amount;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getAmount() {
+        return $this->amount;
+    }
 }

@@ -59,7 +59,13 @@
         </div>
     <?php elseif($gateway->id === WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY): ?>
         <div style="display: inline-block; padding: 5px;" class="<?php echo $containerClass ?>">
-            <?php echo $gateway->show_payment_snippet($price); ?>
+            <?php
+                /**
+                 * @var WC_LatitudeFinance_Method_Latitudepay $gateway
+                 */
+                $gateway->setAmount($price);
+                echo $gateway->generate_snippet_html();
+            ?>
         </div>
     <?php endif; ?>
 <?php endif ?>

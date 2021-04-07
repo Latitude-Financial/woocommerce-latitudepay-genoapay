@@ -53,7 +53,11 @@
         <div class="wc-latitudefinance-new-payment-method-container" style="<?php $has_methods ? printf('display: none') : printf('')?>">
             <?php if($gateway->id === WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY): ?>
                 <?php
-                    echo $gateway->show_payment_snippet($price, true);
+                    /**
+                     * @var WC_LatitudeFinance_Method_Latitudepay $gateway
+                     */
+                    $gateway->setAmount($price)->setIsFullBlock(true);
+                    echo $gateway->generate_snippet_html();
                 ?>
             <?php else: ?>
                 <div style="margin:10px 0px;">

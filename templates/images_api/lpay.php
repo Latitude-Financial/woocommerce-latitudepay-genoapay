@@ -1,24 +1,8 @@
 <?php
-    if (!isset($snippetPath)) {
-        $snippetPath = 'snippet.svg';
-    }
-
-    if (!isset($price)) {
-        $price = 0;
-    }
-
-    if (!isset($title)) {
-        $title = '';
-    }
-
-    if (!isset($isLPayPlusEnabled)) {
-        $isLPayPlusEnabled = '0';
-    }
-
-    if (!isset($fullBlock)) {
-        $fullBlock = false;
-    }
+/**
+ * @var WC_LatitudeFinance_Method_Latitudepay $this
+ */
 ?>
-
-<img src="https://images.latitudepayapps.com/<?php echo $snippetPath; ?>?amount=<?php echo $price; ?><?php if($fullBlock): ?>&full_block=1<?php endif; ?>"  alt="<?php echo $title; ?>"/>
-<script src="https://images.latitudepayapps.com/util.js?lpay_plus=<?php echo $isLPayPlusEnabled; ?>"></script>
+<img src="<?php echo $this->getImagesApiUrl(); ?><?php echo $this->getSnippetPath(); ?>?amount=<?php echo $this->getAmount(); ?><?php if ($this->isFullBlock()): ?>&full_block=1<?php endif; ?>"
+     alt="<?php echo $this->getTitle(); ?>"/>
+<script src="<?php echo $this->getImagesApiUrl(); ?>util.js?lpay_plus=<?php echo $this->getAmount(); ?>"></script>
