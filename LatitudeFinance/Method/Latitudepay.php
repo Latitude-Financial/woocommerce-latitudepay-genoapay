@@ -142,7 +142,9 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
     public function generate_snippet_html()
     {
         include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/snippet.php';
-        include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/modal.php';
+        if (is_checkout()) {
+            include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/modal.php';
+        }
     }
 
     /**

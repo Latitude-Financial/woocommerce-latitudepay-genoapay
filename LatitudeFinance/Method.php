@@ -214,7 +214,6 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
         if (!$request) {
             throw new InvalidArgumentException(__('Request object cannot be empty!', 'woocommerce-payment-gateway-latitudefinance'));
         }
-
         $session = $this->get_checkout_session();
         $token = $session->get('purchase_token');
         // Unset session after use
@@ -575,9 +574,8 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 
         } catch (BinaryPay_Exception $e) {
             $this->add_admin_error_message($className .': '. $e->getMessage());
-            // BinaryPay::log($e->getMessage(), true, 'woocommerce-latitude-finance.log');
         } catch (Exception $e) {
-            BinaryPay::log($e->getMessage(), true, 'woocommerce-latitude-finance.log');
+            BinaryPay::log($e->getMessage(), true, 'latitudepay-finance-' . date('Y-m-d') . '.log');
         }
 
         if (!isset($gateway)) {
@@ -630,7 +628,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             'username' => $public_key,
             'password' => $private_key,
             'environment' => $this->environment,
-            'accountId' => $this->get_option('account_id')
+            'accountId' => $this->get_option('account_id'),
         );
     }
 
@@ -950,11 +948,11 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             // Save token into the session
             $this->get_checkout_session()->set('purchase_token', wc_latitudefinance_get_array_data('token', $response));
         } catch (BinaryPay_Exception $e) {
-            BinaryPay::log($e->getMessage(), true, 'woocommerce-genoapay.log');
+            BinaryPay::log($e->getMessage(), true, 'latitudepay-finance-' . $this->id .'-' . date('Y-m-d') . '.log');
             throw new Exception($e->getMessage());
         } catch (Exception $e) {
             $message = $e->getMessage() ?: 'Something massively went wrong. Please try again. If the problem still exists, please contact us';
-            BinaryPay::log($message, true, 'woocommerce-genoapay.log');
+            BinaryPay::log($message, true, 'latitudepay-finance-' . date('Y-m-d') . '.log');
             throw new Exception($message);
         }
         return $purchaseUrl;
@@ -996,7 +994,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 ), $response['refundId']));
             $order->save();
         } catch (Exception $e) {
-            BinaryPay::log($e->getMessage(), true, 'woocommerce-genoapay.log');
+            BinaryPay::log($e->getMessage(), true, 'latitudepay-finance-' . date('Y-m-d') . '.log');
             return new WP_Error('refund-error',
                 sprintf(__('Exception thrown while issuing refund. Reason: %1$s Exception class: %2$s',
                     'woocommerce-payment-gateway-latitudefinance'), $e->getMessage(), get_class($e)));

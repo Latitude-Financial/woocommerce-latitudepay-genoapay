@@ -106,8 +106,6 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
         return $http;
     }
 
-
-
     public static function getGateway($gateway, $credential, $debug = false)
     {
         if (empty($gateway)) {

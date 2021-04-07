@@ -115,7 +115,7 @@ class Genoapay extends BinaryPay
   /**
      * @description main function to query API.
      * @param  array  request body
-     * @return array  returns API response
+     * @return string  returns API response
      */
 
     public function getApiUrl()
@@ -304,23 +304,18 @@ class Genoapay extends BinaryPay
             'reference'     => $args[BinaryPay_Variable::REFERENCE]
         ];
 
+        // signature
+        $signature = hash_hmac('sha256', base64_encode($this->recursiveImplode($request, '', true)), $this->getConfig('password'));
+
         // Clean implode buffer
         $this->gluedString = '';
-
-        if ($this->getConfig('debug')) {
-            $info = "====== DEBUG INFO STARTS ======\n";
-            $info .= "Return request data:\n";
-            $info .= $this->recursiveImplode($request, '', true) . "\n\n";
-            $info .="====== DEBUG INFO ENDS ========\n\n\n";
-            BinaryPay::log($info);
-        }
 
         $this->setConfig(array(
             'method'                => 'post',
             'request-content-type'  => 'json',
             'response-content-type' => 'json',
             'api-success-status'    => 'refundId',
-            'url'                   => $this->getRefundUrl($token) . '?signature=' . hash_hmac('sha256', base64_encode($this->recursiveImplode($request, '', true)), $args[BinaryPay_Variable::PASSWORD]),
+            'url'                   => $this->getRefundUrl($token) . '?signature=' . $signature,
             'request'               => $request
         ));
         return $this->query();
