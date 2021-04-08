@@ -105,11 +105,10 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
          */
         $this->method_description = __('Available to AU residents who are 18 years old and over and have a valid debit or credit card.',
             'woocommerce-payment-gateway-latitudefinance');
-        $this->isLpayPlusEnabled = isset($this->settings['lpay_plus_enabled']) && $this->settings['lpay_plus_enabled'] === 'yes';
         add_action('wp_footer', [$this, 'latitudepay_footer_modal_script']);
 
         parent::__construct();
-
+        $this->isLpayPlusEnabled = isset($this->settings['lpay_plus_enabled']) && $this->settings['lpay_plus_enabled'] === 'yes';
     }
 
     /**

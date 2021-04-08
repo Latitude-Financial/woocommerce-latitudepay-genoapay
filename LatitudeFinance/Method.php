@@ -190,7 +190,8 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
     public function return_action()
     {
         // save request
-        $this->request = $_GET; 
+        $this->request = $_GET;
+        BinaryPay::log(json_encode($this->request, JSON_PRETTY_PRINT), true, 'latitudepay-finance-' . date('Y-m-d') . '.log');
         try {
             // process the order depends on the request
             $this->validate_response()
