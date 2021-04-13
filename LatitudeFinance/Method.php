@@ -461,15 +461,16 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
          */
         $this->form_fields = array(
             'enabled' => array(
-                'title'     => __('Enable/Disable', 'woocommerce-payment-gateway-latitudefinance'),
+                'title'     => __('Enable/Disable Plugin', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'      => 'checkbox',
                 'label'     => __('Enable', 'woocommerce-payment-gateway-latitudefinance'),
                 'default'   => 'no'
             ),
             'lpay_plus_enabled' => array(
-                'title' => __('Enable LatitudePay+', 'woocommerce-payment-gateway-latitudefinance'),
+                'title' => __('LatitudePay+ Presentment', 'woocommerce-payment-gateway-latitudefinance'),
                 'type' => 'checkbox',
-                'label' => __('Enable LatitudePay+', 'woocommerce-payment-gateway-latitudefinance'),
+                'label' => __('Enable LatitudePay+ Presentment', 'woocommerce-payment-gateway-latitudefinance'),
+                'description' => __('Enable this option to display LatitudePay+ content on your site if you are offering LatitudePay+.', 'woocommerce-payment-gateway-latitudefinance'),
                 'default' => 'yes',
                 'disabled'      => $this->get_id() !== WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY,
             ),
