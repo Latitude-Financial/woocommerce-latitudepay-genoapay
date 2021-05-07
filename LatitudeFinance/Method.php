@@ -792,7 +792,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
     protected function _getProductName($_product) {
         $name = wc_latitudefinance_get_array_data('title', $_product) ?:
             wc_latitudefinance_get_array_data('name', $_product);
-        return preg_replace('/[^a-zA-Z0-9]/i', " ", $name);
+        return htmlspecialchars($name);
     }
 
     protected function get_billing_address()
