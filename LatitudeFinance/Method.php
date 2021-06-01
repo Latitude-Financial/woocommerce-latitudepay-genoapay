@@ -395,28 +395,12 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             foreach ($gateways as $index => $gateway) {
                 if ($gateway instanceof $this->gateway_class) {
                     $orderTotal = WC()->cart->total;
-                    if ($gateway->id === WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY) {
-                        if (
-                            $gateway->settings &&
-                            is_array($gateway->settings) &&
-                            (
-                                !isset($gateway->settings['lpay_plus_enabled']) ||
-                                $gateway->settings['lpay_plus_enabled'] === 'no'
-                            )
-                        ) {
-                            // In the case tha LPay+ is not enabled
-                            if (!$this->_isValidOrderAmount($orderTotal)) {
-                                unset($gateways[$index]);
-                            }
-                        }
-                    } else {
-                        if (!$this->_isValidOrderAmount($orderTotal)) {
-                            unset($gateways[$index]);
-                        }
-                    }
+                    if ($orderTotal > $this->max_order_total && $this->max_order_total || $orderTotal < $this->min_order_total && !is_null($this->min_order_total)) {
+                        unset($gateways[$index]);
                     }
                 }
             }
+        }
         return $gateways;
     }
 
@@ -466,14 +450,6 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 'label'     => __('Enable', 'woocommerce-payment-gateway-latitudefinance'),
                 'default'   => 'no'
             ),
-            'lpay_plus_enabled' => array(
-                'title' => __('LatitudePay+ Presentment', 'woocommerce-payment-gateway-latitudefinance'),
-                'type' => 'checkbox',
-                'label' => __('Enable LatitudePay+ Presentment', 'woocommerce-payment-gateway-latitudefinance'),
-                'description' => __('Enable this option to display LatitudePay+ content on your site if you are offering LatitudePay+.', 'woocommerce-payment-gateway-latitudefinance'),
-                'default' => 'yes',
-                'disabled'      => $this->get_id() !== WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY,
-            ),
             'title' => array(
                 'title'         => __('Title', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'          => 'text',
@@ -485,7 +461,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 'title'         => __('Customer Message', 'woocommerce-payment-gateway-latitudefinance'),
                 'type'          => 'textarea',
                 'default'       => __($this->description, 'woocommerce-payment-gateway-latitudefinance'),
-                'value'         => __($this->description, 'woocommerce-payment-gateway-latitudefinance'),
+                'value'             => __($this->description, 'woocommerce-payment-gateway-latitudefinance'),
                 'readonly'      => true,
                 'disabled'      => true,
                 'desc_tip'      => 'This option can be set from your account portal. When the Save Changes button is clicked, this option will update automatically.'

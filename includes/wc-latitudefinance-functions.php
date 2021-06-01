@@ -200,24 +200,18 @@ function wc_latitudefinance_show_payment_options()
         if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
 
             //Check if it is supported by the gateway.
-            if (
-                !isset($gateway->settings['lpay_plus_enabled']) || $gateway->settings['lpay_plus_enabled'] === 'no'
-            ) {
-                $min = floor($gateway->get_option('min_order_total'));
-                $max = floor($gateway->get_option('max_order_total'));
-                //Check if it is supported by the gateway.
-                if ($cartTotal < $min || $cartTotal > $max) {
-                    continue;
-                }
+            $min = floor($gateway->get_option('min_order_total'));
+            $max = floor($gateway->get_option('max_order_total'));
+            //Check if it is supported by the gateway.
+            if ($cartTotal < $min || $cartTotal > $max) {
+                continue;
             }
 
             if (in_array(get_class($gateway), WC_LatitudeFinance_Manager::$gateways)) {
-                if ($gateway->get_option('cart_page_snippet_enabled', 'yes') === 'yes') {
-                    wc_latitudefinance_get_template('cart/payment.php', array(
-                        'gateway' => $gateway,
-                        'cart' => WC()->cart
-                    ));
-                }
+                wc_latitudefinance_get_template('cart/payment.php', array(
+                    'gateway' => $gateway,
+                    'cart' => WC()->cart
+                ));
             }
         }
     }
