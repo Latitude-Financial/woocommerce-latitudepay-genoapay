@@ -25,6 +25,10 @@
     * @license     http://www.apache.org/licenses/LICENSE-2.0
     */
 
+    if (!isset($gateway)) {
+        return;
+    }
+
     $description = $gateway->get_description();
     wc_latitudefinance_spam_bot_field();
     $color = $gateway->get_id() == "latitudepay" ? "rgb(57, 112, 255)" : "rgb(49, 181, 156)";
@@ -47,20 +51,30 @@
     ?>
 
         <div class="wc-latitudefinance-new-payment-method-container" style="<?php $has_methods ? printf('display: none') : printf('')?>">
-        <div style="margin:10px 0px;">
+            <?php if($gateway->id === WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY): ?>
+                <?php
+                    /**
+                     * @var WC_LatitudeFinance_Method_Latitudepay $gateway
+                     */
+                    $gateway->setAmount($price)->setIsFullBlock(true);
+                    echo $gateway->generate_snippet_html();
+                ?>
+            <?php else: ?>
+                <div style="margin:10px 0px;">
 
-                <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="padding-right: 5px; max-width: 110px;padding-bottom:15px;"/>
-                <p style="font-weight: 700; line-height: 24px;">Shop now pay later.
-                    <a style="text-decoration: none;" href="javascript: void(0)" id="<?php echo $gateway->get_id() ?>-popup">
-                        <span style="text-decoration: none;font-weight: bold; font-size:13px; marigin-left: 5px; color: <?php echo $color; ?>">Learn more</span>
-                    </a>
-                </p>
+                    <img src="<?php echo WC_LATITUDEPAY_ASSETS . $gateway->get_id() . '.svg' ?>" style="padding-right: 5px; max-width: 110px;padding-bottom:15px;"/>
+                    <p style="font-weight: 700; line-height: 24px;">Shop now pay later.
+                        <a style="text-decoration: none;" href="javascript: void(0)" id="<?php echo $gateway->get_id() ?>-popup">
+                            <span style="text-decoration: none;font-weight: bold; font-size:13px; marigin-left: 5px; color: <?php echo $color; ?>">Learn more</span>
+                        </a>
+                    </p>
 
-                <p><?php echo $paymentInfo; ?></p>
+                    <p><?php echo $paymentInfo; ?></p>
 
-            <?php include($modalFile) ?>
+                    <?php include($modalFile) ?>
+                </div>
+
+                <p style="font-size: 22px; color:<?php echo $color; ?>; font-weight: 600; margin-bottom: 20px">No interest.<span style="text-decoration: underline; margin-left: 5px;">Ever.</span></p>
+            <?php endif; ?>
         </div>
-
-        <p style="font-size: 22px; color:<?php echo $color; ?>; font-weight: 600; margin-bottom: 20px">No interest.<span style="text-decoration: underline; margin-left: 5px;">Ever.</span></p>
-    </div>
 </div>

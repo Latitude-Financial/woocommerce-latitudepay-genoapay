@@ -28,8 +28,9 @@
 class BinaryPay_Exception extends Exception
 {
     /**
-     * BinaryPay_Exception
-     * @param Exception $errorMessage exception portal.
+     * BinaryPay_Exception constructor.
+     * @param $errorMessage
+     * @param null $code
      */
     public function __construct($errorMessage, $code = null)
     {
@@ -37,6 +38,7 @@ class BinaryPay_Exception extends Exception
         if (!empty($code)) {
             $this->code = $code;
         }
+        parent::__construct();
     }
 
 }

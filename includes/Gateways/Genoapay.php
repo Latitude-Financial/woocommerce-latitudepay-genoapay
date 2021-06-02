@@ -39,14 +39,9 @@ class Genoapay extends BinaryPay
     const STATUS_ACCESS_DENIED = 403;
     const STATUS_INTERNAL_SERVER_ERROR = 500;
 
-    /**
-     * @var boolean
-     */
-    protected $_debug = false;
-
-    public function __construct($credential = array())
+    public function __construct($credential = array(), $debug = false)
     {
-        parent::__construct($credential);
+        parent::__construct($credential, $debug);
         $this->setConfig(
             array(
                 'api-error-status' => array(
@@ -120,7 +115,7 @@ class Genoapay extends BinaryPay
   /**
      * @description main function to query API.
      * @param  array  request body
-     * @return array  returns API response
+     * @return string  returns API response
      */
 
     public function getApiUrl()
@@ -277,16 +272,6 @@ class Genoapay extends BinaryPay
         // Clean implode buffer
         $this->gluedString = '';
 
-        if ($this->_debug) {
-            $info = "====== DEBUG INFO STARTS ======\n";
-            $info .= "Recursive Implode:\n";
-            $info .= $this->recursiveImplode($request, '', true) . "\n\n";
-            $info .= "Signature:\n";
-            $info .=  $signature. PHP_EOL;
-            $info .="====== DEBUG INFO ENDS ========\n\n\n";
-            //BinaryPay::log($info);
-        }
-
         $this->setConfig(
             array(
                 'method'                => 'post',
@@ -319,6 +304,9 @@ class Genoapay extends BinaryPay
             'reference'     => $args[BinaryPay_Variable::REFERENCE]
         ];
 
+        // signature
+        $signature = hash_hmac('sha256', base64_encode($this->recursiveImplode($request, '', true)), $this->getConfig('password'));
+
         // Clean implode buffer
         $this->gluedString = '';
 
@@ -327,7 +315,7 @@ class Genoapay extends BinaryPay
             'request-content-type'  => 'json',
             'response-content-type' => 'json',
             'api-success-status'    => 'refundId',
-            'url'                   => $this->getRefundUrl($token) . '?signature=' . hash_hmac('sha256', base64_encode($this->recursiveImplode($request, '', true)), $args[BinaryPay_Variable::PASSWORD]),
+            'url'                   => $this->getRefundUrl($token) . '?signature=' . $signature,
             'request'               => $request
         ));
         return $this->query();
@@ -336,7 +324,7 @@ class Genoapay extends BinaryPay
     /**
      * retrieve
      * @param  array  $args
-     * @return response
+     * @return array
      */
     public function retrieve(array $args)
     {
