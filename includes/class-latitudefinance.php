@@ -31,7 +31,7 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
     /**
      * @var boolean
      */
-    protected $_debug = false;
+    protected $_debug;
 
     //Default options
     private $_config = array(
@@ -62,10 +62,12 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
 
     const GATEWAY_PATH = 'Gateways';
 
-    public function __construct($credential = array())
+    public function __construct($credential = array(), $debugMode = false)
     {
         $this->verifyKeys($this->createSignature(), $credential);
         $this->setConfig($credential);
+        $this->setConfig(['debug' => $debugMode]);
+        parent::__construct();
     }
 
 
@@ -90,7 +92,7 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
     {
         if (isset($this->_config[$key])) {
             return $this->_config[$key];
-        } elseif ($key == null) {
+        } else if ($key == null) {
             return $this->_config;
         } else {
             return false;
@@ -104,9 +106,7 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
         return $http;
     }
 
-
-
-    public static function getGateway($gateway, $credential)
+    public static function getGateway($gateway, $credential, $debug = false)
     {
         if (empty($gateway)) {
             throw new BinaryPay_Exception('Please define a gateway');
@@ -118,7 +118,6 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
 
         if ($gateway === 'test') {
             self::runTest($credential);
-            return;
         }
 
         if (strpos($gateway, 'test:') !== false) {
@@ -137,7 +136,7 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
 
         if (is_file($file)) {
             require_once $file;
-            $gateway = new $gateway($credential);
+            $gateway = new $gateway($credential, $debug);
 
             return $gateway;
         } else {
@@ -234,7 +233,7 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
     public function validate($response)
     {
         $status = 0;
-        $errorCode = $errorMessage = 'Unknown';
+        $errorMessage = 'Unknown';
         $httpSuccessStatus = $this->getConfig('http-success-status');
 
         /* Check http response status */
@@ -259,7 +258,7 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
 
         switch ($this->getConfig('response-content-type')) {
             case 'json':
-                $response = $this->jsonToArray($response['body']);
+                $response = self::jsonToArray($response['body']);
                 break;
             case 'xml':
                 $response = $this->xmlToArray($response['body']);
@@ -275,7 +274,6 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
         $response       = $this->arrayFlatten($response);
         $errorMessage   = $this->find('api-error-message-field', $response);
         $errorCode      = $this->find('api-error-code-field', $response);
-
         throw new BinaryPay_Exception(
             sprintf("Message: %s", $errorMessage), $errorCode
         );
@@ -296,7 +294,11 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
         return 'Unknown';
     }
 
-    protected function _getGatewayFileNames()
+    /**
+     * @return array
+     * @throws Exception
+     */
+    static function _getGatewayFileNames()
     {
         // Path for gateway files
         $gateway = array();
@@ -312,13 +314,13 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
             // Get only files that have .php extension
             if ($info['extension'] === 'php') {
                 $fileName = strtolower($info['filename']);
-                array_push($gateway, $fileName);
+                $gateway[] = $fileName;
             }
         }
         return $gateway;
     }
 
-    protected function _runGatewayTest($gateways, $credential)
+    static function _runGatewayTest($gateways, $credential)
     {
         if (is_array($gateways)) {
             foreach ($gateways as $gateway) {
@@ -339,14 +341,19 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
         return "\nTesing finished.\n";
     }
 
-    public function runTest($credential, $gatewayName = '')
+    /**
+     * @param $credential
+     * @param string $gatewayName
+     * @throws Exception
+     */
+    static function runTest($credential, $gatewayName = '')
     {
         echo "\033[37m[+]Starting Testing Procedure...\n";
 
         // Run a full test
         if (empty($gatewayName)) {
             // Read Directory, looking for all gateway files
-            $gateways = self::_getGatewayFileNames();
+            $gatewayName = self::_getGatewayFileNames();
         }
 
         // Run test depends on test.php setting
@@ -368,7 +375,9 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
             $logFile = $logDir . DIRECTORY_SEPARATOR . $file;
 
             if (!is_dir($logDir)) {
-                mkdir($logDir);
+                if (!mkdir($logDir) && !is_dir($logDir)) {
+                    throw new \RuntimeException(sprintf('Directory "%s" was not created', $logDir));
+                }
                 chmod($logDir, 0750);
             }
 
@@ -380,25 +389,16 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
             $file       = fopen($logFile, "a+");
             $contents   = fread($file, filesize($logFile) + 1);
 
-            // Write any type of messages to the log file
-            ob_start();
-            print_r($message);
-            $result    = ob_get_clean();
-
             // Add timestamp
             $timestamp = date("Y/m/d----h:i:sa\n");
-            $result    = $timestamp . $result;
+            $result    = $timestamp . $message;
 
             // Add new line before dump data
             $contents = (strlen($contents) > 1) ?  "\n" . $result : $result;
 
             if ($debug) {
-                debug_print_backtrace();
-                $result    = ob_get_clean();
                 $contents .= "\n" . $result;
             }
-
-            if (ob_get_length()) ob_end_clean();
 
             fwrite($file, $contents);
 

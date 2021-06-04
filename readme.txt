@@ -57,3 +57,8 @@ Please send your integration related issues to [Integration Support](mailto:inte
 
 = 2.0.8 =
 * Fix invalid signature issue by replace all symbols from products' name by spaces
+
+= 2.0.9 =
+* Implement Images API snippets and modals
+* Improve logging function
+

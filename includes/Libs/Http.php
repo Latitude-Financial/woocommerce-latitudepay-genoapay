@@ -41,26 +41,22 @@ class WC_LatitudeFinance_Http
 
     public function post($path, $params = null)
     {
-        $response = $this->_doRequest(self::HTTP_REQUEST_POST, $path, $params);
-        return $response;
+        return $this->_doRequest(self::HTTP_REQUEST_POST, $path, $params);
     }
 
     public function put($path, $params = null)
     {
-        $response = $this->_doRequest(self::HTTP_REQUEST_PUT, $path, $params);
-        return $response;
+        return $this->_doRequest(self::HTTP_REQUEST_PUT, $path, $params);
     }
 
     public function get($path, $params = null)
     {
-        $response = $this->_doRequest(self::HTTP_REQUEST_GET, $path, $params);
-        return $response;
+        return $this->_doRequest(self::HTTP_REQUEST_GET, $path, $params);
     }
 
     public function delete($path, $params = null)
     {
-        $response = $this->_doRequest(self::HTTP_REQUEST_DELETE, $path, $params);
-        return $response;
+        return $this->_doRequest(self::HTTP_REQUEST_DELETE, $path, $params);
     }
 
     private function _doRequest($httpVerb, $path, $requestBody = null)
@@ -99,32 +95,19 @@ class WC_LatitudeFinance_Http
             curl_setopt($curl, CURLOPT_POSTFIELDS, $requestBody);
         }
 
-        /* Adding SSL support with setConfig. It must comes with CA string */
-        /* @TODO: This might still need some work in the future.           */
-        // if (isset($this->_config['ssl']) && isset($this->_config['ssl-ca'])) {
-        //     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
-        //     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
-        //     curl_setopt($curl, CURLOPT_CAINFO, $this->_config['ssl-ca']);
-        // }
         $response   = curl_exec($curl);
         $httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         $response = array('status' => $httpStatus, 'body' => $response);
-        /*TODO: TIDY*/
 
-        $debug = false;
-        if(isset($this->_config['debug'])) {
-            $debug = $this->_config['debug'];
-        }
-
-        if ($debug) {
+        if (isset($this->_config['debug']) && $this->_config['debug']) {
             $info = "======DEBUG INFO STARTS======\n";
             $info .= "REQUEST:\n";
             $info .= "\n".curl_getinfo($curl, CURLINFO_HEADER_OUT);
             $info .= $requestBody."\n\n";
             $info .= "RESPONSE:\n";
-            $info .= json_encode($response) ."\n\n";
-            $info .="======DEBUG INFO ENDS========\n\n\n";
-            BinaryPay::log($info);
+            $info .= json_encode($response, JSON_PRETTY_PRINT) . "\n\n";
+            $info .= "======DEBUG INFO ENDS========\n\n\n";
+            BinaryPay::log($info, true, 'latitudepay-finance-' . date('Y-m-d') . '.log');
         }
         curl_close($curl);
         return $response;
