@@ -44,14 +44,8 @@ class LatitudePaySnippetCest
         $I->amOnPage('/product/polo');
         $I->see('Polo');
         $I->seeElement('img.lpay_snippet');
-        $I->seeElement(Locator::find('a', ['id' => 'latitudepay-popup']));
-        $I->click('#latitudepay-popup');
-        $I->waitForElementVisible('#lp-modal-container', 30);
-        $I->see("Be over 18 years old");
-        $I->see("An Australian driver’s licence or passport");
-        $I->see("A credit/debit card (Visa or Mastercard)");
-        $I->click('#lp-modal-close');
-        $I->waitForElementNotVisible('#lp-modal-container', 30);
+        $I->click('img.lpay_snippet');
+        $I->waitForElementVisible('.lpay-modal-wrapper', 30);
     }
 
     /**
@@ -65,14 +59,9 @@ class LatitudePaySnippetCest
         $I->click('.cart button[name=add-to-cart]');
 
         $I->amOnPage('/cart');
-        $I->seeElement(Locator::find('a', ['id' => 'latitudepay-popup']));
-        $I->click('#latitudepay-popup');
-        $I->waitForElementVisible('#lp-modal-container', 30);
-        $I->see("Be over 18 years old");
-        $I->see("An Australian driver’s licence or passport");
-        $I->see("A credit/debit card (Visa or Mastercard)");
-        $I->click('#lp-modal-close');
-        $I->waitForElementNotVisible('#lp-modal-container', 30);
+        $I->seeElement('img.lpay_snippet');
+        $I->click('img.lpay_snippet');
+        $I->waitForElementVisible('.lpay-modal-wrapper', 30);
     }
 
     /**
@@ -87,15 +76,9 @@ class LatitudePaySnippetCest
 
         $I->amOnPage('/checkout');
         $I->wait(3);
-        $I->seeElement(Locator::find('a', ['id' => 'latitudepay-popup']));
-        $I->waitForElementVisible('#latitudepay-popup', 30);
-        $I->click('#latitudepay-popup');
-        $I->waitForElementVisible('#lp-modal-container', 30);
-        $I->see("Be over 18 years old");
-        $I->see("An Australian driver’s licence or passport");
-        $I->see("A credit/debit card (Visa or Mastercard)");
-        $I->click('#lp-modal-close');
-        $I->waitForElementNotVisible('#lp-modal-container', 30);
+        $I->seeElement('img.lpay_snippet');
+        $I->click('img.lpay_snippet');
+        $I->waitForElementVisible('.lpay-modal-wrapper', 30);
     }
 
     /**
@@ -110,7 +93,7 @@ class LatitudePaySnippetCest
         $I->click('.cart button[name=add-to-cart]');
 
         $I->amOnPage('/cart');
-        $I->dontSeeElement(Locator::find('a', ['id' => 'latitudepay-popup']));
+        $I->dontSeeElement('img.lpay_snippet');
     }
 
     /**
@@ -126,6 +109,6 @@ class LatitudePaySnippetCest
 
         $I->amOnPage('/checkout');
         $I->wait(3);
-        $I->dontSeeElement(Locator::find('a', ['id' => 'latitudepay-popup']));
+        $I->dontSeeElement('img.lpay_snippet');
     }
 }
