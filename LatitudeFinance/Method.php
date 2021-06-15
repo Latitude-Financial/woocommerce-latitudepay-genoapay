@@ -334,7 +334,11 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
         }
         $this->update_option('title', ucfirst(wc_latitudefinance_get_array_data('name', $this->configuration, $this->id)));
         $this->update_option('description', wc_latitudefinance_get_array_data('description', $this->configuration));
-        $this->update_option('min_order_total', wc_latitudefinance_get_array_data('minimumAmount', $this->configuration, 20));
+        if ($this->get_option('lpay_plus_enabled') === 'yes' && $this->id === WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY) {
+            $this->update_option('min_order_total', isset($_POST['woocommerce_latitudepay_min_order_total']) ? (float) $_POST['woocommerce_latitudepay_min_order_total'] : 20);
+        } else {
+            $this->update_option('min_order_total', wc_latitudefinance_get_array_data('minimumAmount', $this->configuration, 20));
+        }
         $this->update_option('max_order_total', wc_latitudefinance_get_array_data('maximumAmount', $this->configuration, 1500) * 1000);
 
     }
@@ -397,7 +401,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             foreach ($gateways as $index => $gateway) {
                 if ($gateway instanceof $this->gateway_class) {
                     $orderTotal = WC()->cart->total;
-                    if ($orderTotal > $this->max_order_total && $this->max_order_total || $orderTotal < $this->min_order_total && !is_null($this->min_order_total)) {
+                    if (!$this->_isValidOrderAmount($orderTotal)) {
                         unset($gateways[$index]);
                     }
                 }
@@ -454,6 +458,28 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 'label' => __('Enable', 'woocommerce-payment-gateway-latitudefinance'),
                 'default' => 'no'
             ),
+            'lpay_plus_enabled' => array(
+                'title' => __('LatitudePay+ Presentment', 'woocommerce-payment-gateway-latitudefinance'),
+                'type' => 'checkbox',
+                'label' => __('Enable LatitudePay+ Presentment', 'woocommerce-payment-gateway-latitudefinance'),
+                'description' => __('Enable this option to display LatitudePay+ content on your site if you are offering LatitudePay+.', 'woocommerce-payment-gateway-latitudefinance'),
+                'default' => 'yes',
+                'disabled'      => $this->get_id() !== WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY,
+            ),
+            'lpay_plus_payment_term' => array(
+                'title' => __('LatitudePay+ Payment Term', 'woocommerce-payment-gateway-latitudefinance'),
+                'type' => 'select',
+                'label' => __('Enable LatitudePay+ Payment Term', 'woocommerce-payment-gateway-latitudefinance'),
+                'description' => __('The amount of weeks that the payment will be split to', 'woocommerce-payment-gateway-latitudefinance'),
+                'options' => [
+                    '6' => __('6 months' ,'woocommerce-payment-gateway-latitudefinance'),
+                    '12' => __('12 months' ,'woocommerce-payment-gateway-latitudefinance'),
+                    '18' => __('18 months' ,'woocommerce-payment-gateway-latitudefinance'),
+                    '24' => __('24 months' ,'woocommerce-payment-gateway-latitudefinance'),
+                ],
+                'default' => '12',
+                'disabled'      => $this->get_option('lpay_plus_enabled') !== 'yes',
+            ),
             'title' => array(
                 'title' => __('Title', 'woocommerce-payment-gateway-latitudefinance'),
                 'type' => 'text',
@@ -475,8 +501,8 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 'type' => 'text',
                 'value' => $this->min_order_total,
                 'default' => $this->min_order_total,
-                'readonly' => true,
-                'disabled' => true,
+                'readonly' => $this->get_option('lpay_plus_enabled') !== 'yes',
+                'disabled' => $this->get_option('lpay_plus_enabled') !== 'yes',
                 'desc_tip' => 'This option can be set from your account portal. When the Save Changes button is clicked, this option will update automatically.'
             ),
             'max_order_total' => array(
