@@ -750,6 +750,7 @@ class WpunitTester extends \Codeception\Actor
 			'refundDate' => '2029-08-24T14:15:22Z',
 			'reference' => $token,
 			'commissionAmount' => 10,
+			'status' => 'Failed'
 		];
 		self::$server->setResponseOfPath('/v3/sale/'.$token.'/refund', new ResponseByMethod([
             ResponseByMethod::METHOD_POST => new Response(
