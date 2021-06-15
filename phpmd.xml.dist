@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<ruleset name="latitude_pay_plugin_rules"
+         xmlns="http://pmd.sf.net/ruleset/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+         xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+	<description>PHP MD Standards for plugin</description>
+
+	<rule ref="rulesets/cleancode.xml">
+        <exclude name="StaticAccess"/>
+		<exclude name="MissingImport"/>
+		<exclude name="ElseExpression"/>
+		<exclude name="BooleanArgumentFlag"/>
+    </rule>
+
+	<rule ref="rulesets/codesize.xml">
+		<exclude name="TooManyPublicMethods"/>
+		<exclude name="CyclomaticComplexity"/>
+		<exclude name="ExcessiveClassComplexity"/>
+		<exclude name="NPathComplexity"/>
+		<exclude name="ExcessiveClassLength"/>
+	</rule>
+
+	<rule ref="rulesets/design.xml">
+		<!-- normal in WP for redirects, etc -->
+		<exclude name="ExitExpression" />
+		<exclude name="DevelopmentCodeFragment" />
+	</rule>
+
+	<rule ref="rulesets/naming.xml/ShortVariable">
+		<properties>
+			<!-- common in WP -->
+			<property name="exceptions" value="id,wp" />
+		</properties>
+	</rule>
+
+	<rule ref="rulesets/naming.xml/LongVariable" />
+	<rule ref="rulesets/naming.xml/ShortMethodName" />
+	<rule ref="rulesets/naming.xml/ConstructorWithNameAsEnclosingClass" />
+	<rule ref="rulesets/naming.xml/ConstantNamingConventions" />
+	<rule ref="rulesets/naming.xml/BooleanGetMethodName" />
+</ruleset>
