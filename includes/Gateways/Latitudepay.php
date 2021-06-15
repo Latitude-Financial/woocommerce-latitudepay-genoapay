@@ -30,6 +30,7 @@ class Latitudepay extends Genoapay
 
     public function getHeader()
     {
+        $headers = [];
         $headers[] = "api-version: " . self::API_VERSION;
 
         if ($this->getConfig('request-content-type') == 'json') {

@@ -367,46 +367,55 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
 
     public static function log($message, $debug = false, $file = '')
     {
-        static $loggers = array();
+        if ( php_sapi_name() == 'cli' ) {
+			return;
+		}
+		$file = empty( $file ) ? 'system.log' : $file;
 
-        $file   = empty($file) ? 'system.log' : $file;
-        if (!isset($loggers[$file])) {
-            $logDir  = __DIR__ . '/../log';
-            $logFile = $logDir . DIRECTORY_SEPARATOR . $file;
+		$logDir  = __DIR__ . '/../log';
+		$logFile = $logDir . DIRECTORY_SEPARATOR . $file;
 
-            if (!is_dir($logDir)) {
-                if (!mkdir($logDir) && !is_dir($logDir)) {
-                    throw new \RuntimeException(sprintf('Directory "%s" was not created', $logDir));
-                }
-                chmod($logDir, 0750);
-            }
+		if ( ! is_dir( $logDir ) ) {
+			mkdir( $logDir );
+			chmod( $logDir, 0750 );
+		}
 
-            if (!file_exists($logFile)) {
-                file_put_contents($logFile, '');
-                chmod($logFile, 0640);
-            }
+		if ( ! file_exists( $logFile ) ) {
+			file_put_contents( $logFile, '' );
+			chmod( $logFile, 0640 );
+		}
 
-            $file       = fopen($logFile, "a+");
-            $contents   = fread($file, filesize($logFile) + 1);
+		$file     = fopen( $logFile, 'a+' );
+		$contents = fread( $file, filesize( $logFile ) + 1 );
 
-            // Add timestamp
-            $timestamp = date("Y/m/d----h:i:sa\n");
-            $result    = $timestamp . $message;
+		// Write any type of messages to the log file
+		ob_start();
+		print_r( $message );
+		$result = ob_get_clean();
 
-            // Add new line before dump data
-            $contents = (strlen($contents) > 1) ?  "\n" . $result : $result;
+		// Add timestamp
+		$timestamp = date( "Y/m/d----h:i:sa\n" );
+		$result    = $timestamp . $result;
 
-            if ($debug) {
-                $contents .= "\n" . $result;
-            }
+		// Add new line before dump data
+		$contents = ( strlen( $contents ) > 1 ) ? "\n" . $result : $result;
 
-            fwrite($file, $contents);
+		if ( $debug ) {
+			debug_print_backtrace();
+			$result    = ob_get_clean();
+			$contents .= "\n" . $result;
+		}
 
-            // Close the file handle to save memory
-            fclose($file);
+		if ( ob_get_length() ) {
+			ob_end_clean();
+		}
 
-            return;
-        }
+		fwrite( $file, $contents );
+
+		// Close the file handle to save memory
+		fclose( $file );
+
+		return;
     }
 
     public function purchase(array $args) {}
