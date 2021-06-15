@@ -43,7 +43,7 @@ class GenoaPaySnippetCest
     {
         $I->amOnPage('/product/polo');
         $I->see('Polo');
-        $I->see('10 weekly payments of');
+        $I->seeElement('img.lpay_snippet');
         $I->seeElement(Locator::find('a', ['id' => 'genoapay-popup']));
         $I->click('#genoapay-popup');
         $I->waitForElementVisible('#g-infomodal-container', 30);

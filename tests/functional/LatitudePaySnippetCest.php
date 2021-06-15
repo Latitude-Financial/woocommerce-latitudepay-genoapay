@@ -43,7 +43,7 @@ class LatitudePaySnippetCest
     {
         $I->amOnPage('/product/polo');
         $I->see('Polo');
-        $I->see('10 weekly payments of');
+        $I->seeElement('img.lpay_snippet');
         $I->seeElement(Locator::find('a', ['id' => 'latitudepay-popup']));
         $I->click('#latitudepay-popup');
         $I->waitForElementVisible('#lp-modal-container', 30);
