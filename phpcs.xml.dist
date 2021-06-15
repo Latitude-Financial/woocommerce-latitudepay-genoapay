@@ -56,6 +56,7 @@
 		<exclude name="Squiz.Commenting.BlockComment.NoEmptyLineBefore"/>
 		<exclude name="Generic.Strings.UnnecessaryStringConcat.Found"/>
 		<exclude name="Generic.Commenting.DocComment.LongNotCapital"/>
+		<exclude name="Generic.PHP.DeprecatedFunctions.Deprecated"/>
 		
         <!-- Exclude as plugin adheres to the PSR-4 standard. -->
         <exclude name="WordPress.Files.FileName"/>
