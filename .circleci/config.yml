@@ -51,10 +51,10 @@ commands: # a reusable command with parameters
           name: Composer Install
           command: |
             composer install -n
-      # - save_cache: # special step to save the dependency cache with the `composer.lock` cache key template
-      #     key: composer-v2-<< parameters.version >>-{{ checksum "composer.json" }}
-      #     paths:
-      #       - vendor
+      - save_cache: # special step to save the dependency cache with the `composer.lock` cache key template
+          key: composer-v2-<< parameters.version >>-{{ checksum "composer.json" }}
+          paths:
+            - vendor
       - run:
           name: "Install Woocommerce"
           command: |
@@ -98,12 +98,10 @@ commands: # a reusable command with parameters
           name: "Latitudepay Plugin Unit Testing"
           command: |
             codecept run wpunit --steps
-            allure tests/_output/ -o tests/_output/allure-report 
       - run:
           name: "Latitudepay Plugin Functional Testing"
           command: |
             codecept run functional --steps
-            allure tests/_output/ -o tests/_output/allure-report
       - store_test_results:
           path: tests/_output/
       - store_artifacts:
