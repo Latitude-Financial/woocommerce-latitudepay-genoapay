@@ -42,19 +42,19 @@ commands: # a reusable command with parameters
             done
             echo Failed waiting for Selenium && exit 1
             
-      - restore_cache: # special step to restore the dependency cache if `composer.lock` does not change
-          keys:
-            - composer-v2-<< parameters.version >>-{{ checksum "composer.json" }}
-            # fallback to using the latest cache if no exact match is found (See https://circleci.com/docs/2.0/caching/)
-            - composer-v2-<< parameters.version >>
+      # - restore_cache: # special step to restore the dependency cache if `composer.lock` does not change
+      #     keys:
+      #       - composer-v2-<< parameters.version >>-{{ checksum "composer.json" }}
+      #       # fallback to using the latest cache if no exact match is found (See https://circleci.com/docs/2.0/caching/)
+      #       - composer-v2-<< parameters.version >>
       - run: 
           name: Composer Install
           command: |
-            composer install -n --prefer-dist --ignore-platform-reqs
-      - save_cache: # special step to save the dependency cache with the `composer.lock` cache key template
-          key: composer-v2-<< parameters.version >>-{{ checksum "composer.json" }}
-          paths:
-            - vendor
+            composer install -n
+      # - save_cache: # special step to save the dependency cache with the `composer.lock` cache key template
+      #     key: composer-v2-<< parameters.version >>-{{ checksum "composer.json" }}
+      #     paths:
+      #       - vendor
       - run:
           name: "Install Woocommerce"
           command: |
