@@ -97,12 +97,13 @@ commands: # a reusable command with parameters
       - run:
           name: "Latitudepay Plugin Unit Testing"
           command: |
-            rm -rf log/*.log && rm -rf tests/_output/*.html && rm -rf tests/_output/*.png && rm -rf tests/_output/failed
-            codecept run wpunit --steps 
+            codecept run wpunit --steps
+            allure tests/_output/ -o tests/_output/allure-report 
       - run:
           name: "Latitudepay Plugin Functional Testing"
           command: |
             codecept run functional --steps
+            allure tests/_output/ -o tests/_output/allure-report
       - store_test_results:
           path: tests/_output/
       - store_artifacts:
@@ -225,9 +226,9 @@ jobs:
     steps:
       - build-tests:
           version: "5.6"
-      - wc-tests
       - cs-tests
       - lp-tests
+      - wc-tests
   php70-build:
     docker:
       - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.1
@@ -272,9 +273,9 @@ jobs:
     steps:
       - build-tests:
           version: "7.0"
-      - wc-tests
       - cs-tests
       - lp-tests
+      - wc-tests
   php71-build:
     docker:
       - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.1
@@ -319,9 +320,9 @@ jobs:
     steps:
       - build-tests:
           version: "7.1"
-      - wc-tests
       - cs-tests
       - lp-tests
+      - wc-tests
   php72-build:
     docker:
       - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.2
@@ -366,9 +367,9 @@ jobs:
     steps:
       - build-tests:
           version: "7.2"
-      - wc-tests
       - cs-tests
       - lp-tests
+      - wc-tests
   php73-build:
     docker:
       - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.3
@@ -413,9 +414,9 @@ jobs:
     steps:
       - build-tests:
           version: "7.3"
-      - wc-tests
       - cs-tests
       - lp-tests
+      - wc-tests
   php74-build:
     docker:
       - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.4
@@ -460,9 +461,9 @@ jobs:
     steps:
       - build-tests:
           version: "7.4"
-      - wc-tests
       - cs-tests
       - lp-tests
+      - wc-tests
   php80-build:
     docker:
       - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-8.0
@@ -514,14 +515,13 @@ workflows:
   main:
     jobs:
       # - php56-build
-      # - php71-build
-      # - php72-build:
-      #     requires:
-      #       - php71-build
-      # - php73-build:
-      #     requires:
-      #       - php72-build
-      - php73-build
+      - php71-build
+      - php72-build:
+          requires:
+            - php71-build
+      - php73-build:
+          requires:
+            - php72-build
       - php74-build:
           requires:
             - php73-build
@@ -530,8 +530,8 @@ workflows:
             - php74-build
       - github-release:
           requires:
-            # - php71-build
-            # - php72-build
+            - php71-build
+            - php72-build
             - php73-build
             - php74-build
             - php80-build
@@ -543,8 +543,8 @@ workflows:
             - github-release
       - deploy:
           requires:
-            # - php71-build
-            # - php72-build
+            - php71-build
+            - php72-build
             - php73-build
             - php74-build
             - php80-build
