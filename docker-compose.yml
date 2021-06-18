@@ -2,7 +2,7 @@ version: "3"
 
 services:
   wordpress:
-    image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-8.0
+    image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.2
     hostname: woocommerce.localhost
     container_name: woocommerce_latitude_wordpress
     working_dir: /var/www/html/wp-content/plugins/woocommerce-latitudepay-genoapay
@@ -19,8 +19,6 @@ services:
     container_name: woocommerce_latitude_mysql
     image: mysql:5.7
     ports:
-      - "3307:3306"
+      - "3306"
     env_file:
       - default.env
-    volumes:
-      - ./.docker/data:/var/lib/mysql
