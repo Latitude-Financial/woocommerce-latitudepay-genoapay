@@ -42,8 +42,8 @@ trait Latitudepay
      */
     public function _before($I)
     {
-        $this->activePlugin($I);
-        $this->configLatitudePaySettings($I);
+        // $this->activePlugin($I);
+        // $this->configLatitudePaySettings($I);
     }
 
     /**
