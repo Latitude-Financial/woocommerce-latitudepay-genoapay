@@ -40,7 +40,6 @@ class ConfigPluginWithLatitudepayCest
      */
     public function iCanConfigWithLatitudePay($I, $scenario)
     {
-        $this->activePlugin($I);
         $this->configLatitudePaySettings($I);
     }
 }
