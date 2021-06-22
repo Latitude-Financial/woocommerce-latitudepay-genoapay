@@ -12,7 +12,7 @@
  *
  * @package LatitudeFinance
  */
-defined( 'ABSPATH' ) || exit;
+// defined( 'ABSPATH' ) || exit;
 define( 'WC_LATITUDEPAY_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WC_LATITUDEPAY_ASSETS', plugin_dir_url( __FILE__ ) . 'assets/' );
 define( 'WC_LATITUDEPAY_TEMPLATES', plugin_dir_url( __FILE__ ) . 'templates/' );
