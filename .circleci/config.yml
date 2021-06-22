@@ -1,0 +1,555 @@
+version: 2.1
+commands: # a reusable command with parameters
+  build-tests:
+    parameters:
+      version:
+        default: "7.3"
+        type: string
+    steps:
+      - checkout
+      - run:
+          # Our primary container isn't Nginx so run a sleep command until it's ready.
+          name: Waiting for Nginx to be ready
+          command: |
+            /bin/app/start.sh &
+            for i in `seq 1 50`;
+            do
+              nc -z 127.0.0.1 80 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for Nginx && exit 1
+      - run:
+          # Our primary container isn't MYSQL so run a sleep command until it's ready.
+          name: Waiting for MySQL to be ready
+          command: |
+            for i in `seq 1 50`;
+            do
+              nc -z 127.0.0.1 3306 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for MySQL && exit 1
+      - run:
+          # Our primary container isn't Selenium so run a sleep command until it's ready.
+          name: Waiting for Selenium to be ready
+          command: |
+            for i in `seq 1 50`;
+            do
+              nc -z 127.0.0.1 4444 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for Selenium && exit 1
+            
+      - restore_cache: # special step to restore the dependency cache if `composer.lock` does not change
+          keys:
+            - composer-v4-<< parameters.version >>-{{ checksum "composer.json" }}
+            # fallback to using the latest cache if no exact match is found (See https://circleci.com/docs/2.0/caching/)
+            - composer-v4-<< parameters.version >>
+      - run: 
+          name: Composer Install
+          command: |
+            composer install -n
+      - save_cache: # special step to save the dependency cache with the `composer.lock` cache key template
+          key: composer-v4-<< parameters.version >>-{{ checksum "composer.json" }}
+          paths:
+            - vendor
+      - run:
+          name: "Install Woocommerce"
+          command: |
+            SKIP_DB_CREATE=false
+            /bin/app/woocommerce/install.sh
+            composer install --ignore-platform-reqs
+      - run:
+          name: "Dump Database"
+          command: |
+            mysqldump -uwoocommerce -pwoocommerce -h127.0.0.1 --no-tablespaces --databases woocommerce > ./tests/_data/dump.sql
+  wc-tests:
+    steps:
+      - run:
+          name: "Woocommerce Default Unit Testing"
+          command: |
+            cd /var/www/html/wp-content/plugins/woocommerce/
+            rm -rf tests/legacy/unit-tests/core/template-cache.php
+            phpunit --testdox
+  cs-tests:
+    steps:
+      - run:
+         name: "PHP Copy/Paste Detector"
+         command: |
+           phpcpd --exclude vendor --exclude tests .
+      - run:
+         name: "PHP Mess Detector"
+         command: |
+           phpmd ./ text phpmd.xml.dist --exclude vendor/,tests/
+      - run:
+         name: "PHP CodeSniffer"
+         command: |
+            phpcs --config-set show_warnings 0
+            phpcs --standard=phpcs.xml.dist --extensions=php --ignore=*/vendor/,*/tests/ --colors -s -p -v .
+      # - run:
+      #    name: "Run Backward Compatibility Check"
+      #    command: |
+      #      vendor/bin/roave-backward-compatibility-check
+  lp-tests:
+    steps:
+      - run:
+          name: "Latitudepay Plugin Unit Testing"
+          command: |
+            codecept run wpunit --steps
+      - run:
+          name: "Latitudepay Plugin Functional Testing"
+          command: |
+            codecept run functional --steps
+      - store_test_results:
+          path: tests/_output/
+      - store_artifacts:
+          path: tests/_output/
+jobs:
+  deploy:
+    docker:
+      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.3
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASSWORD
+        environment:
+          - SSH_REMOTE_SERVER_USER=$SSH_REMOTE_SERVER_USER
+          - SSH_REMOTE_SERVER_IP=$SSH_REMOTE_SERVER_IP
+          - SSH_REMOTE_SERVER_HOST=$SSH_REMOTE_SERVER_HOST
+          - SSH_REMOTE_SERVER_ROOT=$SSH_REMOTE_SERVER_ROOT
+          - SSH_REMOTE_SERVER_PASSWORD=$SSH_REMOTE_SERVER_PASSWORD
+          - SSH_REMOTE_SERVER_GIT_BRANCH=$SSH_REMOTE_SERVER_GIT_BRANCH
+    working_directory: /var/www/html/wp-content/plugins/woocommerce-latitudepay-genoapay
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "fa:00:f7:82:79:9e:91:74:6f:15:54:a0:c8:ac:11:01"
+      - checkout
+      - run:
+          name: Build the plugin
+          command: |
+            mkdir -p /tmp/artifacts
+            zip -r woocommerce-latitudepay-genoapay.zip .
+            cp woocommerce-latitudepay-genoapay.zip /tmp/artifacts
+      - run:
+          name: Deploy the plugin
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              ./bin/deploy.sh live
+            else
+              ./bin/deploy.sh --dry-run
+            fi
+      - store_artifacts:
+          path: /tmp/artifacts
+  github-release:
+    docker:
+      - image: circleci/php:latest-node-browsers-legacy
+        environment:
+          - GITHUB_TOKEN=$GITHUB_TOKEN
+          - GITHUB_APP_NAME=$GITHUB_APP_NAME
+          - GITHUB_USER=$GITHUB_USER
+    working_directory: ~/latitude
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "SSH Fingerprint from CircleCI Project Settings > SSH Permissions"
+      - checkout
+      - run:
+          name: Tag new release
+          command: |
+            cd ~/latitude
+            cd bin/
+            chmod +x git_release.sh
+            ./git_release.sh
+  wordpress-release:
+    docker:
+      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.3
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASSWORD
+        environment:
+          - GITHUB_TOKEN=$GITHUB_TOKEN
+          - GITHUB_APP_NAME=$GITHUB_APP_NAME
+          - GITHUB_USER=$GITHUB_USER
+    working_directory: /var/www/html/wp-content/plugins/woocommerce-latitudepay-genoapay
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "SSH Fingerprint from CircleCI Project Settings > SSH Permissions"
+      - checkout
+      - run:
+          name: Release new version on wordpress.org
+          command: |
+            cd bin/
+            chmod +x wp_release.sh
+            ./wp_release.sh
+  php56-build:
+    docker:
+      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-4.9-php-5.6
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASSWORD
+        environment:
+          - MYSQL_ROOT_HOST=%
+          - PLATFORM=woocommerce
+          - MYSQL_ROOT_PASSWORD=woocommerce
+          - MYSQL_DATABASE=woocommerce
+          - MYSQL_USER=woocommerce
+          - MYSQL_PASSWORD=woocommerce
+          - MYSQL_DB_HOST=127.0.0.1
+          - WP_CORE_DIR=/var/www/html
+          - WP_SITE_URL=http://woocommerce.localhost
+          - PLATFORM_VERSION=4.9
+          - WC_VERSION=3.8.1
+          - WP_TESTS_DIR=/tmp/wordpress-tests-lib
+          - WP_CORE_DIR=/var/www/html
+          - WP_PLUGIN_DIR=/var/www/html/wp-content/plugins
+          - LATITUDE_API_PUBLIC_KEY=$LATITUDE_API_PUBLIC_KEY
+          - LATITUDE_API_PRIVATE_KEY=$LATITUDE_API_PRIVATE_KEY
+          - LATITUDE_USER_EMAIL=$LATITUDE_USER_EMAIL
+          - LATITUDE_USER_PASSWORD=$LATITUDE_USER_PASSWORD
+          - GENOAPAY_API_PUBLIC_KEY=$GENOAPAY_API_PUBLIC_KEY
+          - GENOAPAY_API_PRIVATE_KEY=$GENOAPAY_API_PRIVATE_KEY
+          - GENOAPAY_USER_EMAIL=$GENOAPAY_USER_EMAIL
+          - GENOAPAY_USER_PASSWORD=$GENOAPAY_USER_PASSWORD
+      - image: circleci/mysql:5.7
+        environment:
+          - MYSQL_ROOT_HOST=%
+          - MYSQL_ROOT_PASSWORD=woocommerce
+          - MYSQL_DATABASE=woocommerce
+          - MYSQL_USER=woocommerce
+          - MYSQL_PASSWORD=woocommerce
+    environment:
+      - WP_TESTS_DIR: "/tmp/wordpress-tests-lib"
+      - WP_CORE_DIR: "/var/www/html"
+    working_directory: /var/www/html/wp-content/plugins/woocommerce-latitudepay-genoapay
+    resource_class: xlarge
+    steps:
+      - build-tests:
+          version: "5.6"
+      - cs-tests
+      - lp-tests
+      - wc-tests
+  php70-build:
+    docker:
+      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.1
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASSWORD
+        environment:
+          - MYSQL_ROOT_HOST=%
+          - PLATFORM=woocommerce
+          - MYSQL_ROOT_PASSWORD=woocommerce
+          - MYSQL_DATABASE=woocommerce
+          - MYSQL_USER=woocommerce
+          - MYSQL_PASSWORD=woocommerce
+          - MYSQL_DB_HOST=127.0.0.1
+          - WP_CORE_DIR=/var/www/html
+          - WP_SITE_URL=http://woocommerce.localhost
+          - PLATFORM_VERSION=5.6
+          - WC_VERSION=5.3.0
+          - WP_TESTS_DIR=/tmp/wordpress-tests-lib
+          - WP_CORE_DIR=/var/www/html
+          - WP_PLUGIN_DIR=/var/www/html/wp-content/plugins
+          - LATITUDE_API_PUBLIC_KEY=$LATITUDE_API_PUBLIC_KEY
+          - LATITUDE_API_PRIVATE_KEY=$LATITUDE_API_PRIVATE_KEY
+          - LATITUDE_USER_EMAIL=$LATITUDE_USER_EMAIL
+          - LATITUDE_USER_PASSWORD=$LATITUDE_USER_PASSWORD
+          - GENOAPAY_API_PUBLIC_KEY=$GENOAPAY_API_PUBLIC_KEY
+          - GENOAPAY_API_PRIVATE_KEY=$GENOAPAY_API_PRIVATE_KEY
+          - GENOAPAY_USER_EMAIL=$GENOAPAY_USER_EMAIL
+          - GENOAPAY_USER_PASSWORD=$GENOAPAY_USER_PASSWORD
+      - image: circleci/mysql:5.7
+        environment:
+          - MYSQL_ROOT_HOST=%
+          - MYSQL_ROOT_PASSWORD=woocommerce
+          - MYSQL_DATABASE=woocommerce
+          - MYSQL_USER=woocommerce
+          - MYSQL_PASSWORD=woocommerce
+    environment:
+      - WP_TESTS_DIR: "/tmp/wordpress-tests-lib"
+      - WP_CORE_DIR: "/var/www/html"
+    working_directory: /var/www/html/wp-content/plugins/woocommerce-latitudepay-genoapay
+    resource_class: xlarge
+    steps:
+      - build-tests:
+          version: "7.0"
+      - cs-tests
+      - lp-tests
+      - wc-tests
+  php71-build:
+    docker:
+      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.1
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASSWORD
+        environment:
+          - MYSQL_ROOT_HOST=%
+          - PLATFORM=woocommerce
+          - MYSQL_ROOT_PASSWORD=woocommerce
+          - MYSQL_DATABASE=woocommerce
+          - MYSQL_USER=woocommerce
+          - MYSQL_PASSWORD=woocommerce
+          - MYSQL_DB_HOST=127.0.0.1
+          - WP_CORE_DIR=/var/www/html
+          - WP_SITE_URL=http://woocommerce.localhost
+          - PLATFORM_VERSION=5.6
+          - WC_VERSION=5.3.0
+          - WP_TESTS_DIR=/tmp/wordpress-tests-lib
+          - WP_CORE_DIR=/var/www/html
+          - WP_PLUGIN_DIR=/var/www/html/wp-content/plugins
+          - LATITUDE_API_PUBLIC_KEY=$LATITUDE_API_PUBLIC_KEY
+          - LATITUDE_API_PRIVATE_KEY=$LATITUDE_API_PRIVATE_KEY
+          - LATITUDE_USER_EMAIL=$LATITUDE_USER_EMAIL
+          - LATITUDE_USER_PASSWORD=$LATITUDE_USER_PASSWORD
+          - GENOAPAY_API_PUBLIC_KEY=$GENOAPAY_API_PUBLIC_KEY
+          - GENOAPAY_API_PRIVATE_KEY=$GENOAPAY_API_PRIVATE_KEY
+          - GENOAPAY_USER_EMAIL=$GENOAPAY_USER_EMAIL
+          - GENOAPAY_USER_PASSWORD=$GENOAPAY_USER_PASSWORD
+      - image: circleci/mysql:5.7
+        environment:
+          - MYSQL_ROOT_HOST=%
+          - MYSQL_ROOT_PASSWORD=woocommerce
+          - MYSQL_DATABASE=woocommerce
+          - MYSQL_USER=woocommerce
+          - MYSQL_PASSWORD=woocommerce
+    environment:
+      - WP_TESTS_DIR: "/tmp/wordpress-tests-lib"
+      - WP_CORE_DIR: "/var/www/html"
+    working_directory: /var/www/html/wp-content/plugins/woocommerce-latitudepay-genoapay
+    resource_class: xlarge
+    steps:
+      - build-tests:
+          version: "7.1"
+      - cs-tests
+      - lp-tests
+      - wc-tests
+  php72-build:
+    docker:
+      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.2
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASSWORD
+        environment:
+          - MYSQL_ROOT_HOST=%
+          - PLATFORM=woocommerce
+          - MYSQL_ROOT_PASSWORD=woocommerce
+          - MYSQL_DATABASE=woocommerce
+          - MYSQL_USER=woocommerce
+          - MYSQL_PASSWORD=woocommerce
+          - MYSQL_DB_HOST=127.0.0.1
+          - WP_CORE_DIR=/var/www/html
+          - WP_SITE_URL=http://woocommerce.localhost
+          - PLATFORM_VERSION=5.6
+          - WC_VERSION=5.3.0
+          - WP_TESTS_DIR=/tmp/wordpress-tests-lib
+          - WP_CORE_DIR=/var/www/html
+          - WP_PLUGIN_DIR=/var/www/html/wp-content/plugins
+          - LATITUDE_API_PUBLIC_KEY=$LATITUDE_API_PUBLIC_KEY
+          - LATITUDE_API_PRIVATE_KEY=$LATITUDE_API_PRIVATE_KEY
+          - LATITUDE_USER_EMAIL=$LATITUDE_USER_EMAIL
+          - LATITUDE_USER_PASSWORD=$LATITUDE_USER_PASSWORD
+          - GENOAPAY_API_PUBLIC_KEY=$GENOAPAY_API_PUBLIC_KEY
+          - GENOAPAY_API_PRIVATE_KEY=$GENOAPAY_API_PRIVATE_KEY
+          - GENOAPAY_USER_EMAIL=$GENOAPAY_USER_EMAIL
+          - GENOAPAY_USER_PASSWORD=$GENOAPAY_USER_PASSWORD
+      - image: circleci/mysql:5.7
+        environment:
+          - MYSQL_ROOT_HOST=%
+          - MYSQL_ROOT_PASSWORD=woocommerce
+          - MYSQL_DATABASE=woocommerce
+          - MYSQL_USER=woocommerce
+          - MYSQL_PASSWORD=woocommerce
+    environment:
+      - WP_TESTS_DIR: "/tmp/wordpress-tests-lib"
+      - WP_CORE_DIR: "/var/www/html"
+    working_directory: /var/www/html/wp-content/plugins/woocommerce-latitudepay-genoapay
+    resource_class: xlarge
+    steps:
+      - build-tests:
+          version: "7.2"
+      #- cs-tests
+      - lp-tests
+      - wc-tests
+  php73-build:
+    docker:
+      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.3
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASSWORD
+        environment:
+          - MYSQL_ROOT_HOST=%
+          - PLATFORM=woocommerce
+          - MYSQL_ROOT_PASSWORD=woocommerce
+          - MYSQL_DATABASE=woocommerce
+          - MYSQL_USER=woocommerce
+          - MYSQL_PASSWORD=woocommerce
+          - MYSQL_DB_HOST=127.0.0.1
+          - WP_CORE_DIR=/var/www/html
+          - WP_SITE_URL=http://woocommerce.localhost
+          - PLATFORM_VERSION=5.6
+          - WC_VERSION=5.3.0
+          - WP_TESTS_DIR=/tmp/wordpress-tests-lib
+          - WP_CORE_DIR=/var/www/html
+          - WP_PLUGIN_DIR=/var/www/html/wp-content/plugins
+          - LATITUDE_API_PUBLIC_KEY=$LATITUDE_API_PUBLIC_KEY
+          - LATITUDE_API_PRIVATE_KEY=$LATITUDE_API_PRIVATE_KEY
+          - LATITUDE_USER_EMAIL=$LATITUDE_USER_EMAIL
+          - LATITUDE_USER_PASSWORD=$LATITUDE_USER_PASSWORD
+          - GENOAPAY_API_PUBLIC_KEY=$GENOAPAY_API_PUBLIC_KEY
+          - GENOAPAY_API_PRIVATE_KEY=$GENOAPAY_API_PRIVATE_KEY
+          - GENOAPAY_USER_EMAIL=$GENOAPAY_USER_EMAIL
+          - GENOAPAY_USER_PASSWORD=$GENOAPAY_USER_PASSWORD
+      - image: circleci/mysql:5.7
+        environment:
+          - MYSQL_ROOT_HOST=%
+          - MYSQL_ROOT_PASSWORD=woocommerce
+          - MYSQL_DATABASE=woocommerce
+          - MYSQL_USER=woocommerce
+          - MYSQL_PASSWORD=woocommerce
+    environment:
+      - WP_TESTS_DIR: "/tmp/wordpress-tests-lib"
+      - WP_CORE_DIR: "/var/www/html"
+    working_directory: /var/www/html/wp-content/plugins/woocommerce-latitudepay-genoapay
+    resource_class: xlarge
+    steps:
+      - build-tests:
+          version: "7.3"
+      - cs-tests
+      - lp-tests
+      - wc-tests
+  php74-build:
+    docker:
+      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.4
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASSWORD
+        environment:
+          - MYSQL_ROOT_HOST=%
+          - PLATFORM=woocommerce
+          - MYSQL_ROOT_PASSWORD=woocommerce
+          - MYSQL_DATABASE=woocommerce
+          - MYSQL_USER=woocommerce
+          - MYSQL_PASSWORD=woocommerce
+          - MYSQL_DB_HOST=127.0.0.1
+          - WP_CORE_DIR=/var/www/html
+          - WP_SITE_URL=http://woocommerce.localhost
+          - PLATFORM_VERSION=5.6
+          - WC_VERSION=5.3.0
+          - WP_TESTS_DIR=/tmp/wordpress-tests-lib
+          - WP_CORE_DIR=/var/www/html
+          - WP_PLUGIN_DIR=/var/www/html/wp-content/plugins
+          - LATITUDE_API_PUBLIC_KEY=$LATITUDE_API_PUBLIC_KEY
+          - LATITUDE_API_PRIVATE_KEY=$LATITUDE_API_PRIVATE_KEY
+          - LATITUDE_USER_EMAIL=$LATITUDE_USER_EMAIL
+          - LATITUDE_USER_PASSWORD=$LATITUDE_USER_PASSWORD
+          - GENOAPAY_API_PUBLIC_KEY=$GENOAPAY_API_PUBLIC_KEY
+          - GENOAPAY_API_PRIVATE_KEY=$GENOAPAY_API_PRIVATE_KEY
+          - GENOAPAY_USER_EMAIL=$GENOAPAY_USER_EMAIL
+          - GENOAPAY_USER_PASSWORD=$GENOAPAY_USER_PASSWORD
+      - image: circleci/mysql:5.7
+        environment:
+          - MYSQL_ROOT_HOST=%
+          - MYSQL_ROOT_PASSWORD=woocommerce
+          - MYSQL_DATABASE=woocommerce
+          - MYSQL_USER=woocommerce
+          - MYSQL_PASSWORD=woocommerce
+    environment:
+      - WP_TESTS_DIR: "/tmp/wordpress-tests-lib"
+      - WP_CORE_DIR: "/var/www/html"
+    working_directory: /var/www/html/wp-content/plugins/woocommerce-latitudepay-genoapay
+    resource_class: xlarge
+    steps:
+      - build-tests:
+          version: "7.4"
+      - cs-tests
+      - lp-tests
+      - wc-tests
+  php80-build:
+    docker:
+      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-8.0
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASSWORD
+        environment:
+          - MYSQL_ROOT_HOST=%
+          - PLATFORM=woocommerce
+          - MYSQL_ROOT_PASSWORD=woocommerce
+          - MYSQL_DATABASE=woocommerce
+          - MYSQL_USER=woocommerce
+          - MYSQL_PASSWORD=woocommerce
+          - MYSQL_DB_HOST=127.0.0.1
+          - WP_CORE_DIR=/var/www/html
+          - WP_SITE_URL=http://woocommerce.localhost
+          - PLATFORM_VERSION=5.6
+          - WC_VERSION=5.3.0
+          - WP_TESTS_DIR=/tmp/wordpress-tests-lib
+          - WP_CORE_DIR=/var/www/html
+          - WP_PLUGIN_DIR=/var/www/html/wp-content/plugins
+          - LATITUDE_API_PUBLIC_KEY=$LATITUDE_API_PUBLIC_KEY
+          - LATITUDE_API_PRIVATE_KEY=$LATITUDE_API_PRIVATE_KEY
+          - LATITUDE_USER_EMAIL=$LATITUDE_USER_EMAIL
+          - LATITUDE_USER_PASSWORD=$LATITUDE_USER_PASSWORD
+          - GENOAPAY_API_PUBLIC_KEY=$GENOAPAY_API_PUBLIC_KEY
+          - GENOAPAY_API_PRIVATE_KEY=$GENOAPAY_API_PRIVATE_KEY
+          - GENOAPAY_USER_EMAIL=$GENOAPAY_USER_EMAIL
+          - GENOAPAY_USER_PASSWORD=$GENOAPAY_USER_PASSWORD
+      - image: circleci/mysql:5.7
+        environment:
+          - MYSQL_ROOT_HOST=%
+          - MYSQL_ROOT_PASSWORD=woocommerce
+          - MYSQL_DATABASE=woocommerce
+          - MYSQL_USER=woocommerce
+          - MYSQL_PASSWORD=woocommerce
+    environment:
+      - WP_TESTS_DIR: "/tmp/wordpress-tests-lib"
+      - WP_CORE_DIR: "/var/www/html"
+    working_directory: /var/www/html/wp-content/plugins/woocommerce-latitudepay-genoapay
+    resource_class: xlarge
+    steps:
+      - build-tests:
+          version: "8.0"
+      - cs-tests
+      - lp-tests
+workflows:
+  version: 2
+  main:
+    jobs:
+      # - php56-build
+      - php71-build
+      - php72-build:
+          requires:
+            - php71-build
+      - php73-build:
+          requires:
+            - php72-build
+      - php74-build:
+          requires:
+            - php73-build
+      - php80-build:
+          requires:
+            - php74-build
+      - github-release:
+          requires:
+            - php71-build
+            - php72-build
+            - php73-build
+            - php74-build
+            - php80-build
+          filters:
+            branches:
+              only: master
+      - wordpress-release:
+          requires:
+            - github-release
+      - deploy:
+          requires:
+            - php71-build
+            - php72-build
+            - php73-build
+            - php74-build
+            - php80-build
+          filters:
+            branches:
+              only: staging

@@ -3,4 +3,12 @@ sftp-config.json
 
 # Ignore log file
 log/*
+vendor/
+.docker/
 !log/.gitkeep
+.idea
+.vscode
+default.env
+run-ci-tests.sh
+run-ci-release.sh
+core

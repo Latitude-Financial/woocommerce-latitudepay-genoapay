@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress Coding Standards">
+	<description>Ruleset for the The Plugin Name.</description>
+
+    <file>LatitudeFinance.php</file>
+    <file>./includes/</file>
+	<file>./LatitudeFinance/</file>
+
+    <!-- Additional arguments. -->
+    <arg value="sp"/>
+    <arg name="basepath" value="."/>
+    <arg name="parallel" value="8"/>
+    <arg name="cache"/>
+    <arg name="extensions" value="php"/>
+    <!-- Check for PHP cross-version compatibility. -->
+    <config name="testVersion" value="7.1-"/>
+    
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+    <rule ref="Generic.Commenting.Todo"/>
+    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.Found">
+        <severity>0</severity>
+    </rule>
+    <!-- WordPress coding standards. -->
+    <!-- https://github.com/WordPress/WordPress-Coding-Standards/wiki/Customizable-sniff-properties -->
+    <config name="minimum_supported_wp_version" value="5.5"/>
+    <rule ref="WordPress">
+		<exclude name="NeutronStandard.AssignAlign.DisallowAssignAlign.Aligned"/>
+		<exclude name="PSR2.Methods.MethodDeclaration.Underscore"/>
+		<exclude name="Squiz.Commenting.FunctionComment.Missing"/>
+		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar"/>
+		<exclude name="Squiz.Commenting.FileComment.SpacingAfterComment"/>
+		<exclude name="Generic.Commenting.DocComment.ShortNotCapital"/>
+		<exclude name="Generic.Commenting.DocComment.MissingShort"/>
+		<exclude name="Squiz.Commenting.FileComment.Missing"/>
+		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment"/>
+		<exclude name="Squiz.Commenting.ClassComment.SpacingAfter"/>
+		<exclude name="Squiz.Commenting.FunctionComment.SpacingAfter"/>
+		<exclude name="Squiz.Commenting.FunctionComment.MissingParamTag"/>
+		<exclude name="Squiz.Commenting.FunctionCommentThrowTag.Missing"/>
+		<exclude name="Squiz.Commenting.FunctionComment.WrongStyle"/>
+		<exclude name="Squiz.Commenting.VariableComment.WrongStyle"/>
+		<exclude name="Squiz.Commenting.FunctionComment.InvalidNoReturn"/>
+		<exclude name="Squiz.Scope.MethodScope.Missing"/>
+		<exclude name="Squiz.Commenting.FunctionComment.ExtraParamComment"/>
+		<exclude name="Squiz.Commenting.FunctionComment.MissingParamName"/>
+		<exclude name="Squiz.Commenting.FunctionComment.EmptyThrows"/>
+		<exclude name="Squiz.Commenting.ClassComment.Missing"/>
+		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop"/>
+        <exclude name="Squiz.Commenting.FileComment.MissingPackageTag"/>	
+		<exclude name="Generic.Commenting.DocComment.Empty"/>
+		<exclude name="Squiz.Operators.IncrementDecrementUsage.Found"/>
+		<exclude name="Squiz.Commenting.BlockComment.CloserSameLine"/>
+		<exclude name="PSR2.Classes.PropertyDeclaration.Underscore"/>
+		<exclude name="Squiz.PHP.DisallowMultipleAssignments.Found"/>
+		<exclude name="Squiz.Commenting.VariableComment.Missing"/>
+		<exclude name="Squiz.Commenting.BlockComment.NoEmptyLineBefore"/>
+		<exclude name="Generic.Strings.UnnecessaryStringConcat.Found"/>
+		<exclude name="Generic.Commenting.DocComment.LongNotCapital"/>
+		<exclude name="Generic.PHP.DeprecatedFunctions.Deprecated"/>
+		
+        <!-- Exclude as plugin adheres to the PSR-4 standard. -->
+        <exclude name="WordPress.Files.FileName"/>
+		<exclude name="WordPress.Security.EscapeOutput.OutputNotEscaped"/>
+		<exclude name="WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase"/>
+		<exclude name="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid"/>
+		<exclude name="WordPress.PHP.StrictComparisons.LooseComparison"/>
+		<exclude name="WordPress.PHP.YodaConditions.NotYoda"/>
+		<exclude name="WordPress.PHP.DisallowShortTernary.Found"/>
+		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment"/>
+		<exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase"/>
+		<exclude name="WordPress.WP.I18n.NonSingularStringLiteralText"/>
+		<exclude name="WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase"/>
+		<exclude name="WordPress.PHP.StrictInArray.MissingTrueStrict"/>
+		<exclude name="WordPress.WP.EnqueuedResourceParameters.MissingVersion"/>
+		<exclude name="WordPress.PHP.RestrictedPHPFunctions.create_function_create_function"/>
+		<exclude name="WordPress.DateTime.RestrictedFunctions.date_date"/>
+		<exclude name="WordPress.Security.ValidatedSanitizedInput.MissingUnslash"/>
+		<exclude name="WordPress.Security.ValidatedSanitizedInput.InputNotSanitized"/>
+    </rule>
+    
+</ruleset>
