@@ -109,25 +109,29 @@ commands: # a reusable command with parameters
 jobs:
   deploy:
     docker:
-      - image: circleci/php:latest-node-browsers-legacy
+      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.3
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASSWORD
         environment:
           - SSH_REMOTE_SERVER_USER=$SSH_REMOTE_SERVER_USER
           - SSH_REMOTE_SERVER_IP=$SSH_REMOTE_SERVER_IP
           - SSH_REMOTE_SERVER_HOST=$SSH_REMOTE_SERVER_HOST
           - SSH_REMOTE_SERVER_ROOT=$SSH_REMOTE_SERVER_ROOT
-    working_directory: ~/latitude
+          - SSH_REMOTE_SERVER_PASSWORD=$SSH_REMOTE_SERVER_PASSWORD
+          - SSH_REMOTE_SERVER_GIT_BRANCH=$SSH_REMOTE_SERVER_GIT_BRANCH
+    working_directory: /var/www/html/wp-content/plugins/woocommerce-latitudepay-genoapay
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "SSH Fingerprint from CircleCI Project Settings > SSH Permissions"
+            - "fa:00:f7:82:79:9e:91:74:6f:15:54:a0:c8:ac:11:01"
       - checkout
       - run:
           name: Build the plugin
           command: |
             mkdir -p /tmp/artifacts
-            mkdir -p build/
-            zip -r woocommerce-latitudepay-genoapay.zip build/
-            cp -a build/*.zip /tmp/artifacts
+            zip -r woocommerce-latitudepay-genoapay.zip .
+            cp woocommerce-latitudepay-genoapay.zip /tmp/artifacts
       - run:
           name: Deploy the plugin
           command: |
