@@ -4,7 +4,7 @@ export DEPLOY_BRANCH=$SSH_REMOTE_SERVER_GIT_BRANCH
 INVALID_PARAMETERS="\033[1;31mError:\033[0m Please make sure you've indicated correct parameters."
 
 # Path to plugin directory on the remote server
-PLUGIN_DIR="${SSH_REMOTE_SERVER_ROOT}/wp-content/plugins/${CIRCLE_PROJECT_REPONAME}"
+PLUGIN_DIR="${SSH_REMOTE_SERVER_ROOT}/wp-content/plugins/woocommerce-payment-gateway-latitudefinance"
 
 # Set Remote server SSH credentials (If this is a public Repo, you will want to set these as CircleCI environment variables)
 SSH_CREDS="${SSH_REMOTE_SERVER_USER}@${SSH_REMOTE_SERVER_HOST}"
@@ -22,7 +22,6 @@ if [ $# -eq 0 ]
 elif [ $1 == "--dry-run" ]
 	then
 		echo "Running dry-run deployment."
-		ssh -p22 ${SSH_CREDS} mkdir -p ${PLUGIN_DIR}
 		BUILD_COMMAND="cd ${PLUGIN_DIR} && git checkout ${DEPLOY_BRANCH} && git reset --hard origin/${DEPLOY_BRANCH} && git pull origin ${DEPLOY_BRANCH}"
 		sshpass -e ssh ${SSH_EXTRA} ${SSH_CREDS} -p${SSH_REMOTE_SERVER_PORT} $BUILD_COMMAND
 elif [ $1 == "live" ]
