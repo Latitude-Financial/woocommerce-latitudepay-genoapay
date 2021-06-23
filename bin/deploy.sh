@@ -22,7 +22,6 @@ if [ $# -eq 0 ]
 elif [ $1 == "--dry-run" ]
 	then
 		echo "Running dry-run deployment."
-		ssh -p22 ${SSH_CREDS} mkdir -p ${PLUGIN_DIR}
 		BUILD_COMMAND="cd ${PLUGIN_DIR} && git checkout ${DEPLOY_BRANCH} && git reset --hard origin/${DEPLOY_BRANCH} && git pull origin ${DEPLOY_BRANCH}"
 		sshpass -e ssh ${SSH_EXTRA} ${SSH_CREDS} -p${SSH_REMOTE_SERVER_PORT} $BUILD_COMMAND
 elif [ $1 == "live" ]
