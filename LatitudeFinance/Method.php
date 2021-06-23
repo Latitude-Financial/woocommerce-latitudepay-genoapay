@@ -468,7 +468,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             ),
             'lpay_plus_payment_term' => array(
                 'title' => __('LatitudePay+ Payment Term', 'woocommerce-payment-gateway-latitudefinance'),
-                'type' => 'select',
+                'type' => 'multiselect',
                 'label' => __('Enable LatitudePay+ Payment Term', 'woocommerce-payment-gateway-latitudefinance'),
                 'description' => __('The amount of weeks that the payment will be split to', 'woocommerce-payment-gateway-latitudefinance'),
                 'options' => [
