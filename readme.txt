@@ -1,4 +1,6 @@
+===========================================================
 === LatitudePay & Genoapay Integrations for WooCommerce ===
+===========================================================
 Plugin URI: https://www.latitudefinancial.com.au/
 Description: An online ecommerce payment solution
 Version: 2.0.8
