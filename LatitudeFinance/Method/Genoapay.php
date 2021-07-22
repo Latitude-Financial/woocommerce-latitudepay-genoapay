@@ -36,6 +36,12 @@ class WC_LatitudeFinance_Method_Genoapay extends WC_LatitudeFinance_Method_Abstr
     /**
      * @var string
      */
+    //const IMAGES_API_URL = 'https://images.latitudepayapps.com/';
+    const IMAGES_API_URL = 'http://localhost:3000/v2/';
+
+    /**
+     * @var string
+     */
     protected $return_url = '?wc-api=genoapay_return_action';
 
     /**
@@ -52,6 +58,11 @@ class WC_LatitudeFinance_Method_Genoapay extends WC_LatitudeFinance_Method_Abstr
      * @var string
      */
     protected $return_action_name = 'genoapay_return_action';
+
+    /**
+     * @var float
+     */
+    private $amount = 0.00;
 
     public function __construct()
     {
@@ -83,8 +94,113 @@ class WC_LatitudeFinance_Method_Genoapay extends WC_LatitudeFinance_Method_Abstr
         // Add hook to handle the response from remote API
         add_action('woocommerce_api_' . $this->id . '_return_action', array($this, 'return_action'));
 
+        add_action('wp_footer', [$this, 'genoapay_footer_modal_script']);
+
         // Execture parent hooks
         parent::add_hooks();
     }
 
+    /**
+     * Append modal script into page footer if the current template is in cart or product pages
+     * @return string|void
+     */
+    public function genoapay_footer_modal_script()
+    {
+        if (is_product() || is_cart()
+        ) {
+            include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/modal.php';
+        }
+    }
+
+    /**
+     * Show payment snippet and modal from images API
+     */
+    public function generate_snippet_html()
+    {
+        include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/snippet.php';
+        if (is_checkout()) {
+            include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/modal.php';
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSnippetPath()
+    {
+        return 'snippet.svg';
+    }
+
+    /**
+     * @return string
+     */
+    public function getImagesApiUrl()
+    {
+        return self::IMAGES_API_URL;
+    }
+
+    /**
+     * @param $amount
+     * @return $this
+     */
+    public function setAmount($amount)
+    {
+        $this->amount = $amount;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getAmount()
+    {
+        return $this->amount;
+    }
+
+    /**
+     * @param $flag
+     * @return $this
+     */
+    public function setIsFullBlock($flag)
+    {
+        $this->isFullBlock = $flag;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFullBlock()
+    {
+        return $this->isFullBlock;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSnippetUrl()
+    {
+        $params = [
+            'amount' => $this->getAmount(),
+            'services' => ['GPAY']
+        ];
+        if ($this->isFullBlock()) {
+            $params['full_block'] = '1';
+        }
+        foreach($params as &$param) {
+            if(is_array($param)) {
+                $param = implode(',',$param);
+            }
+        }
+        $url = $this->getImagesApiUrl().$this->getSnippetPath().'?'.build_query($params);
+        return $url;
+    }
 }
