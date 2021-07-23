@@ -141,7 +141,7 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
         );
         $this->form_fields = $this->add_form_fields($this->form_fields, 'lpay_services', array(
                     'lpay_plus_payment_terms' => array(
-                    'title' => __('Enable LatitudePay+ Payment Term', 'woocommerce-payment-gateway-latitudefinance'),
+                    'title' => __('Payment Term', 'woocommerce-payment-gateway-latitudefinance'),
                     'type' => 'multiselect',
                     'show_if_checked' => 'yes',
 					'checkboxgroup'   => 'end',
