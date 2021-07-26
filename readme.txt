@@ -62,3 +62,6 @@ Please send your integration related issues to [Integration Support](mailto:inte
 * Implement Images API snippets and modals
 * Improve logging function
 
+= 2.0.10 =
+* Implement LatitudePay+
+

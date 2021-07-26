@@ -151,6 +151,17 @@ function wc_latitudefinance_include_extra_scripts()
     }
 }
 
+function wc_latitudefinance_include_settings_scripts()
+{
+    /**
+     * is admin page
+     */
+    if (is_admin()) {
+        wp_enqueue_script('woocommerce-payment-gateway-latitudefinance-settings',
+            WC_LATITUDEPAY_ASSETS . 'js/settings.js');
+    }
+}
+
 function wc_latitudefinance_show_payment_banners() {
     $gateways = array();
     $cartTotal = WC()->cart->total;

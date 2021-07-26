@@ -131,6 +131,9 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
                     'class' => 'environment-field sandbox-field',
                     'description' => 'LatitudePay (Enable this option if you want to offer just LatitudePay)<br/>LatitudePay+ (Enable this option if you want to offer just LatitudePay+)<br/>Co-Presentment (Enable this option if you want to offer both LatitudePay & LatitudePay+)',
                     'default' => 'LPAY',
+                    'custom_attributes' => array(
+						'onchange' => 'function(e){alert(\'hiepvotinh\')}',
+					),
                     'options' => array(
                         'LPAY' => esc_html__('LatitudePay', 'woocommerce-payment-gateway-latitudefinance'),
                         'LPAYPLUS' => esc_html__('LatitudePay+', 'woocommerce-payment-gateway-latitudefinance'),
@@ -139,14 +142,16 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
                 )
             )
         );
+
+        
         $this->form_fields = $this->add_form_fields($this->form_fields, 'lpay_services', array(
                     'lpay_plus_payment_terms' => array(
                     'title' => __('Payment Term', 'woocommerce-payment-gateway-latitudefinance'),
                     'type' => 'multiselect',
                     'show_if_checked' => 'yes',
 					'checkboxgroup'   => 'end',
-                    'class' => 'environment-field sandbox-field',
-                    'description' => esc_html__('This amount of weeks that the payment will be split to', 'woocommerce-payment-gateway-latitudefinance'),
+                    'class' => 'wc-enhanced-select',
+                    'description' => esc_html__('Please select the amount of months that the payment will be split into.', 'woocommerce-payment-gateway-latitudefinance'),
                     'default' => '',
                     'options' => array(
                         6 => esc_html__('6 months', 'woocommerce-payment-gateway-latitudefinance'),

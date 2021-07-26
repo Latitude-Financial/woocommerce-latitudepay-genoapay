@@ -900,7 +900,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
          * Unified the this with the product page CSS
          * Include extra CSS and Javascript files
          */
-        // add_action('wp_enqueue_scripts', array($this, 'include_extra_scripts'));
+        //add_action('wp_enqueue_scripts', array($this, 'include_extra_scripts'));
     }
 
     public function process_admin_options()
@@ -1013,7 +1013,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
     private function _isValidOrderAmount($orderTotal)
     {
         if ($this->max_order_total && $this->min_order_total) {
-            return $orderTotal >= $this->min_order_total && $orderTotal <= $this->max_order_total;
+            return $orderTotal >= $this->min_order_total;
         }
         if ($this->max_order_total && !$this->min_order_total) {
             return $orderTotal <= $this->max_order_total;
