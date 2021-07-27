@@ -3,7 +3,7 @@
     $price = $cart->total;
     $containerClass = "wc-latitudefinance-" . $gateway->get_id() . "-container";
     ?>
-    <div style="display: inline-block; padding: 5px;" class="<?php echo $containerClass ?>">
+    <div style="display: inline-block; padding: 5px 0;" class="<?php echo $containerClass ?>">
         <?php
         /**
          * @var WC_LatitudeFinance_Method_Latitudepay $gateway
