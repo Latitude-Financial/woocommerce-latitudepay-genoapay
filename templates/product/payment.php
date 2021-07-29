@@ -25,7 +25,7 @@
 * @license     http://www.apache.org/licenses/LICENSE-2.0
 */
 ?>
-<?php global $product; if ($product && isset($gateway)) : ?>
+<?php global $product; if ($product && isset($gateway) && $product->is_in_stock()) : ?>
     <?php
         $price = $product->get_price();
         $containerClass = "wc-latitudefinance-" . $gateway->get_id() . "-container";
