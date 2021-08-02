@@ -331,6 +331,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
         if (!is_admin() || !$this->get_configuration()) {
             return;
         }
+        global $wp_settings_errors;
         $this->update_option('title', ucfirst(wc_latitudefinance_get_array_data('name', $this->configuration, $this->id)));
         $this->update_option('description', wc_latitudefinance_get_array_data('description', $this->configuration));
         
@@ -340,12 +341,31 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 case 'LPAY':
                     $this->update_option('min_order_total', isset($_POST['woocommerce_latitudepay_min_order_total']) ? (float) $_POST['woocommerce_latitudepay_min_order_total'] : 20);
                     $this->update_option('max_order_total', wc_latitudefinance_get_array_data('maximumAmount', $this->configuration, 1500));
+                    $this->update_option('payment_terms', '');
                     break;
                 case 'LPAYPLUS':
+                    $terms =isset($_POST['woocommerce_latitudepay_lpay_plus_payment_terms']) ? $_POST['woocommerce_latitudepay_lpay_plus_payment_terms'] : '';
+                    if(empty($terms)){
+                        $wp_settings_errors[] = array(
+                            'setting' => 'latitudepay',
+                            'code'    => 'invalid_terms',
+                            'message' => 'Payment Terms Is Required.',
+                            'type'    => 'error',
+                        );
+                    }
                     $this->update_option('min_order_total', isset($_POST['woocommerce_latitudepay_min_order_total']) ? (float) $_POST['woocommerce_latitudepay_min_order_total'] : 1500);
                     $this->update_option('max_order_total', 5000);
                     break;
                 case 'LPAY,LPAYPLUS':
+                    $terms =isset($_POST['woocommerce_latitudepay_lpay_plus_payment_terms']) ? $_POST['woocommerce_latitudepay_lpay_plus_payment_terms'] : '';
+                    if(empty($terms)){
+                        $wp_settings_errors[] = array(
+                            'setting' => 'latitudepay',
+                            'code'    => 'invalid_terms',
+                            'message' => 'Payment Terms Is Required.',
+                            'type'    => 'error',
+                        );
+                    }
                     $this->update_option('min_order_total', isset($_POST['woocommerce_latitudepay_min_order_total']) ? (float) $_POST['woocommerce_latitudepay_min_order_total'] : 20);
                     $this->update_option('max_order_total', 5000);
                     break;

@@ -34,6 +34,7 @@ add_filter('woocommerce_payment_gateways', 'wc_latitudefinance_payment_gateways'
 add_action('woocommerce_proceed_to_checkout', 'wc_latitudefinance_show_payment_options');
 add_action('wp_enqueue_scripts', 'wc_latitudefinance_include_extra_scripts');
 add_action('admin_enqueue_scripts', 'wc_latitudefinance_include_settings_scripts');
+add_action( 'admin_notices', 'wc_latitudefinance_include_admin_notices_action' );
 foreach (array_keys(WC_LatitudeFinance_Method_Abstract::WOOCOMMERCE_PRODUCT_PAGE_POSITIONS) as $hook) {
     add_action($hook, 'wc_latitudefinance_show_snippet_in_product_page');
 }

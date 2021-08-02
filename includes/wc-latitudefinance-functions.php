@@ -236,3 +236,10 @@ function wc_latitudefinance_get_array_data($key, $array, $default = '')
     $value = isset($array[$key]) ? $array[$key] : $default;
     return $value;
 }
+
+/**
+ * @since 1.0.0
+ */
+function wc_latitudefinance_include_admin_notices_action() {
+    settings_errors( 'latitudepay' );
+}
