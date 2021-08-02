@@ -131,6 +131,11 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
     /**
      * @var string
      */
+    protected $lpay_plus_payment_terms;
+
+    /**
+     * @var string
+     */
     protected $order_comment;
 
     /**
@@ -182,6 +187,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
         $this->max_order_total = $this->get_option('max_order_total', wc_latitudefinance_get_array_data('maximumAmount', $this->configuration, 1500));
         $this->currency_code = get_woocommerce_currency();
         $this->credentials = $this->get_credentials();
+        $this->lpay_plus_payment_terms = $this->get_option('lpay_plus_payment_terms');
 
         $this->add_hooks();
     }
@@ -352,6 +358,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                             'message' => 'Payment Terms Is Required.',
                             'type'    => 'error',
                         );
+                        $this->update_option('lpay_plus_payment_terms', $this->lpay_plus_payment_terms);
                     }
                     $this->update_option('min_order_total', isset($_POST['woocommerce_latitudepay_min_order_total']) ? (float) $_POST['woocommerce_latitudepay_min_order_total'] : 1500);
                     $this->update_option('max_order_total', 5000);
@@ -365,6 +372,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                             'message' => 'Payment Terms Is Required.',
                             'type'    => 'error',
                         );
+                        $this->update_option('lpay_plus_payment_terms', $this->lpay_plus_payment_terms);
                     }
                     $this->update_option('min_order_total', isset($_POST['woocommerce_latitudepay_min_order_total']) ? (float) $_POST['woocommerce_latitudepay_min_order_total'] : 20);
                     $this->update_option('max_order_total', 5000);
