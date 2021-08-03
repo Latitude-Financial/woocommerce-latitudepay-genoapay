@@ -148,7 +148,7 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
                     'show_if_checked' => 'yes',
 					'checkboxgroup'   => 'end',
                     'class' => 'wc-enhanced-select',
-                    'description' => esc_html__('Please select the payment terms you would like to offer your customers.', 'woocommerce-payment-gateway-latitudefinance'),
+                    'description' => esc_html__('Please select the following payment terms you would like to offer your customers. The following payment terms will be reflected on your Modal. Please check your merchant contract to confirm the payment terms you have been approved for.', 'woocommerce-payment-gateway-latitudefinance'),
                     'default' => '',
                     'options' => array(
                         6 => esc_html__('6 months', 'woocommerce-payment-gateway-latitudefinance'),
