@@ -98,7 +98,7 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
         $this->order_button_text = __('Proceed with LatitudePay', 'woocommerce-payment-gateway-latitudefinance');
         $this->method_title = __('LatitudePay', 'woocommerce-payment-gateway-latitudefinance');
         $this->tab_title = __('LatitudePay', 'woocommerce-payment-gateway-latitudefinance');
-        $this->icon = WC_LATITUDEPAY_ASSETS . 'latitudepay.svg';
+        $this->icon = WC_LATITUDEPAY_ASSETS . 'latitudepay.svg?v=2';
 
         /**
          * Allow refund and purchase product action
