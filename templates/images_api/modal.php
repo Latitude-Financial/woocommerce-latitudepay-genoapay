@@ -17,7 +17,7 @@
                 t.onreadystatechange = function () {
                     4 == t.readyState && 200 == t.status && null != t.responseText && (document.body.insertAdjacentHTML("beforeend", t.responseText))
                 },
-                    t.open("GET", e.srcElement.currentSrc.replace('snippet.svg','modal.html'), !0),
+                    t.open("GET", e.srcElement.getAttribute('src').replace('snippet.svg','modal.html'), !0),
                     t.send(null)
             } else document.querySelector(".lpay-modal-wrapper").style.display = "block"
         }
