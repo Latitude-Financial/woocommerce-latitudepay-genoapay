@@ -36,8 +36,7 @@ class WC_LatitudeFinance_Method_Genoapay extends WC_LatitudeFinance_Method_Abstr
     /**
      * @var string
      */
-    //const IMAGES_API_URL = 'https://images.latitudepayapps.com/';
-    const IMAGES_API_URL = 'http://localhost:3000/v2/';
+    const IMAGES_API_URL = 'https://images.latitudepayapps.com/v2/';
 
     /**
      * @var string

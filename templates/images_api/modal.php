@@ -15,7 +15,7 @@
             if (0 == document.getElementsByClassName("lpay-modal-wrapper").length) {
                 var t = new XMLHttpRequest;
                 t.onreadystatechange = function () {
-                    4 == t.readyState && 200 == t.status && null != t.responseText && (document.body.insertAdjacentHTML("beforeend", t.responseText))
+                    4 == t.readyState && 200 == t.status && null != t.responseText && (document.body.insertAdjacentHTML("beforeend", t.responseText));
                 },
                     t.open("GET", e.srcElement.getAttribute('src').replace('snippet.svg','modal.html'), !0),
                     t.send(null)

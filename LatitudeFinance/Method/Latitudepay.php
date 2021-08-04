@@ -45,7 +45,7 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
     /**
      * @var string
      */
-    const IMAGES_API_URL = 'https://images.latitudepayapps.com/v2/';
+    const IMAGES_API_URL = 'http://192.168.1.6:3000/v2/';
 
     /**
      * @var string
