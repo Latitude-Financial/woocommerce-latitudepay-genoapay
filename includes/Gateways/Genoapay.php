@@ -235,7 +235,8 @@ class Genoapay extends BinaryPay
             ),
             'returnUrls' => array(
                 'successUrl'    => $args[BinaryPay_Variable::RETURN_URL],
-                'failUrl'       => $args[BinaryPay_Variable::RETURN_URL]
+                'failUrl'       => $args[BinaryPay_Variable::RETURN_URL],
+                'callbackUrl'   => $args[BinaryPay_Variable::RETURN_URL]
             ),
             "reference"         => $args[BinaryPay_Variable::REFERENCE],
             "customer" => [

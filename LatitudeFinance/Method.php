@@ -131,6 +131,11 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
     /**
      * @var string
      */
+    protected $lpay_plus_payment_terms;
+
+    /**
+     * @var string
+     */
     protected $order_comment;
 
     /**
@@ -180,9 +185,9 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
         $this->description = $this->get_option('description', wc_latitudefinance_get_array_data('description', $this->configuration));
         $this->min_order_total = $this->get_option('min_order_total', wc_latitudefinance_get_array_data('minimumAmount', $this->configuration, 20));
         $this->max_order_total = $this->get_option('max_order_total', wc_latitudefinance_get_array_data('maximumAmount', $this->configuration, 1500));
-
         $this->currency_code = get_woocommerce_currency();
         $this->credentials = $this->get_credentials();
+        $this->lpay_plus_payment_terms = $this->get_option('lpay_plus_payment_terms');
 
         $this->add_hooks();
     }
@@ -332,11 +337,54 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
         if (!is_admin() || !$this->get_configuration()) {
             return;
         }
+        global $wp_settings_errors;
         $this->update_option('title', ucfirst(wc_latitudefinance_get_array_data('name', $this->configuration, $this->id)));
         $this->update_option('description', wc_latitudefinance_get_array_data('description', $this->configuration));
-        $this->update_option('min_order_total', wc_latitudefinance_get_array_data('minimumAmount', $this->configuration, 20));
-        $this->update_option('max_order_total', wc_latitudefinance_get_array_data('maximumAmount', $this->configuration, 1500) * 1000);
-
+        
+        if ($this->id === WC_LatitudeFinance_Method_Latitudepay::METHOD_LATITUDEPAY) {
+            $services =isset($_POST['woocommerce_latitudepay_lpay_services']) ? $_POST['woocommerce_latitudepay_lpay_services'] : '';
+            switch($services) {
+                case 'LPAY':
+                    $this->update_option('min_order_total', isset($_POST['woocommerce_latitudepay_min_order_total']) ? (float) $_POST['woocommerce_latitudepay_min_order_total'] : 20);
+                    $this->update_option('max_order_total', wc_latitudefinance_get_array_data('maximumAmount', $this->configuration, 1500));
+                    $this->update_option('payment_terms', '');
+                    break;
+                case 'LPAYPLUS':
+                    $terms =isset($_POST['woocommerce_latitudepay_lpay_plus_payment_terms']) ? $_POST['woocommerce_latitudepay_lpay_plus_payment_terms'] : '';
+                    if(empty($terms)){
+                        $wp_settings_errors[] = array(
+                            'setting' => 'latitudepay',
+                            'code'    => 'invalid_terms',
+                            'message' => 'Payment Terms Is Required.',
+                            'type'    => 'error',
+                        );
+                        $this->update_option('lpay_plus_payment_terms', $this->lpay_plus_payment_terms);
+                    }
+                    $this->update_option('min_order_total', isset($_POST['woocommerce_latitudepay_min_order_total']) ? (float) $_POST['woocommerce_latitudepay_min_order_total'] : 1500);
+                    $this->update_option('max_order_total', 5000);
+                    break;
+                case 'LPAY,LPAYPLUS':
+                    $terms =isset($_POST['woocommerce_latitudepay_lpay_plus_payment_terms']) ? $_POST['woocommerce_latitudepay_lpay_plus_payment_terms'] : '';
+                    if(empty($terms)){
+                        $wp_settings_errors[] = array(
+                            'setting' => 'latitudepay',
+                            'code'    => 'invalid_terms',
+                            'message' => 'Payment Terms Is Required.',
+                            'type'    => 'error',
+                        );
+                        $this->update_option('lpay_plus_payment_terms', $this->lpay_plus_payment_terms);
+                    }
+                    $this->update_option('min_order_total', isset($_POST['woocommerce_latitudepay_min_order_total']) ? (float) $_POST['woocommerce_latitudepay_min_order_total'] : 20);
+                    $this->update_option('max_order_total', 5000);
+                    break;
+                default:
+                    $this->update_option('min_order_total', isset($_POST['woocommerce_latitudepay_min_order_total']) ? (float) $_POST['woocommerce_latitudepay_min_order_total'] : 20);
+                    $this->update_option('max_order_total', 1500);
+            }
+        } else {
+            $this->update_option('min_order_total', 20);
+            $this->update_option('max_order_total', 1500);
+        }
     }
 
     /**
@@ -397,7 +445,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             foreach ($gateways as $index => $gateway) {
                 if ($gateway instanceof $this->gateway_class) {
                     $orderTotal = WC()->cart->total;
-                    if ($orderTotal > $this->max_order_total && $this->max_order_total || $orderTotal < $this->min_order_total && !is_null($this->min_order_total)) {
+                    if (!$this->_isValidOrderAmount($orderTotal)) {
                         unset($gateways[$index]);
                     }
                 }
@@ -880,7 +928,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
          * Unified the this with the product page CSS
          * Include extra CSS and Javascript files
          */
-        // add_action('wp_enqueue_scripts', array($this, 'include_extra_scripts'));
+        //add_action('wp_enqueue_scripts', array($this, 'include_extra_scripts'));
     }
 
     public function process_admin_options()
@@ -993,7 +1041,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
     private function _isValidOrderAmount($orderTotal)
     {
         if ($this->max_order_total && $this->min_order_total) {
-            return $orderTotal >= $this->min_order_total && $orderTotal <= $this->max_order_total;
+            return $orderTotal >= $this->min_order_total;
         }
         if ($this->max_order_total && !$this->min_order_total) {
             return $orderTotal <= $this->max_order_total;
