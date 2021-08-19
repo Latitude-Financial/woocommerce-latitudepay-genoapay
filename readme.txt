@@ -2,7 +2,7 @@
 Tags: latitudepay, genoapay, woocommerce, bnpl, buynowpaylater
 Requires at least: 4.4
 Tested up to: 5.8
-Stable tag: 2.0.9
+Stable tag: 2.0.10
 Requires PHP: 5.6
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
