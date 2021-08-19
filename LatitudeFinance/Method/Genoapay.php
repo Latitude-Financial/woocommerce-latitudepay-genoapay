@@ -194,6 +194,12 @@ class WC_LatitudeFinance_Method_Genoapay extends WC_LatitudeFinance_Method_Abstr
         if ($this->isFullBlock()) {
             $params['full_block'] = '1';
         }
+        if(is_checkout()){
+            $params['style'] = 'checkout';
+        }
+        if(is_cart()){
+            $params['style'] = 'cart';
+        }
         foreach($params as &$param) {
             if(is_array($param)) {
                 $param = implode(',',$param);
