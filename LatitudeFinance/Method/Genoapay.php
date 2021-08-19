@@ -59,6 +59,11 @@ class WC_LatitudeFinance_Method_Genoapay extends WC_LatitudeFinance_Method_Abstr
     protected $return_action_name = 'genoapay_return_action';
 
     /**
+     * @var bool
+     */
+    private $isFullBlock = false;
+
+    /**
      * @var float
      */
     private $amount = 0.00;
