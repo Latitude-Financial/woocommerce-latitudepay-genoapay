@@ -396,9 +396,9 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
             // Add new line before dump data
             $contents = (strlen($contents) > 1) ?  "\n" . $result : $result;
 
-            if ($debug) {
-                $contents .= "\n" . $result;
-            }
+            // if ($debug) {
+            //     $contents .= "\n" . $result;
+            // }
 
             fwrite($file, $contents);
 
