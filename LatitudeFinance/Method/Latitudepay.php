@@ -96,8 +96,6 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
         $this->template = 'latitudepay/info.php';
         $this->default_title = __('LatitudePay', 'woocommerce-payment-gateway-latitudefinance');
         $this->order_button_text = __('Proceed with LatitudePay', 'woocommerce-payment-gateway-latitudefinance');
-        $this->method_title = __('LatitudePay', 'woocommerce-payment-gateway-latitudefinance');
-        $this->tab_title = __('LatitudePay', 'woocommerce-payment-gateway-latitudefinance');
         $this->icon = WC_LATITUDEPAY_ASSETS . 'latitudepay.svg?v=2';
 
         /**
@@ -114,6 +112,7 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
         add_action('wp_footer', [$this, 'latitudepay_footer_modal_script']);
 
         parent::__construct();
+        $this->title = $this->method_title = $this->tab_title = __($this->getMethodTitle(), 'woocommerce-payment-gateway-latitudefinance');
         $this->lpay_services = $this->get_option('lpay_services', wc_latitudefinance_get_array_data('lpay_services', $this->configuration, false));
         $this->lpay_plus_payment_terms = $this->get_option('lpay_plus_payment_terms', wc_latitudefinance_get_array_data('lpay_plus_payment_terms', $this->configuration, []));
     }
@@ -303,5 +302,18 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
         }
         $url = $this->getImagesApiUrl().$this->getSnippetPath().'?'.build_query($params);
         return $url;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getMethodTitle() {
+        $currency = get_woocommerce_currency();
+        switch ($currency) {
+            case 'NZD':
+                return 'Genoapay';
+            default:
+                return 'LatitudePay';
+        }
     }
 }
