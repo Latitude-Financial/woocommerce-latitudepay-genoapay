@@ -104,6 +104,11 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
     );
 
     /**
+     * @var string
+     */
+    public $id;
+
+    /**
      * @var WC_LatitudeFinance_Method_Abstract
      */
     public $gateway;
