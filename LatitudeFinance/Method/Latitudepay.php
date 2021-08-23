@@ -307,7 +307,7 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
     /**
      * @return string
      */
-    private function getMethodTitle() {
+    public static function getMethodTitle() {
         $currency = get_woocommerce_currency();
         switch ($currency) {
             case 'NZD':
