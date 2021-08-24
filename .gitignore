@@ -4,3 +4,8 @@ sftp-config.json
 # Ignore log file
 log/*
 !log/.gitkeep
+core
+default.env
+phpcpd.phar
+supervisord.log
+bin/run-ci.sh

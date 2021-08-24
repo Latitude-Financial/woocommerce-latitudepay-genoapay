@@ -1,0 +1,35 @@
+{
+    "name": "latitudepay/woocommerce-latitudepay-genoapay",
+    "description": "Take credit card payments on your store using Latitudepay Genoapay.",
+    "version": "2.0.9",
+    "homepage": "https://woocommerce.com/products/woocommerce-latitudepay-genoapay/",
+		"license": "GPL-2.0",
+		"config": {
+    },
+    "require-dev": {
+        "composer/installers": "1.9.0",
+        "phpunit/phpunit": "*",
+        "woocommerce/woocommerce-sniffs": "0.1.0",
+        "lucatume/wp-browser": "^3.0",
+        "codeception/module-asserts": "^1.0",
+        "codeception/module-phpbrowser": "^1.0",
+        "codeception/module-webdriver": "^1.0",
+        "codeception/module-db": "^1.0",
+        "codeception/module-filesystem": "^1.0",
+        "codeception/module-cli": "^1.0",
+        "codeception/util-universalframework": "^1.0",
+        "vlucas/phpdotenv":"v5.3.0",
+        "wp-cli/wp-cli-bundle": "^2.4",
+        "donatj/mock-webserver": "^2.2"
+    },
+    "extra": {
+      "installer-disable": true
+    },
+    "autoload":{
+        "psr-4":{
+            "Latitude\\Tests\\Functional\\":"tests/functional",
+            "Latitude\\Tests\\Acceptance\\":"tests/acceptance",
+            "Latitude\\Tests\\Wpunit\\":"tests/wpunit"
+        }
+    }
+}
