@@ -2,7 +2,7 @@
 Tags: latitudepay, genoapay, woocommerce, bnpl, buynowpaylater
 Requires at least: 4.4
 Tested up to: 5.8
-Stable tag: 2.0.11
+Stable tag: 2.0.12
 Requires PHP: 5.6
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -28,6 +28,8 @@ Please visit the official websites below for more information.
 Please send your integration related issues to [Integration Support](mailto:integrationsupport@latitudefinancial.com)
 
 == Changelog ==
+= 2.0.12 =
+* Fix the issue with snippets width
 
 = 2.0.11 =
 * Fix the issue with default payment method title inside admin dashboard
