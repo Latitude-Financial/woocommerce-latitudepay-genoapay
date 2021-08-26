@@ -69,23 +69,23 @@ class WC_LatitudeFinance_Method_Genoapay extends WC_LatitudeFinance_Method_Abstr
 	private $amount = 0.00;
 
 	public function __construct() {
-		$this->id                   = 'genoapay';
-		$this->template             = 'genoapay/info.php';
-		$this->default_title        = __( 'GenoaPay', 'woocommerce-payment-gateway-latitudefinance' );
-		$this->order_button_text    = __( 'Proceed with GenoaPay', 'woocommerce-payment-gateway-latitudefinance' );
-		$this->method_title         = __( 'GenoaPay', 'woocommerce-payment-gateway-latitudefinance' );
-		$this->tab_title            = __( 'GenoaPay', 'woocommerce-payment-gateway-latitudefinance' );
-		$this->icon                 = WC_LATITUDEPAY_ASSETS . 'genoapay.svg';
+		$this->id                = 'genoapay';
+		$this->template          = 'genoapay/info.php';
+		$this->default_title     = __( 'GenoaPay', 'woocommerce-payment-gateway-latitudefinance' );
+		$this->order_button_text = __( 'Proceed with GenoaPay', 'woocommerce-payment-gateway-latitudefinance' );
+		$this->method_title      = __( 'GenoaPay', 'woocommerce-payment-gateway-latitudefinance' );
+		$this->tab_title         = __( 'GenoaPay', 'woocommerce-payment-gateway-latitudefinance' );
+		$this->icon              = WC_LATITUDEPAY_ASSETS . 'genoapay.svg';
 
 		/**
 		  * Allow refund and purchase product action
 		  */
-		$this->supports             = array( 'products', 'refunds' );
+		$this->supports = array( 'products', 'refunds' );
 
 		/**
 		 * The description will show in the backend
 		 */
-		$this->method_description   = __( 'Available to NZ residents who are 18 years old and over and have a valid debit or credit card.', 'woocommerce-payment-gateway-latitudefinance' );
+		$this->method_description = __( 'Available to NZ residents who are 18 years old and over and have a valid debit or credit card.', 'woocommerce-payment-gateway-latitudefinance' );
 		parent::__construct();
 	}
 
@@ -182,7 +182,7 @@ class WC_LatitudeFinance_Method_Genoapay extends WC_LatitudeFinance_Method_Abstr
 	 */
 	public function getSnippetUrl() {
 		$params = array(
-			'amount' => $this->getAmount(),
+			'amount'   => $this->getAmount(),
 			'services' => array( 'GPAY' ),
 		);
 		if ( $this->isFullBlock() ) {

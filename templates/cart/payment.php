@@ -1,6 +1,6 @@
 <?php if ( isset( $gateway ) && isset( $cart ) ) : ?>
 	<?php
-	$price = $cart->total;
+	$price          = $cart->total;
 	$containerClass = 'wc-latitudefinance-' . $gateway->get_id() . '-container';
 	?>
 	<div style="display: inline-block; padding: 5px 0;" class="<?php echo $containerClass; ?>">

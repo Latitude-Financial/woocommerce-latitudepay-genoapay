@@ -30,7 +30,7 @@ $price = WC()->cart->total;
 $paymentInfo = 'Available now.';
 
 if ( $price >= 20 && $price <= 1500 ) {
-	$weekly = number_format( round( $price / 10, 2 ), 2 );
+	$weekly      = number_format( round( $price / 10, 2 ), 2 );
 	$paymentInfo = "10 weekly payments of <strong>$${weekly}</strong>";
 }
 
@@ -40,5 +40,5 @@ if ( $price >= 20 && $price <= 1500 ) {
 		<p><?php echo $paymentInfo; ?></p>
 	</strong>
 
-	<?php include( 'modal.php' ); ?>
+	<?php require 'modal.php'; ?>
 </div>

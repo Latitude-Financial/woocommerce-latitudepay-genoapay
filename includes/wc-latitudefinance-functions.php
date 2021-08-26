@@ -169,7 +169,7 @@ function wc_latitudefinance_include_settings_scripts() {
 }
 
 function wc_latitudefinance_show_payment_banners() {
-	$gateways = array();
+	$gateways  = array();
 	$cartTotal = WC()->cart->total;
 
 	// Check cart total is not empty.
@@ -192,7 +192,7 @@ function wc_latitudefinance_show_payment_banners() {
 					'cart/payment.php',
 					array(
 						'gateway' => $gateway,
-						'cart' => WC()->cart,
+						'cart'    => WC()->cart,
 					)
 				);
 			}
@@ -206,7 +206,7 @@ function wc_latitudefinance_show_payment_banners() {
  * @package LatitudeFinance/Functions
  */
 function wc_latitudefinance_show_payment_options() {
-	$gateways = array();
+	$gateways  = array();
 	$cartTotal = WC()->cart->total;
 
 	// Check cart total is not empty.
@@ -231,7 +231,7 @@ function wc_latitudefinance_show_payment_options() {
 					'cart/payment.php',
 					array(
 						'gateway' => $gateway,
-						'cart' => WC()->cart,
+						'cart'    => WC()->cart,
 					)
 				);
 			}

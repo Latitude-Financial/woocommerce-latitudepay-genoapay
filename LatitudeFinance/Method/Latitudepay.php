@@ -92,11 +92,11 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
 	 * WC_LatitudeFinance_Method_Latitudepay constructor.
 	 */
 	public function __construct() {
-		$this->id = self::METHOD_LATITUDEPAY;
-		$this->template = 'latitudepay/info.php';
-		$this->default_title = __( 'LatitudePay', 'woocommerce-payment-gateway-latitudefinance' );
+		$this->id                = self::METHOD_LATITUDEPAY;
+		$this->template          = 'latitudepay/info.php';
+		$this->default_title     = __( 'LatitudePay', 'woocommerce-payment-gateway-latitudefinance' );
 		$this->order_button_text = __( 'Proceed with LatitudePay', 'woocommerce-payment-gateway-latitudefinance' );
-		$this->icon = WC_LATITUDEPAY_ASSETS . 'latitudepay.svg?v=2';
+		$this->icon              = WC_LATITUDEPAY_ASSETS . 'latitudepay.svg?v=2';
 
 		/**
 		 * Allow refund and purchase product action
@@ -114,8 +114,8 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
 		add_action( 'wp_footer', array( $this, 'latitudepay_footer_modal_script' ) );
 
 		parent::__construct();
-		$this->title = $this->method_title = $this->tab_title = __( $this->getMethodTitle(), 'woocommerce-payment-gateway-latitudefinance' );
-		$this->lpay_services = $this->get_option( 'lpay_services', wc_latitudefinance_get_array_data( 'lpay_services', $this->configuration, false ) );
+		$this->title                   = $this->method_title = $this->tab_title = __( $this->getMethodTitle(), 'woocommerce-payment-gateway-latitudefinance' );
+		$this->lpay_services           = $this->get_option( 'lpay_services', wc_latitudefinance_get_array_data( 'lpay_services', $this->configuration, false ) );
 		$this->lpay_plus_payment_terms = $this->get_option( 'lpay_plus_payment_terms', wc_latitudefinance_get_array_data( 'lpay_plus_payment_terms', $this->configuration, array() ) );
 	}
 
@@ -129,14 +129,14 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
 			'sandbox_private_key',
 			array(
 				'lpay_services' => array(
-					'title' => __( 'Which Payment Options do you want to offer?', 'woocommerce-payment-gateway-latitudefinance' ),
-					'type' => 'select',
-					'class' => 'environment-field sandbox-field',
+					'title'       => __( 'Which Payment Options do you want to offer?', 'woocommerce-payment-gateway-latitudefinance' ),
+					'type'        => 'select',
+					'class'       => 'environment-field sandbox-field',
 					'description' => 'LatitudePay (Enable this option if you want to offer just LatitudePay)<br/>LatitudePay+ (Enable this option if you want to offer just LatitudePay+)<br/>Co-Presentment (Enable this option if you want to offer both LatitudePay & LatitudePay+)',
-					'default' => 'LPAY',
-					'options' => array(
-						'LPAY' => esc_html__( 'LatitudePay', 'woocommerce-payment-gateway-latitudefinance' ),
-						'LPAYPLUS' => esc_html__( 'LatitudePay+', 'woocommerce-payment-gateway-latitudefinance' ),
+					'default'     => 'LPAY',
+					'options'     => array(
+						'LPAY'          => esc_html__( 'LatitudePay', 'woocommerce-payment-gateway-latitudefinance' ),
+						'LPAYPLUS'      => esc_html__( 'LatitudePay+', 'woocommerce-payment-gateway-latitudefinance' ),
 						'LPAY,LPAYPLUS' => esc_html__( 'Co-Presentment', 'woocommerce-payment-gateway-latitudefinance' ),
 					),
 				),
@@ -148,15 +148,15 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
 			'lpay_services',
 			array(
 				'lpay_plus_payment_terms' => array(
-					'title' => __( 'Payment Term', 'woocommerce-payment-gateway-latitudefinance' ),
-					'type' => 'multiselect',
+					'title'           => __( 'Payment Term', 'woocommerce-payment-gateway-latitudefinance' ),
+					'type'            => 'multiselect',
 					'show_if_checked' => 'yes',
 					'checkboxgroup'   => 'end',
-					'class' => 'wc-enhanced-select',
-					'description' => __( 'Please select the following payment terms you would like to offer your customers.<br/>The following payment terms will be reflected on your Modal.<br/>Please check your merchant contract to confirm the payment terms you have been approved for.', 'woocommerce-payment-gateway-latitudefinance' ),
-					'default' => '',
-					'options' => array(
-						6 => esc_html__( '6 months', 'woocommerce-payment-gateway-latitudefinance' ),
+					'class'           => 'wc-enhanced-select',
+					'description'     => __( 'Please select the following payment terms you would like to offer your customers.<br/>The following payment terms will be reflected on your Modal.<br/>Please check your merchant contract to confirm the payment terms you have been approved for.', 'woocommerce-payment-gateway-latitudefinance' ),
+					'default'         => '',
+					'options'         => array(
+						6  => esc_html__( '6 months', 'woocommerce-payment-gateway-latitudefinance' ),
 						12 => esc_html__( '12 months', 'woocommerce-payment-gateway-latitudefinance' ),
 						18 => esc_html__( '18 months', 'woocommerce-payment-gateway-latitudefinance' ),
 						24 => esc_html__( '24 months', 'woocommerce-payment-gateway-latitudefinance' ),
@@ -271,7 +271,7 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
 	 */
 	public function getSnippetUrl() {
 		$params = array(
-			'amount' => $this->getAmount(),
+			'amount'   => $this->getAmount(),
 			'services' => array( 'LPAY' ),
 		);
 		if ( $this->isFullBlock() ) {

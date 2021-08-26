@@ -86,24 +86,24 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 	 * List of available hooks inside product page
 	 */
 	const WOOCOMMERCE_PRODUCT_PAGE_POSITIONS = array(
-		'woocommerce_before_single_product' => 'woocommerce_before_single_product',
+		'woocommerce_before_single_product'         => 'woocommerce_before_single_product',
 		'woocommerce_before_single_product_summary' => 'woocommerce_before_single_product_summary',
-		'woocommerce_single_product_summary' => 'woocommerce_single_product_summary',
-		'woocommerce_before_add_to_cart_form' => 'woocommerce_before_add_to_cart_form',
-		'woocommerce_before_variations_form' => 'woocommerce_before_variations_form',
-		'woocommerce_product_thumbnails' => 'woocommerce_product_thumbnails (may not work)',
-		'woocommerce_before_add_to_cart_button' => 'woocommerce_before_add_to_cart_button',
-		'woocommerce_before_single_variation' => 'woocommerce_before_single_variation',
-		'woocommerce_single_variation' => 'woocommerce_single_variation',
-		'woocommerce_after_single_variation' => 'woocommerce_after_single_variation',
-		'woocommerce_after_add_to_cart_button' => 'woocommerce_after_add_to_cart_button',
-		'woocommerce_after_variations_form' => 'woocommerce_after_variations_form',
-		'woocommerce_after_add_to_cart_form' => 'woocommerce_after_add_to_cart_form',
-		'woocommerce_product_meta_start' => 'woocommerce_product_meta_start',
-		'woocommerce_product_meta_end' => 'woocommerce_product_meta_end',
-		'woocommerce_share' => 'woocommerce_share',
-		'woocommerce_after_single_product_summary' => 'woocommerce_after_single_product_summary',
-		'woocommerce_after_single_product' => 'woocommerce_after_single_product',
+		'woocommerce_single_product_summary'        => 'woocommerce_single_product_summary',
+		'woocommerce_before_add_to_cart_form'       => 'woocommerce_before_add_to_cart_form',
+		'woocommerce_before_variations_form'        => 'woocommerce_before_variations_form',
+		'woocommerce_product_thumbnails'            => 'woocommerce_product_thumbnails (may not work)',
+		'woocommerce_before_add_to_cart_button'     => 'woocommerce_before_add_to_cart_button',
+		'woocommerce_before_single_variation'       => 'woocommerce_before_single_variation',
+		'woocommerce_single_variation'              => 'woocommerce_single_variation',
+		'woocommerce_after_single_variation'        => 'woocommerce_after_single_variation',
+		'woocommerce_after_add_to_cart_button'      => 'woocommerce_after_add_to_cart_button',
+		'woocommerce_after_variations_form'         => 'woocommerce_after_variations_form',
+		'woocommerce_after_add_to_cart_form'        => 'woocommerce_after_add_to_cart_form',
+		'woocommerce_product_meta_start'            => 'woocommerce_product_meta_start',
+		'woocommerce_product_meta_end'              => 'woocommerce_product_meta_end',
+		'woocommerce_share'                         => 'woocommerce_share',
+		'woocommerce_after_single_product_summary'  => 'woocommerce_after_single_product_summary',
+		'woocommerce_after_single_product'          => 'woocommerce_after_single_product',
 	);
 
 	/**
@@ -170,13 +170,13 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 	// protected $debug = true;
 
 	public function __construct() {
-		$this->has_fields = true;
-		$this->nonce_key = $this->id . '_nonce_key';
-		$this->token_key = $this->id . '_token_key';
-		$this->device_data_key = $this->id . '_device_data';
-		$this->save_method_key = $this->id . '_save_method';
+		$this->has_fields       = true;
+		$this->nonce_key        = $this->id . '_nonce_key';
+		$this->token_key        = $this->id . '_token_key';
+		$this->device_data_key  = $this->id . '_device_data';
+		$this->save_method_key  = $this->id . '_save_method';
 		$this->payment_type_key = $this->id . '_payment_type';
-		$this->config_key = $this->id . '_config_data';
+		$this->config_key       = $this->id . '_config_data';
 
 		$this->init_form_fields();
 		$this->init_settings();
@@ -187,12 +187,12 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 		// @TODO need to run this when admin update the config hook.
 		// $this->update_configuration_options();
 
-		$this->title = $this->get_option( 'title', ucfirst( wc_latitudefinance_get_array_data( 'name', $this->configuration, $this->id ) ) );
-		$this->description = $this->get_option( 'description', wc_latitudefinance_get_array_data( 'description', $this->configuration ) );
-		$this->min_order_total = $this->get_option( 'min_order_total', wc_latitudefinance_get_array_data( 'minimumAmount', $this->configuration, 20 ) );
-		$this->max_order_total = $this->get_option( 'max_order_total', wc_latitudefinance_get_array_data( 'maximumAmount', $this->configuration, 1500 ) );
-		$this->currency_code = get_woocommerce_currency();
-		$this->credentials = $this->get_credentials();
+		$this->title                   = $this->get_option( 'title', ucfirst( wc_latitudefinance_get_array_data( 'name', $this->configuration, $this->id ) ) );
+		$this->description             = $this->get_option( 'description', wc_latitudefinance_get_array_data( 'description', $this->configuration ) );
+		$this->min_order_total         = $this->get_option( 'min_order_total', wc_latitudefinance_get_array_data( 'minimumAmount', $this->configuration, 20 ) );
+		$this->max_order_total         = $this->get_option( 'max_order_total', wc_latitudefinance_get_array_data( 'maximumAmount', $this->configuration, 1500 ) );
+		$this->currency_code           = get_woocommerce_currency();
+		$this->credentials             = $this->get_credentials();
 		$this->lpay_plus_payment_terms = $this->get_option( 'lpay_plus_payment_terms' );
 
 		$this->add_hooks();
@@ -225,7 +225,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 			throw new InvalidArgumentException( __( 'Request object cannot be empty!', 'woocommerce-payment-gateway-latitudefinance' ) );
 		}
 		$session = $this->get_checkout_session();
-		$token = $session->get( 'purchase_token' );
+		$token   = $session->get( 'purchase_token' );
 		// Unset session after use
 		$session->set( 'purchase_token', null );
 
@@ -250,10 +250,10 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 	 */
 	protected function process_response() {
 		// $request is response lol.
-		$order = $this->get_order();
+		$order   = $this->get_order();
 		$request = $this->request;
 		$message = wc_latitudefinance_get_array_data( 'message', $request );
-		$result = wc_latitudefinance_get_array_data( 'result', $request );
+		$result  = wc_latitudefinance_get_array_data( 'result', $request );
 
 		switch ( $result ) {
 			case BinaryPay_Variable::STATUS_COMPLETED:
@@ -278,7 +278,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 
 				break;
 			case BinaryPay_Variable::STATUS_UNKNOWN:
-				$this->order_status = self::FAILED_ORDER_STATUS;
+				$this->order_status  = self::FAILED_ORDER_STATUS;
 				$this->order_comment = __( $message, 'woocommerce-payment-gateway-latitudefinance' );
 				break;
 
@@ -290,7 +290,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 				/**
 				 * @todo Need more tests for this code
 				 */
-				$this->order_status = self::FAILED_ORDER_STATUS;
+				$this->order_status  = self::FAILED_ORDER_STATUS;
 				$this->order_comment = __( $message, 'woocommerce-payment-gateway-latitudefinance' );
 				break;
 		}
@@ -403,7 +403,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 		$this->get_checkout_session()->set( 'order_id', $order_id );
 		// Return thankyou redirect
 		return array(
-			'result' => 'success',
+			'result'   => 'success',
 			'redirect' => $this->get_purchase_url(),
 		);
 	}
@@ -466,9 +466,9 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 	 * @since 1.0.0
 	 */
 	protected function add_form_fields( $form_fields, $key, $value ) {
-		$keys = array_keys( $form_fields );
+		$keys  = array_keys( $form_fields );
 		$index = array_search( $key, $keys );
-		$pos = false === $index ? count( $form_fields ) : $index + 1;
+		$pos   = false === $index ? count( $form_fields ) : $index + 1;
 		return array_merge( array_slice( $form_fields, 0, $pos ), $value, array_slice( $form_fields, $pos ) );
 	}
 
@@ -498,50 +498,50 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 		 * Display the following options as the backend settings
 		 */
 		$this->form_fields = array(
-			'enabled' => array(
-				'title' => __( 'Enable/Disable Plugin', 'woocommerce-payment-gateway-latitudefinance' ),
-				'type' => 'checkbox',
-				'label' => __( 'Enable', 'woocommerce-payment-gateway-latitudefinance' ),
+			'enabled'         => array(
+				'title'   => __( 'Enable/Disable Plugin', 'woocommerce-payment-gateway-latitudefinance' ),
+				'type'    => 'checkbox',
+				'label'   => __( 'Enable', 'woocommerce-payment-gateway-latitudefinance' ),
 				'default' => 'no',
 			),
-			'title' => array(
-				'title' => __( 'Title', 'woocommerce-payment-gateway-latitudefinance' ),
-				'type' => 'text',
+			'title'           => array(
+				'title'       => __( 'Title', 'woocommerce-payment-gateway-latitudefinance' ),
+				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-payment-gateway-latitudefinance' ),
-				'default' => __( WC_LatitudeFinance_Method_Latitudepay::getMethodTitle(), 'woocommerce-payment-gateway-latitudefinance' ),
-				'desc_tip' => true,
+				'default'     => __( WC_LatitudeFinance_Method_Latitudepay::getMethodTitle(), 'woocommerce-payment-gateway-latitudefinance' ),
+				'desc_tip'    => true,
 			),
-			'description' => array(
-				'title' => __( 'Customer Message', 'woocommerce-payment-gateway-latitudefinance' ),
-				'type' => 'textarea',
-				'default' => __( $this->description, 'woocommerce-payment-gateway-latitudefinance' ),
-				'value' => __( $this->description, 'woocommerce-payment-gateway-latitudefinance' ),
+			'description'     => array(
+				'title'    => __( 'Customer Message', 'woocommerce-payment-gateway-latitudefinance' ),
+				'type'     => 'textarea',
+				'default'  => __( $this->description, 'woocommerce-payment-gateway-latitudefinance' ),
+				'value'    => __( $this->description, 'woocommerce-payment-gateway-latitudefinance' ),
 				'readonly' => true,
 				'disabled' => true,
 				'desc_tip' => 'This option can be set from your account portal. When the Save Changes button is clicked, this option will update automatically.',
 			),
 			'min_order_total' => array(
-				'title' => __( 'Minimum Order Total', 'woocommerce-payment-gateway-latitudefinance' ),
-				'type' => 'text',
-				'value' => $this->min_order_total,
-				'default' => $this->min_order_total,
+				'title'    => __( 'Minimum Order Total', 'woocommerce-payment-gateway-latitudefinance' ),
+				'type'     => 'text',
+				'value'    => $this->min_order_total,
+				'default'  => $this->min_order_total,
 				'readonly' => true,
 				'disabled' => true,
 				'desc_tip' => 'This option can be set from your account portal. When the Save Changes button is clicked, this option will update automatically.',
 			),
 			'max_order_total' => array(
-				'title' => __( 'Max Order Total', 'woocommerce-payment-gateway-latitudefinance' ),
-				'type' => 'text',
-				'value' => $this->max_order_total,
-				'default' => $this->max_order_total,
+				'title'    => __( 'Max Order Total', 'woocommerce-payment-gateway-latitudefinance' ),
+				'type'     => 'text',
+				'value'    => $this->max_order_total,
+				'default'  => $this->max_order_total,
 				'disabled' => true,
-				'css' => 'display:none',
+				'css'      => 'display:none',
 			),
-			'debug_mode' => array(
-				'title' => esc_html__( 'Debug Mode', 'woocommerce-payment-gateway-latitudefinance' ),
-				'type' => 'select',
+			'debug_mode'      => array(
+				'title'   => esc_html__( 'Debug Mode', 'woocommerce-payment-gateway-latitudefinance' ),
+				'type'    => 'select',
 				/* translators: Placeholders: %1$s - <a> tag, %2$s - </a> tag */
-				'desc' => sprintf(
+				'desc'    => sprintf(
 					esc_html__(
 						'Show Detailed Error Messages and API requests/responses on the checkout page and/or save them to the %1$sdebug log%2$s',
 						'woocommerce-payment-gateway-latitudefinance'
@@ -559,7 +559,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 
 		// add unique method fields added by concrete gateway class
 		$gateway_form_fields = $this->get_gateway_form_fields();
-		$this->form_fields = array_merge( $this->form_fields, $gateway_form_fields );
+		$this->form_fields   = array_merge( $this->form_fields, $gateway_form_fields );
 
 		if ( count( $this->get_environments() ) > 1 ) {
 			$this->form_fields = $this->add_form_fields(
@@ -568,14 +568,14 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 				array(
 					'environment' => array(
 						/* translators: environment as in a software environment (test/production) */
-						'title' => esc_html__( 'Environment', 'woocommerce-payment-gateway-latitudefinance' ),
-						'type' => 'select',
-						'default' => self::ENVIRONMENT_PRODUCTION,  // default to first defined environment
+						'title'    => esc_html__( 'Environment', 'woocommerce-payment-gateway-latitudefinance' ),
+						'type'     => 'select',
+						'default'  => self::ENVIRONMENT_PRODUCTION,  // default to first defined environment
 						'desc_tip' => esc_html__(
 							'Select the gateway environment to use for transactions.',
 							'woocommerce-payment-gateway-latitudefinance'
 						),
-						'options' => $this->get_environments(),
+						'options'  => $this->get_environments(),
 					),
 				)
 			);
@@ -613,7 +613,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 	public function get_gateway() {
 		try {
 			$className = ( isset( explode( '_', $this->id )[1] ) ) ? ucfirst( explode( '_', $this->id )[1] ) : ucfirst( $this->id );
-			$gateway = BinaryPay::getGateway( $className, $this->get_credentials(), $this->get_option( 'debug_mode' ) === self::DEBUG_MODE_LOG );
+			$gateway   = BinaryPay::getGateway( $className, $this->get_credentials(), $this->get_option( 'debug_mode' ) === self::DEBUG_MODE_LOG );
 
 		} catch ( BinaryPay_Exception $e ) {
 			$this->add_admin_error_message( $className . ': ' . $e->getMessage() );
@@ -654,11 +654,11 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 		switch ( $this->environment ) {
 			case self::ENVIRONMENT_SANDBOX:
 			case self::ENVIRONMENT_DEVELOPMENT:
-				$public_key = $this->get_option( 'sandbox_public_key' );
+				$public_key  = $this->get_option( 'sandbox_public_key' );
 				$private_key = $this->get_option( 'sandbox_private_key' );
 				break;
 			case self::ENVIRONMENT_PRODUCTION:
-				$public_key = $this->get_option( 'public_key' );
+				$public_key  = $this->get_option( 'public_key' );
 				$private_key = $this->get_option( 'private_key' );
 				break;
 			default:
@@ -666,10 +666,10 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 		}
 
 		return array(
-			'username' => $public_key,
-			'password' => $private_key,
+			'username'    => $public_key,
+			'password'    => $private_key,
 			'environment' => $this->environment,
-			'accountId' => $this->get_option( 'account_id' ),
+			'accountId'   => $this->get_option( 'account_id' ),
 		);
 	}
 
@@ -682,74 +682,74 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 	protected function get_gateway_form_fields() {
 		return array(
 			// merchant account ID per currency feature
-			'merchant_account_id_title' => array(
-				'title' => __( 'Merchant Account Info', 'woocommerce-payment-gateway-latitudefinance' ),
-				'type' => 'title',
+			'merchant_account_id_title'          => array(
+				'title'       => __( 'Merchant Account Info', 'woocommerce-payment-gateway-latitudefinance' ),
+				'type'        => 'title',
 				'description' => sprintf(
 					esc_html__( 'Please enter merchant account to use the payment gateway.', 'woocommerce-payment-gateway-latitudefinance' )
 				),
 			),
 			// production
-			'public_key' => array(
-				'title' => __( 'API Key', 'woocommerce-payment-gateway-latitudefinance' ),
-				'type' => 'text',
-				'class' => 'environment-field production-field',
+			'public_key'                         => array(
+				'title'    => __( 'API Key', 'woocommerce-payment-gateway-latitudefinance' ),
+				'type'     => 'text',
+				'class'    => 'environment-field production-field',
 				'desc_tip' => __( 'The Public Key for your GenoaPay account.', 'woocommerce-payment-gateway-latitudefinance' ),
 			),
-			'private_key' => array(
-				'title' => __( 'API Secret', 'woocommerce-payment-gateway-latitudefinance' ),
-				'type' => 'text',
-				'class' => 'environment-field production-field',
+			'private_key'                        => array(
+				'title'    => __( 'API Secret', 'woocommerce-payment-gateway-latitudefinance' ),
+				'type'     => 'text',
+				'class'    => 'environment-field production-field',
 				'desc_tip' => __( 'The Private Key for your GenoaPay account.', 'woocommerce-payment-gateway-latitudefinance' ),
 			),
 			// sandbox
-			'sandbox_public_key' => array(
-				'title' => __( 'Sandbox API Key', 'woocommerce-payment-gateway-latitudefinance' ),
-				'type' => 'text',
-				'class' => 'environment-field sandbox-field',
+			'sandbox_public_key'                 => array(
+				'title'    => __( 'Sandbox API Key', 'woocommerce-payment-gateway-latitudefinance' ),
+				'type'     => 'text',
+				'class'    => 'environment-field sandbox-field',
 				'desc_tip' => __( 'The Public Key for your GenoaPay sandbox account.', 'woocommerce-payment-gateway-latitudefinance' ),
 			),
-			'sandbox_private_key' => array(
-				'title' => __( 'Sandbox API Secret', 'woocommerce-payment-gateway-latitudefinance' ),
-				'type' => 'text',
-				'class' => 'environment-field sandbox-field',
+			'sandbox_private_key'                => array(
+				'title'    => __( 'Sandbox API Secret', 'woocommerce-payment-gateway-latitudefinance' ),
+				'type'     => 'text',
+				'class'    => 'environment-field sandbox-field',
 				'desc_tip' => __( 'The Private Key for your GenoaPay sandbox account.', 'woocommerce-payment-gateway-latitudefinance' ),
 			),
-			'individual_snippet_enabled' => array(
-				'title' => __( 'Payment Info on Individual Product Pages', 'woocommerce-payment-gateway-latitudefinance' ),
-				'type' => 'checkbox',
-				'class' => 'environment-field sandbox-field',
+			'individual_snippet_enabled'         => array(
+				'title'       => __( 'Payment Info on Individual Product Pages', 'woocommerce-payment-gateway-latitudefinance' ),
+				'type'        => 'checkbox',
+				'class'       => 'environment-field sandbox-field',
 				'description' => esc_html__( sprintf( 'Enable to display %s elements on individual product pages.', $this->get_option( 'title', 'Genoapay' ) ), 'woocommerce-payment-gateway-latitudefinance' ),
-				'default' => 'yes',
+				'default'     => 'yes',
 			),
-			'snippet_product_page_position' => array(
-				'title' => __( 'Product Price breakdown Position', 'woocommerce-payment-gateway-latitudefinance' ),
-				'type' => 'select',
-				'class' => 'environment-field sandbox-field',
+			'snippet_product_page_position'      => array(
+				'title'       => __( 'Product Price breakdown Position', 'woocommerce-payment-gateway-latitudefinance' ),
+				'type'        => 'select',
+				'class'       => 'environment-field sandbox-field',
 				'description' => __( 'Select where on the Product page you would like the breakdown to display, see <a href="https://www.businessbloomer.com/woocommerce-visual-hook-guide-single-product-page/">here</a> for a visual guide.', 'woocommerce-payment-gateway-latitudefinance' ),
-				'options' => self::WOOCOMMERCE_PRODUCT_PAGE_POSITIONS,
-				'default' => 'woocommerce_single_product_summary',
+				'options'     => self::WOOCOMMERCE_PRODUCT_PAGE_POSITIONS,
+				'default'     => 'woocommerce_single_product_summary',
 			),
 			'snippet_product_page_hook_priority' => array(
-				'title' => __( 'Product Price Breakdown Hook Priority', 'woocommerce-payment-gateway-latitudefinance' ),
-				'type' => 'number',
-				'class' => 'environment-field sandbox-field',
+				'title'       => __( 'Product Price Breakdown Hook Priority', 'woocommerce-payment-gateway-latitudefinance' ),
+				'type'        => 'number',
+				'class'       => 'environment-field sandbox-field',
 				'description' => esc_html__( 'Choose hook priority for the product price breakdown hook, default is 11.', 'woocommerce-payment-gateway-latitudefinance' ),
-				'default' => 11,
+				'default'     => 11,
 			),
-			'cart_page_snippet_enabled' => array(
-				'title' => __( 'Payment Info on Cart Page', 'woocommerce-payment-gateway-latitudefinance' ),
-				'type' => 'checkbox',
-				'class' => 'environment-field sandbox-field',
+			'cart_page_snippet_enabled'          => array(
+				'title'       => __( 'Payment Info on Cart Page', 'woocommerce-payment-gateway-latitudefinance' ),
+				'type'        => 'checkbox',
+				'class'       => 'environment-field sandbox-field',
 				'description' => esc_html__( sprintf( 'Enable to display %s elements on cart page.', $this->get_option( 'title', 'Genoapay' ) ), 'woocommerce-payment-gateway-latitudefinance' ),
-				'default' => 'yes',
+				'default'     => 'yes',
 			),
-			'checkout_page_snippet_enabled' => array(
-				'title' => __( 'Payment Info on Checkout Page', 'woocommerce-payment-gateway-latitudefinance' ),
-				'type' => 'checkbox',
-				'class' => 'environment-field sandbox-field',
+			'checkout_page_snippet_enabled'      => array(
+				'title'       => __( 'Payment Info on Checkout Page', 'woocommerce-payment-gateway-latitudefinance' ),
+				'type'        => 'checkbox',
+				'class'       => 'environment-field sandbox-field',
 				'description' => esc_html__( sprintf( 'Enable to display %s elements on checkout page.', $this->get_option( 'title', 'Genoapay' ) ), 'woocommerce-payment-gateway-latitudefinance' ),
-				'default' => 'yes',
+				'default'     => 'yes',
 			),
 		);
 	}
@@ -767,7 +767,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 
 	public function get_environments() {
 		return array(
-			self::ENVIRONMENT_SANDBOX => __( 'Sandbox', 'woocommerce-payment-gateway-latitudefinance' ),
+			self::ENVIRONMENT_SANDBOX    => __( 'Sandbox', 'woocommerce-payment-gateway-latitudefinance' ),
 			self::ENVIRONMENT_PRODUCTION => __( 'Production', 'woocommerce-payment-gateway-latitudefinance' ),
 		);
 	}
@@ -783,7 +783,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 	 * @throws Exception
 	 */
 	protected function get_reference_number() {
-		$session = $this->get_checkout_session();
+		$session  = $this->get_checkout_session();
 		$order_id = $session->get( 'order_id' );
 
 		if ( empty( $order_id ) ) {
@@ -807,7 +807,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 	 * @return array
 	 */
 	protected function get_quote_products() {
-		$items = WC()->cart->get_cart();
+		$items         = WC()->cart->get_cart();
 		$isTaxIncluded = WC()->cart->display_prices_including_tax();
 
 		$products = array();
@@ -815,18 +815,18 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 			if ( ! isset( $_item['data'] ) ) {
 				throw new Exception( '"data" must be defined in the item array.' );
 			}
-			$_product = $_item['data']->get_data();
-			$product_price = ( $isTaxIncluded ) ? wc_get_price_including_tax( $_item['data'] ) : wc_get_price_excluding_tax( $_item['data'] );
+			$_product          = $_item['data']->get_data();
+			$product_price     = ( $isTaxIncluded ) ? wc_get_price_including_tax( $_item['data'] ) : wc_get_price_excluding_tax( $_item['data'] );
 			$product_line_item = array(
-				'name' => wc_latitudefinance_get_array_data( 'title', $_product ) ?
+				'name'        => wc_latitudefinance_get_array_data( 'title', $_product ) ?
 					htmlspecialchars( wc_latitudefinance_get_array_data( 'title', $_product ) ) :
 					htmlspecialchars( wc_latitudefinance_get_array_data( 'name', $_product ) ),
-				'price' => array(
-					'amount' => round( $product_price, 2 ),
+				'price'       => array(
+					'amount'   => round( $product_price, 2 ),
 					'currency' => $this->currency_code,
 				),
-				'sku' => wc_latitudefinance_get_array_data( 'sku', $_product ),
-				'quantity' => wc_latitudefinance_get_array_data( 'quantity', $_item, 0 ),
+				'sku'         => wc_latitudefinance_get_array_data( 'sku', $_product ),
+				'quantity'    => wc_latitudefinance_get_array_data( 'quantity', $_item, 0 ),
 				'taxIncluded' => (int) $isTaxIncluded,
 			);
 			array_push( $products, $product_line_item );
@@ -837,7 +837,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 
 	protected function get_billing_address() {
 		global $woocommerce;
-		$address = $woocommerce->cart->get_customer()->get_billing_address();
+		$address  = $woocommerce->cart->get_customer()->get_billing_address();
 		$address2 = $woocommerce->cart->get_customer()->get_billing_address_2();
 
 		if ( $address2 ) {
@@ -869,9 +869,9 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 	 */
 	protected function get_shipping_data() {
 		$shippingDetail = array(
-			'carrier' => $this->get_carrier_method_name() ?: 'flat_rate',
-			'price' => array(
-				'amount' => WC()->cart->get_shipping_total(),
+			'carrier'     => $this->get_carrier_method_name() ?: 'flat_rate',
+			'price'       => array(
+				'amount'   => WC()->cart->get_shipping_total(),
 				'currency' => $this->currency_code,
 			),
 			'taxIncluded' => 0,
@@ -950,36 +950,36 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 
 	public function get_purchase_url() {
 		try {
-			$session = $this->get_checkout_session();
-			$gateway = $this->get_gateway();
+			$session   = $this->get_checkout_session();
+			$gateway   = $this->get_gateway();
 			$reference = $this->get_reference_number();
-			$amount = $this->get_amount();
-			$cart = WC()->cart;
-			$customer = $cart->get_customer();
-			$shipping = $this->get_shipping_data();
+			$amount    = $this->get_amount();
+			$cart      = WC()->cart;
+			$customer  = $cart->get_customer();
+			$shipping  = $this->get_shipping_data();
 
 			$payment = array(
-				BinaryPay_Variable::REFERENCE => (string) $reference,
-				BinaryPay_Variable::AMOUNT => $amount,
-				BinaryPay_Variable::CURRENCY => $this->currency_code ?: self::DEFAULT_VALUE,
-				BinaryPay_Variable::RETURN_URL => home_url() . $this->return_url,
-				BinaryPay_Variable::MOBILENUMBER => $customer->get_billing_phone() ?: '0210123456',
-				BinaryPay_Variable::EMAIL => $customer->get_billing_email(),
-				BinaryPay_Variable::FIRSTNAME => $customer->get_billing_first_name() ?: self::DEFAULT_VALUE,
-				BinaryPay_Variable::SURNAME => $customer->get_billing_last_name() ?: self::DEFAULT_VALUE,
-				BinaryPay_Variable::SHIPPING_ADDRESS => $customer->get_shipping_address() ?: self::DEFAULT_VALUE,
+				BinaryPay_Variable::REFERENCE             => (string) $reference,
+				BinaryPay_Variable::AMOUNT                => $amount,
+				BinaryPay_Variable::CURRENCY              => $this->currency_code ?: self::DEFAULT_VALUE,
+				BinaryPay_Variable::RETURN_URL            => home_url() . $this->return_url,
+				BinaryPay_Variable::MOBILENUMBER          => $customer->get_billing_phone() ?: '0210123456',
+				BinaryPay_Variable::EMAIL                 => $customer->get_billing_email(),
+				BinaryPay_Variable::FIRSTNAME             => $customer->get_billing_first_name() ?: self::DEFAULT_VALUE,
+				BinaryPay_Variable::SURNAME               => $customer->get_billing_last_name() ?: self::DEFAULT_VALUE,
+				BinaryPay_Variable::SHIPPING_ADDRESS      => $customer->get_shipping_address() ?: self::DEFAULT_VALUE,
 				BinaryPay_Variable::SHIPPING_COUNTRY_CODE => $customer->get_shipping_country() ?: self::DEFAULT_VALUE,
-				BinaryPay_Variable::SHIPPING_POSTCODE => $customer->get_shipping_postcode() ?: self::DEFAULT_VALUE,
-				BinaryPay_Variable::SHIPPING_SUBURB => $customer->get_shipping_state() ?: self::DEFAULT_VALUE,
-				BinaryPay_Variable::SHIPPING_CITY => $customer->get_shipping_city() ?: self::DEFAULT_VALUE,
-				BinaryPay_Variable::BILLING_ADDRESS => $this->get_billing_address() ?: self::DEFAULT_VALUE,
-				BinaryPay_Variable::BILLING_COUNTRY_CODE => $customer->get_billing_country() ?: self::DEFAULT_VALUE,
-				BinaryPay_Variable::BILLING_POSTCODE => $customer->get_billing_postcode() ?: self::DEFAULT_VALUE,
-				BinaryPay_Variable::BILLING_SUBURB => $customer->get_billing_state() ?: self::DEFAULT_VALUE,
-				BinaryPay_Variable::BILLING_CITY => $customer->get_billing_city() ?: self::DEFAULT_VALUE,
-				BinaryPay_Variable::TAX_AMOUNT => array_sum( $cart->get_taxes() ),
-				BinaryPay_Variable::PRODUCTS => $this->get_quote_products(),
-				BinaryPay_Variable::SHIPPING_LINES => array( $shipping ),
+				BinaryPay_Variable::SHIPPING_POSTCODE     => $customer->get_shipping_postcode() ?: self::DEFAULT_VALUE,
+				BinaryPay_Variable::SHIPPING_SUBURB       => $customer->get_shipping_state() ?: self::DEFAULT_VALUE,
+				BinaryPay_Variable::SHIPPING_CITY         => $customer->get_shipping_city() ?: self::DEFAULT_VALUE,
+				BinaryPay_Variable::BILLING_ADDRESS       => $this->get_billing_address() ?: self::DEFAULT_VALUE,
+				BinaryPay_Variable::BILLING_COUNTRY_CODE  => $customer->get_billing_country() ?: self::DEFAULT_VALUE,
+				BinaryPay_Variable::BILLING_POSTCODE      => $customer->get_billing_postcode() ?: self::DEFAULT_VALUE,
+				BinaryPay_Variable::BILLING_SUBURB        => $customer->get_billing_state() ?: self::DEFAULT_VALUE,
+				BinaryPay_Variable::BILLING_CITY          => $customer->get_billing_city() ?: self::DEFAULT_VALUE,
+				BinaryPay_Variable::TAX_AMOUNT            => array_sum( $cart->get_taxes() ),
+				BinaryPay_Variable::PRODUCTS              => $this->get_quote_products(),
+				BinaryPay_Variable::SHIPPING_LINES        => array( $shipping ),
 			);
 
 			$response = $gateway->purchase( $payment );
@@ -1004,20 +1004,20 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway {
 	 * @todo : BinaryPay::log($e->getMessage(), true, 'woocommerce-genoapay.log'); extension wide.
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
-		$gateway = $this->get_gateway();
-		$order = wc_get_order( $order_id );
+		$gateway        = $this->get_gateway();
+		$order          = wc_get_order( $order_id );
 		$transaction_id = $order->get_transaction_id();
 
 		/**
-		 * @todo support to add refund reason via wordpress backend
+		 * @todo support to add refund reason via WordPress backend
 		 */
 		$refund = array(
 			BinaryPay_Variable::PURCHASE_TOKEN => $transaction_id,
-			BinaryPay_Variable::CURRENCY => $this->currency_code,
-			BinaryPay_Variable::AMOUNT => $amount,
-			BinaryPay_Variable::REFERENCE => $order->get_id(),
-			BinaryPay_Variable::REASON => '',
-			BinaryPay_Variable::PASSWORD => $this->credentials['password'],
+			BinaryPay_Variable::CURRENCY       => $this->currency_code,
+			BinaryPay_Variable::AMOUNT         => $amount,
+			BinaryPay_Variable::REFERENCE      => $order->get_id(),
+			BinaryPay_Variable::REASON         => '',
+			BinaryPay_Variable::PASSWORD       => $this->credentials['password'],
 		);
 
 		try {

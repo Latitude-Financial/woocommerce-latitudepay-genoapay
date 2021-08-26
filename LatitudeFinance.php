@@ -20,7 +20,7 @@ define( 'WC_LATITUDEPAY_PLUGIN_NAME', plugin_basename( __FILE__ ) );
 
 
 function wc_latitudepay_init() {
-	require_once( WC_LATITUDEPAY_PATH . 'includes/autoload.php' );
+	require_once WC_LATITUDEPAY_PATH . 'includes/autoload.php';
 }
 
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wc_latitudepay_plugin_action_links' );

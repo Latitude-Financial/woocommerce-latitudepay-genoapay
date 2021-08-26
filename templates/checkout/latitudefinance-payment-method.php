@@ -31,15 +31,15 @@ if ( ! isset( $gateway ) ) {
 
 	$description = $gateway->get_description();
 	wc_latitudefinance_spam_bot_field();
-	$color = $gateway->get_id() == 'latitudepay' ? 'rgb(57, 112, 255)' : 'rgb(49, 181, 156)';
-	$modalFile = __DIR__ . DIRECTORY_SEPARATOR . '../checkout/' . $gateway->get_id() . DIRECTORY_SEPARATOR . 'modal.php';
-	$paymentInfo = 'Available now.';
-	$price = WC()->cart->total;
+	$color         = $gateway->get_id() == 'latitudepay' ? 'rgb(57, 112, 255)' : 'rgb(49, 181, 156)';
+	$modalFile     = __DIR__ . DIRECTORY_SEPARATOR . '../checkout/' . $gateway->get_id() . DIRECTORY_SEPARATOR . 'modal.php';
+	$paymentInfo   = 'Available now.';
+	$price         = WC()->cart->total;
 	$saved_methods = wc_get_customer_saved_methods_list( get_current_user_id() );
 	$has_methods   = (bool) $saved_methods;
 
 if ( $price >= 20 && $price <= 1500 ) {
-	$weekly = number_format( round( $price / 10, 2 ), 2 );
+	$weekly      = number_format( round( $price / 10, 2 ), 2 );
 	$paymentInfo = "10 weekly payments of <strong style='color:${color}'>$${weekly}</strong>";
 }
 

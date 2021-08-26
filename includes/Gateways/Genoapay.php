@@ -29,30 +29,30 @@ class Genoapay extends BinaryPay {
 
 	const API_VERSION = 'v3';
 
-	const TOKEN_ENDPOINT = 'token';
-	const PURCHASE_ENDPOINT = 'sale/online';
+	const TOKEN_ENDPOINT           = 'token';
+	const PURCHASE_ENDPOINT        = 'sale/online';
 	const PURCHASE_STATUS_ENDPOINT = 'sale/pos';
-	const CONFIGURATON_ENDPOINT = 'configuration';
+	const CONFIGURATON_ENDPOINT    = 'configuration';
 
-	const STATUS_SUCCESSFUL = 200;
-	const STATUS_INVALID = 400;
-	const STATUS_ACCESS_DENIED = 403;
+	const STATUS_SUCCESSFUL            = 200;
+	const STATUS_INVALID               = 400;
+	const STATUS_ACCESS_DENIED         = 403;
 	const STATUS_INTERNAL_SERVER_ERROR = 500;
 
 	public function __construct( $credential = array(), $debug = false ) {
 		parent::__construct( $credential, $debug );
 		$this->setConfig(
 			array(
-				'api-error-status' => array(
+				'api-error-status'        => array(
 					BinaryPay_Variable::STATUS_DECLINED,
 					BinaryPay_Variable::STATUS_BLOCKED,
 					BinaryPay_Variable::STATUS_FAILED,
 					BinaryPay_Variable::STATUS_INPROGRESS,
 				),
-				'api-success-status'  => array(
+				'api-success-status'      => array(
 					BinaryPay_Variable::STATUS_SUCCESSFUL,
 				),
-				'http-success-status'  => array( 200 ),
+				'http-success-status'     => array( 200 ),
 				'api-error-message-field' => 'error',
 			)
 		);
@@ -61,7 +61,7 @@ class Genoapay extends BinaryPay {
 	}
 
 	public function getHeader() {
-		$headers = array();
+		$headers   = array();
 		$headers[] = 'api-version: ' . self::API_VERSION;
 
 		if ( $this->getConfig( 'request-content-type' ) == 'json' ) {
@@ -81,7 +81,7 @@ class Genoapay extends BinaryPay {
 		if ( $this->getConfig( 'authToken' ) ) {
 			$encodedAuth = 'Bearer ' . $this->getConfig( 'authToken' );
 		} else {
-			$authString = $this->getConfig( BinaryPay_Variable::USERNAME ) . ':' . $this->getConfig( BinaryPay_Variable::PASSWORD );
+			$authString  = $this->getConfig( BinaryPay_Variable::USERNAME ) . ':' . $this->getConfig( BinaryPay_Variable::PASSWORD );
 			$encodedAuth = 'Basic ' . base64_encode( $authString );
 		}
 		return $encodedAuth;
@@ -121,12 +121,12 @@ class Genoapay extends BinaryPay {
 			case 'production':
 				$url = 'https://api.genoapay.com/';
 				break;
-            case 'sandbox':
-                $url = 'https://api.uat.genoapay.com/';
-                break;
-            case 'development':
-                $url = getenv( 'GATEWAY_API_URL', true ) ?: getenv( 'GATEWAY_API_URL' );
-                break;
+			case 'sandbox':
+				$url = 'https://api.uat.genoapay.com/';
+				break;
+			case 'development':
+				$url = getenv( 'GATEWAY_API_URL', true ) ?: getenv( 'GATEWAY_API_URL' );
+				break;
 		}
 
 		return $url;
@@ -200,7 +200,7 @@ class Genoapay extends BinaryPay {
 	 * @return array
 	 */
 	public function configuration( array $args = array() ) {
-		$url = $this->getConfigurationUrl();
+		$url     = $this->getConfigurationUrl();
 		$request = array();
 
 		$this->setConfig(
@@ -225,44 +225,44 @@ class Genoapay extends BinaryPay {
 	 * @return response
 	 */
 	public function purchase( array $args = array() ) {
-		$url = $this->getPurchaseUrl();
+		$url     = $this->getPurchaseUrl();
 		$request = array(
-			'totalAmount' => array(
-				'amount'        => round( $args[ BinaryPay_Variable::AMOUNT ], 2 ),
-				'currency'      => $args[ BinaryPay_Variable::CURRENCY ],
-			),
-			'returnUrls' => array(
-				'successUrl'    => $args[ BinaryPay_Variable::RETURN_URL ],
-				'failUrl'       => $args[ BinaryPay_Variable::RETURN_URL ],
-				'callbackUrl'   => $args[ BinaryPay_Variable::RETURN_URL ],
-			),
-			'reference'         => $args[ BinaryPay_Variable::REFERENCE ],
-			'customer' => array(
-				'mobileNumber'  => $args[ BinaryPay_Variable::MOBILENUMBER ],
-				'firstName'     => $args[ BinaryPay_Variable::FIRSTNAME ],
-				'surname'       => $args[ BinaryPay_Variable::SURNAME ],
-				'email'         => $args[ BinaryPay_Variable::EMAIL ],
-			),
-			'shippingAddress' => array(
-				'addressLine1'  => $args[ BinaryPay_Variable::SHIPPING_ADDRESS ],
-				'suburb'        => $args[ BinaryPay_Variable::SHIPPING_SUBURB ],
-				'cityTown'      => $args[ BinaryPay_Variable::SHIPPING_CITY ],
-				'postcode'      => $args[ BinaryPay_Variable::SHIPPING_POSTCODE ],
-				'countryCode'   => $args[ BinaryPay_Variable::SHIPPING_COUNTRY_CODE ],
-			),
-			'billingAddress' => array(
-				'addressLine1'  => $args[ BinaryPay_Variable::BILLING_ADDRESS ],
-				'suburb'        => $args[ BinaryPay_Variable::BILLING_SUBURB ],
-				'cityTown'      => $args[ BinaryPay_Variable::BILLING_CITY ],
-				'postcode'      => $args[ BinaryPay_Variable::BILLING_POSTCODE ],
-				'countryCode'   => $args[ BinaryPay_Variable::BILLING_COUNTRY_CODE ],
-			),
-			'products' => $args[ BinaryPay_Variable::PRODUCTS ],
-			'taxAmount' => array(
-				'amount' => round( $args[ BinaryPay_Variable::TAX_AMOUNT ], 2 ),
+			'totalAmount'     => array(
+				'amount'   => round( $args[ BinaryPay_Variable::AMOUNT ], 2 ),
 				'currency' => $args[ BinaryPay_Variable::CURRENCY ],
 			),
-			'shippingLines' => $args[ BinaryPay_Variable::SHIPPING_LINES ],
+			'returnUrls'      => array(
+				'successUrl'  => $args[ BinaryPay_Variable::RETURN_URL ],
+				'failUrl'     => $args[ BinaryPay_Variable::RETURN_URL ],
+				'callbackUrl' => $args[ BinaryPay_Variable::RETURN_URL ],
+			),
+			'reference'       => $args[ BinaryPay_Variable::REFERENCE ],
+			'customer'        => array(
+				'mobileNumber' => $args[ BinaryPay_Variable::MOBILENUMBER ],
+				'firstName'    => $args[ BinaryPay_Variable::FIRSTNAME ],
+				'surname'      => $args[ BinaryPay_Variable::SURNAME ],
+				'email'        => $args[ BinaryPay_Variable::EMAIL ],
+			),
+			'shippingAddress' => array(
+				'addressLine1' => $args[ BinaryPay_Variable::SHIPPING_ADDRESS ],
+				'suburb'       => $args[ BinaryPay_Variable::SHIPPING_SUBURB ],
+				'cityTown'     => $args[ BinaryPay_Variable::SHIPPING_CITY ],
+				'postcode'     => $args[ BinaryPay_Variable::SHIPPING_POSTCODE ],
+				'countryCode'  => $args[ BinaryPay_Variable::SHIPPING_COUNTRY_CODE ],
+			),
+			'billingAddress'  => array(
+				'addressLine1' => $args[ BinaryPay_Variable::BILLING_ADDRESS ],
+				'suburb'       => $args[ BinaryPay_Variable::BILLING_SUBURB ],
+				'cityTown'     => $args[ BinaryPay_Variable::BILLING_CITY ],
+				'postcode'     => $args[ BinaryPay_Variable::BILLING_POSTCODE ],
+				'countryCode'  => $args[ BinaryPay_Variable::BILLING_COUNTRY_CODE ],
+			),
+			'products'        => $args[ BinaryPay_Variable::PRODUCTS ],
+			'taxAmount'       => array(
+				'amount'   => round( $args[ BinaryPay_Variable::TAX_AMOUNT ], 2 ),
+				'currency' => $args[ BinaryPay_Variable::CURRENCY ],
+			),
+			'shippingLines'   => $args[ BinaryPay_Variable::SHIPPING_LINES ],
 		);
 
 		// signature
@@ -295,12 +295,12 @@ class Genoapay extends BinaryPay {
 		$token = $args[ BinaryPay_Variable::PURCHASE_TOKEN ];
 
 		$request = array(
-			'amount' => array(
-				'amount'    => round( $args[ BinaryPay_Variable::AMOUNT ], 2 ),
-				'currency'  => $args[ BinaryPay_Variable::CURRENCY ],
+			'amount'    => array(
+				'amount'   => round( $args[ BinaryPay_Variable::AMOUNT ], 2 ),
+				'currency' => $args[ BinaryPay_Variable::CURRENCY ],
 			),
-			'reason'        => $args[ BinaryPay_Variable::REASON ],
-			'reference'     => $args[ BinaryPay_Variable::REFERENCE ],
+			'reason'    => $args[ BinaryPay_Variable::REASON ],
+			'reference' => $args[ BinaryPay_Variable::REFERENCE ],
 		);
 
 		// signature

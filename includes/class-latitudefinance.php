@@ -35,10 +35,10 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
 
 	// Default options
 	private $_config = array(
-		'method'                    => 'post',
-		'debug'                     => false,
-		'http-success-status'       => array( 200, 201, 204, 422, 400 ),
-		'api-error-message-field'   => array(
+		'method'                  => 'post',
+		'debug'                   => false,
+		'http-success-status'     => array( 200, 201, 204, 422, 400 ),
+		'api-error-message-field' => array(
 			'error',
 			'errorMessage',
 			'message',
@@ -48,7 +48,7 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
 			'ErrorMessage',
 			'TransactionStatusCode',
 		),
-		'api-error-code-field'      => array(
+		'api-error-code-field'    => array(
 			'errorCode',
 			'code',
 			'errornumber',
@@ -92,7 +92,7 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
 	public function getConfig( $key = null ) {
 		if ( isset( $this->_config[ $key ] ) ) {
 			return $this->_config[ $key ];
-		} else if ( $key == null ) {
+		} elseif ( $key == null ) {
 			return $this->_config;
 		} else {
 			return false;
@@ -144,7 +144,7 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
 
 	public function verifyKeys( $signature, &$attributes ) {
 		if ( ! empty( $attributes ) ) {
-			$userKeys = array_keys( $attributes );
+			$userKeys    = array_keys( $attributes );
 			$invalidKeys = array_diff( $userKeys, $signature );
 			if ( ! empty( $invalidKeys ) ) {
 				asort( $invalidKeys );
@@ -158,7 +158,7 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
 		$args = $this->getConfig( 'request' );
 		$this->verifyKeys( $this->createSignature(), $args );
 		$apiUrl = $this->getConfig( 'url' );
-		$http = $this->prepare();
+		$http   = $this->prepare();
 
 		/* Request content type*/
 		switch ( $this->getConfig( 'request-content-type' ) ) {
@@ -226,8 +226,8 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
 	}
 
 	public function validate( $response ) {
-		$status = 0;
-		$errorMessage = 'Unknown';
+		$status            = 0;
+		$errorMessage      = 'Unknown';
 		$httpSuccessStatus = $this->getConfig( 'http-success-status' );
 
 		/* Check http response status */
@@ -265,9 +265,9 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
 		}
 
 		/* Find the error message field & code from any response*/
-		$response       = $this->arrayFlatten( $response );
-		$errorMessage   = $this->find( 'api-error-message-field', $response );
-		$errorCode      = $this->find( 'api-error-code-field', $response );
+		$response     = $this->arrayFlatten( $response );
+		$errorMessage = $this->find( 'api-error-message-field', $response );
+		$errorCode    = $this->find( 'api-error-code-field', $response );
 		throw new BinaryPay_Exception(
 			sprintf( 'Message: %s', $errorMessage ),
 			$errorCode
@@ -294,7 +294,7 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
 	 */
 	static function _getGatewayFileNames() {
 		// Path for gateway files
-		$gateway = array();
+		$gateway       = array();
 		$pathToGateway = __DIR__ . DIRECTORY_SEPARATOR . 'Gateways';
 		$gatewayFiles  = scandir( $pathToGateway );
 
@@ -303,10 +303,10 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
 		}
 
 		foreach ( $gatewayFiles as $file ) {
-			$info    = pathinfo( $file );
+			$info = pathinfo( $file );
 			// Get only files that have .php extension
 			if ( $info['extension'] === 'php' ) {
-				$fileName = strtolower( $info['filename'] );
+				$fileName  = strtolower( $info['filename'] );
 				$gateway[] = $fileName;
 			}
 		}
@@ -362,7 +362,7 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
 	public static function log( $message, $debug = false, $file = '' ) {
 		static $loggers = array();
 
-		$file   = empty( $file ) ? 'system.log' : $file;
+		$file = empty( $file ) ? 'system.log' : $file;
 		if ( ! isset( $loggers[ $file ] ) ) {
 			$logDir  = __DIR__ . '/../log';
 			$logFile = $logDir . DIRECTORY_SEPARATOR . $file;
@@ -379,8 +379,8 @@ abstract class BinaryPay extends WC_LatitudeFinance_Base implements GatewayInter
 				chmod( $logFile, 0640 );
 			}
 
-			$file       = fopen( $logFile, 'a+' );
-			$contents   = fread( $file, filesize( $logFile ) + 1 );
+			$file     = fopen( $logFile, 'a+' );
+			$contents = fread( $file, filesize( $logFile ) + 1 );
 
 			// Add timestamp
 			$timestamp = date( "Y/m/d----h:i:sa\n" );

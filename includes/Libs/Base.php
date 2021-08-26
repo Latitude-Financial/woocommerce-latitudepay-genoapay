@@ -103,7 +103,7 @@ class WC_LatitudeFinance_Base {
 
 		$exist = 0;
 		foreach ( $keys as $k ) {
-			$isset = isset( $source[ $k ] ) ? 1 : 0;
+			$isset  = isset( $source[ $k ] ) ? 1 : 0;
 			$exist += $isset;
 			if ( $debug ) {
 				echo "$k : $isset \n";
@@ -126,7 +126,7 @@ class WC_LatitudeFinance_Base {
 		foreach ( $array as $key => $val ) {
 			$newKey = @explode( '_', $key );
 			array_walk( $newKey, create_function( '&$v', '$v = ucwords($v);' ) );
-			$newKey = @implode( '', $newKey );
+			$newKey    = @implode( '', $newKey );
 			$newKey[0] = strtolower( $newKey[0] );
 			if ( ! is_array( $val ) ) {
 				$camelCaseArray[ $newKey ] = $val;

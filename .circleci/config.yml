@@ -517,13 +517,9 @@ workflows:
   main:
     jobs:
       # - php56-build
-      - php71-build
-      - php72-build:
-          requires:
-            - php71-build
-      - php73-build:
-          requires:
-            - php72-build
+      # - php71-build
+      # - php72-build
+      - php73-build
       - php74-build:
           requires:
             - php73-build
@@ -532,8 +528,8 @@ workflows:
             - php74-build
       - github-release:
           requires:
-            - php71-build
-            - php72-build
+            # - php71-build
+            # - php72-build
             - php73-build
             - php74-build
             - php80-build
@@ -545,8 +541,8 @@ workflows:
             - github-release
       - deploy:
           requires:
-            - php71-build
-            - php72-build
+            # - php71-build
+            # - php72-build
             - php73-build
             - php74-build
             - php80-build

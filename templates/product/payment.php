@@ -27,7 +27,7 @@
 ?>
 <?php global $product; if ( $product && isset( $gateway ) && $product->is_in_stock() ) : ?>
 	<?php
-		$price = $product->get_price();
+		$price          = $product->get_price();
 		$containerClass = 'wc-latitudefinance-' . $gateway->get_id() . '-container';
 	?>
 	<div style="display: inline-block; padding: 5px 0;" class="<?php echo $containerClass; ?>">

@@ -27,10 +27,10 @@
 
 class WC_LatitudeFinance_Http {
 
-	const HTTP_REQUEST_GET      = 'GET';
-	const HTTP_REQUEST_POST     = 'POST';
-	const HTTP_REQUEST_PUT      = 'PUT';
-	const HTTP_REQUEST_DELETE   = 'DELETE';
+	const HTTP_REQUEST_GET    = 'GET';
+	const HTTP_REQUEST_POST   = 'POST';
+	const HTTP_REQUEST_PUT    = 'PUT';
+	const HTTP_REQUEST_DELETE = 'DELETE';
 
 	protected $_config;
 
@@ -68,22 +68,22 @@ class WC_LatitudeFinance_Http {
 			$url = trim( $url ) . '?' . $requestBody;
 		}
 
-		$curl = curl_init();
+		$curl    = curl_init();
 		$headers = $this->_getHeader();
 		curl_setopt( $curl, CURLINFO_HEADER_OUT, true );
 		curl_setopt_array(
 			$curl,
 			array(
-				CURLOPT_URL => $url,
+				CURLOPT_URL            => $url,
 				CURLOPT_RETURNTRANSFER => true,
 				// CURLOPT_ENCODING => "gzip",
-				CURLOPT_MAXREDIRS => 10,
-				CURLOPT_TIMEOUT => 30,
-				CURLOPT_USERAGENT => 'MageBinary BinaryPay API Integration Engine',
-				CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-				CURLOPT_CUSTOMREQUEST => $httpVerb,
-				CURLOPT_HTTPHEADER => $headers,
-				CURLINFO_HEADER_OUT => true,
+				CURLOPT_MAXREDIRS      => 10,
+				CURLOPT_TIMEOUT        => 30,
+				CURLOPT_USERAGENT      => 'MageBinary BinaryPay API Integration Engine',
+				CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+				CURLOPT_CUSTOMREQUEST  => $httpVerb,
+				CURLOPT_HTTPHEADER     => $headers,
+				CURLINFO_HEADER_OUT    => true,
 			)
 		);
 
@@ -93,13 +93,13 @@ class WC_LatitudeFinance_Http {
 
 		$response   = curl_exec( $curl );
 		$httpStatus = curl_getinfo( $curl, CURLINFO_HTTP_CODE );
-		$response = array(
+		$response   = array(
 			'status' => $httpStatus,
-			'body' => $response,
+			'body'   => $response,
 		);
 
 		if ( isset( $this->_config['debug'] ) && $this->_config['debug'] ) {
-			$info = "======DEBUG INFO STARTS======\n";
+			$info  = "======DEBUG INFO STARTS======\n";
 			$info .= "REQUEST:\n";
 			$info .= "\n" . curl_getinfo( $curl, CURLINFO_HEADER_OUT );
 			$info .= $requestBody . "\n\n";
