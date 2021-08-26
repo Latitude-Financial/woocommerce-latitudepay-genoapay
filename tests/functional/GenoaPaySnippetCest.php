@@ -43,13 +43,12 @@ class GenoaPaySnippetCest
     {
         $I->amOnPage('/product/polo');
         $I->see('Polo');
-        $I->seeElement(Locator::find('a', ['id' => 'genoapay-popup']));
-        $I->click('#genoapay-popup');
-        $I->waitForElementVisible('#g-infomodal-container', 30);
-        $I->see("Pay over 10 weeks.");
-        $I->see("That's it! We manage automatic weekly payments until you're paid off. Full purchase details can be viewed anytime online.");
-        $I->click('#g-infomodal-close');
-        $I->waitForElementNotVisible('#g-infomodal-container', 30);
+        $I->seeElement(Locator::find('img', ['class' => 'lpay_snippet']));
+        $I->click('img.lpay_snippet');
+        $I->waitForElementVisible('.lpay-modal', 30);
+        $I->see("That's it! We manage automatic weekly payments until you're paid");
+        $I->click('span.close-modal');
+        $I->waitForElementNotVisible('.lpay-modal', 30);
     }
 
     /**
@@ -63,13 +62,12 @@ class GenoaPaySnippetCest
         $I->click('.cart button[name=add-to-cart]');
 
         $I->amOnPage('/cart');
-        $I->seeElement(Locator::find('a', ['id' => 'genoapay-popup']));
-        $I->click('#genoapay-popup');
-        $I->waitForElementVisible('#g-infomodal-container', 30);
-        $I->see("Pay over 10 weeks.");
-        $I->see("That's it! We manage automatic weekly payments until you're paid off. Full purchase details can be viewed anytime online.");
-        $I->click('#g-infomodal-close');
-        $I->waitForElementNotVisible('#g-infomodal-container', 30);
+        $I->seeElement(Locator::find('img', ['class' => 'lpay_snippet']));
+        $I->click('img.lpay_snippet');
+        $I->waitForElementVisible('.lpay-modal', 30);
+        $I->see("That's it! We manage automatic weekly payments until you're paid");
+        $I->click('span.close-modal');
+        $I->waitForElementNotVisible('.lpay-modal', 30);
     }
 
     /**
@@ -84,14 +82,12 @@ class GenoaPaySnippetCest
 
         $I->amOnPage('/checkout');
         $I->wait(3);
-        $I->seeElement(Locator::find('a', ['id' => 'genoapay-popup']));
-        $I->waitForElementVisible('#genoapay-popup', 30);
-        $I->click('#genoapay-popup');
-        $I->waitForElementVisible('#g-infomodal-container', 30);
-        $I->see("Pay over 10 weeks.");
-        $I->see("That's it! We manage automatic weekly payments until you're paid off. Full purchase details can be viewed anytime online.");
-        $I->click('#g-infomodal-close');
-        $I->waitForElementNotVisible('#g-infomodal-container', 30);
+        $I->seeElement(Locator::find('img', ['class' => 'lpay_snippet']));
+        $I->click('img.lpay_snippet');
+        $I->waitForElementVisible('.lpay-modal', 30);
+        $I->see("That's it! We manage automatic weekly payments until you're paid");
+        $I->click('span.close-modal');
+        $I->waitForElementNotVisible('.lpay-modal', 30);
     }
 
     /**
@@ -106,7 +102,7 @@ class GenoaPaySnippetCest
         $I->click('.cart button[name=add-to-cart]');
 
         $I->amOnPage('/cart');
-        $I->dontSeeElement(Locator::find('a', ['id' => 'genoapay-popup']));
+        $I->dontSeeElement(Locator::find('img', ['class' => 'lpay_snippet']));
     }
 
     /**
@@ -122,6 +118,6 @@ class GenoaPaySnippetCest
 
         $I->amOnPage('/checkout');
         $I->wait(3);
-        $I->dontSeeElement(Locator::find('a', ['id' => 'genoapay-popup']));
+        $I->dontSeeElement(Locator::find('img', ['class' => 'lpay_snippet']));
     }
 }

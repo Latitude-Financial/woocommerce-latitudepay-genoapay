@@ -121,10 +121,12 @@ class Genoapay extends BinaryPay {
 			case 'production':
 				$url = 'https://api.genoapay.com/';
 				break;
-			case 'sandbox':
-			case 'development':
-				$url = 'https://api.uat.genoapay.com/';
-				break;
+            case 'sandbox':
+                $url = 'https://api.uat.genoapay.com/';
+                break;
+            case 'development':
+                $url = getenv( 'GATEWAY_API_URL', true ) ?: getenv( 'GATEWAY_API_URL' );
+                break;
 		}
 
 		return $url;
