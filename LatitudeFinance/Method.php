@@ -511,7 +511,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
                 'title' => __('Title', 'woocommerce-payment-gateway-latitudefinance'),
                 'type' => 'text',
                 'description' => __('This controls the title which the user sees during checkout.', 'woocommerce-payment-gateway-latitudefinance'),
-                'default' => __('GenoaPay', 'woocommerce-payment-gateway-latitudefinance'),
+                'default' => __(WC_LatitudeFinance_Method_Latitudepay::getMethodTitle(), 'woocommerce-payment-gateway-latitudefinance'),
                 'desc_tip' => true
             ),
             'description' => array(
