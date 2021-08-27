@@ -28,6 +28,9 @@ Please visit the official websites below for more information.
 Please send your integration related issues to [Integration Support](mailto:integrationsupport@latitudefinancial.com)
 
 == Changelog ==
+= 2.0.13 =
+* Fix the issue with payment method logo
+
 = 2.0.12 =
 * Fix the issue with snippets width
 
