@@ -30,8 +30,16 @@ if (!class_exists('WC_Payment_Gateway')) {
     return;
 }
 
+require_once __DIR__ . '/LatitudeFinance_Payment_Method_Interface.php';
+
 abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
+    implements LatitudeFinance_Payment_Method_Interface
 {
+    /**
+     * @var string
+     */
+    const IMAGES_API_URL = 'https://images.latitudepayapps.com/v2/';
+
     /**
      * @var string
      * Debug mode disabled
@@ -1056,5 +1064,13 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
             return $orderTotal >= $this->min_order_total;
         }
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getImagesApiUrl()
+    {
+        return self::IMAGES_API_URL;
     }
 }
