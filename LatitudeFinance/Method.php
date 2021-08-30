@@ -1057,4 +1057,15 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
         }
         return true;
     }
+
+    /**
+     * Get the payment method icon tag with the preset width value
+     * @return mixed|string|void
+     */
+    public function get_icon()
+    {
+        $icon = $this->icon ? '<img width="120px" src="' . WC_HTTPS::force_https_url( $this->icon ) . '" alt="' . esc_attr( $this->get_title() ) . '" />' : '';
+
+        return apply_filters( 'woocommerce_gateway_icon', $icon, $this->id );
+    }
 }
