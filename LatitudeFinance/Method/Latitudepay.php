@@ -45,11 +45,6 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
     /**
      * @var string
      */
-    const IMAGES_API_URL = 'https://images.latitudepayapps.com/v2/';
-
-    /**
-     * @var string
-     */
     protected $return_url = '?wc-api=latitudepay_return_action';
 
     /**
@@ -243,14 +238,6 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
     public function getSnippetPath()
     {
         return 'snippet.svg';
-    }
-
-    /**
-     * @return string
-     */
-    public function getImagesApiUrl()
-    {
-        return self::IMAGES_API_URL;
     }
 
     /**

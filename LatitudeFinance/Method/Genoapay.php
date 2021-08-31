@@ -36,11 +36,6 @@ class WC_LatitudeFinance_Method_Genoapay extends WC_LatitudeFinance_Method_Abstr
     /**
      * @var string
      */
-    const IMAGES_API_URL = 'https://images.latitudepayapps.com/v2/';
-
-    /**
-     * @var string
-     */
     protected $return_url = '?wc-api=genoapay_return_action';
 
     /**
@@ -141,14 +136,6 @@ class WC_LatitudeFinance_Method_Genoapay extends WC_LatitudeFinance_Method_Abstr
     public function getSnippetPath()
     {
         return 'snippet.svg';
-    }
-
-    /**
-     * @return string
-     */
-    public function getImagesApiUrl()
-    {
-        return self::IMAGES_API_URL;
     }
 
     /**
