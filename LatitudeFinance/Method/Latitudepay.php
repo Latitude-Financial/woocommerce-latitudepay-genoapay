@@ -25,13 +25,14 @@
  * @license     http://www.apache.org/licenses/LICENSE-2.0
  */
 
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
-if (!class_exists('WC_LatitudeFinance_Method_Abstract')) {
-    return;
+if ( ! class_exists( 'WC_LatitudeFinance_Method_Abstract' ) ) {
+	return;
 }
 
 /**
+ * @SuppressWarnings(PHPMD.LongVariable)
  * @see when I extend from the 'WC_LatitudeFinance_Method_Genoapay' the Woocommerce is not recognize
  * @todo remove the duplication of the code
  */
@@ -41,11 +42,6 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
      * @var string
      */
     const METHOD_LATITUDEPAY = 'latitudepay';
-
-    /**
-     * @var string
-     */
-    const IMAGES_API_URL = 'https://images.latitudepayapps.com/v2/';
 
     /**
      * @var string
@@ -243,14 +239,6 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
     public function getSnippetPath()
     {
         return 'snippet.svg';
-    }
-
-    /**
-     * @return string
-     */
-    public function getImagesApiUrl()
-    {
-        return self::IMAGES_API_URL;
     }
 
     /**
