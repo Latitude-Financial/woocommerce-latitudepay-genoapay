@@ -50,9 +50,9 @@ function woocommerce_latitude_finance_woocommerce_blocks_support() {
         require_once dirname( __FILE__ ) . '/includes/Blocks/LatitudePay.php';
         add_action(
             'woocommerce_blocks_payment_method_type_registration',
-            function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ) {
-                $payment_method_registry->register( new WC_Gateway_Genoapay_Blocks_Support );
-                $payment_method_registry->register( new WC_Gateway_LatitudePay_Blocks_Support );
+            function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $registry ) {
+                $registry->register( new WC_Gateway_Genoapay_Blocks_Support );
+                $registry->register( new WC_Gateway_LatitudePay_Blocks_Support );
             }
         );
     }

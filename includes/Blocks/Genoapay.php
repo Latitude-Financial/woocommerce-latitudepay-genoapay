@@ -2,6 +2,9 @@
 
 use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType;
 
+/**
+ * @SuppressWarnings(PHPMD.LongVariable)
+ */
 class WC_Gateway_Genoapay_Blocks_Support extends AbstractPaymentMethodType
 {
     /**

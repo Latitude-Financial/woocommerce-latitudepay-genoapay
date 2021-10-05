@@ -32,6 +32,9 @@ if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
 
 require_once __DIR__ . '/LatitudeFinance_Payment_Method_Interface.php';
 
+/**
+ * @SuppressWarnings(PHPMD.LongVariable)
+ */
 abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
     implements LatitudeFinance_Payment_Method_Interface
 {
