@@ -50,7 +50,7 @@ commands: # a reusable command with parameters
       - run: 
           name: Composer Install
           command: |
-            composer install -n
+            composer install --prefer-dist -n
       - save_cache: # special step to save the dependency cache with the `composer.lock` cache key template
           key: composer-v5-<< parameters.version >>-{{ checksum "composer.json" }}
           paths:
