@@ -78,16 +78,16 @@ commands: # a reusable command with parameters
       - run:
          name: "PHP Copy/Paste Detector"
          command: |
-           phpcpd --exclude vendor --exclude tests .
+           phpcpd --exclude assets --exclude vendor --exclude tests .
       - run:
          name: "PHP Mess Detector"
          command: |
-           phpmd ./ text phpmd.xml.dist --exclude vendor/,tests/
+           phpmd ./ text phpmd.xml.dist --exclude assets/,vendor/,tests/
       - run:
          name: "PHP CodeSniffer"
          command: |
             phpcs --config-set show_warnings 0
-            phpcs --standard=phpcs.xml.dist --extensions=php --ignore=*/vendor/,*/tests/ --colors -s -p -v .
+            phpcs --standard=phpcs.xml.dist --extensions=php --ignore=*/assets/,*/vendor/,*/tests/ --colors -s -p -v .
       # - run:
       #    name: "Run Backward Compatibility Check"
       #    command: |
