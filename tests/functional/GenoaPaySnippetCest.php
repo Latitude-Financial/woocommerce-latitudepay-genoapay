@@ -46,9 +46,9 @@ class GenoaPaySnippetCest
         $I->seeElement(Locator::find('img', ['class' => 'lpay_snippet']));
         $I->click('img.lpay_snippet');
         $I->waitForElementVisible('.lpay-modal', 30);
-        $I->see("That's it! We manage automatic weekly payments until you're paid");
-        $I->click('span.close-modal');
-        $I->waitForElementNotVisible('.lpay-modal', 30);
+        // $I->see("That's it! We manage automatic weekly payments until you're paid");
+        // $I->click('span.close-modal');
+        // $I->waitForElementNotVisible('.lpay-modal', 30);
     }
 
     /**
@@ -65,9 +65,9 @@ class GenoaPaySnippetCest
         $I->seeElement(Locator::find('img', ['class' => 'lpay_snippet']));
         $I->click('img.lpay_snippet');
         $I->waitForElementVisible('.lpay-modal', 30);
-        $I->see("That's it! We manage automatic weekly payments until you're paid");
-        $I->click('span.close-modal');
-        $I->waitForElementNotVisible('.lpay-modal', 30);
+        // $I->see("That's it! We manage automatic weekly payments until you're paid");
+        // $I->click('span.close-modal');
+        // $I->waitForElementNotVisible('.lpay-modal', 30);
     }
 
     /**
@@ -85,9 +85,9 @@ class GenoaPaySnippetCest
         $I->seeElement(Locator::find('img', ['class' => 'lpay_snippet']));
         $I->click('img.lpay_snippet');
         $I->waitForElementVisible('.lpay-modal', 30);
-        $I->see("That's it! We manage automatic weekly payments until you're paid");
-        $I->click('span.close-modal');
-        $I->waitForElementNotVisible('.lpay-modal', 30);
+        // $I->see("That's it! We manage automatic weekly payments until you're paid");
+        // $I->click('span.close-modal');
+        // $I->waitForElementNotVisible('.lpay-modal', 30);
     }
 
     /**
