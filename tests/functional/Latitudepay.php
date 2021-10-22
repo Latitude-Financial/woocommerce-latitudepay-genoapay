@@ -105,7 +105,7 @@ trait Latitudepay
         $I->wait(3);
         $I->amOnUrl('https://app.uat.latitudepay.com/');
         $I->wait(3);
-        $I->see('Sign in or create an account');
+        $I->see('Welcome to LatitudePay');
         $I->fillField(['name' => 'emailAddress'], getenv('LATITUDE_USER_EMAIL', "") ?: getenv('LATITUDE_USER_EMAIL'));
         $I->fillField(['name' => 'password'], getenv('LATITUDE_USER_PASSWORD', "") ?: getenv('LATITUDE_USER_PASSWORD'));
         $I->click("button.btn-submit");

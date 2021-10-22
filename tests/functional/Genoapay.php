@@ -94,7 +94,7 @@ trait Genoapay
         if(strpos($uri,"/account") !== false) {
             return;
         }
-        $I->see('Sign in or create an account');
+        $I->see('Welcome to Genoapay');
         $I->fillField(['name' => 'emailAddress'], getenv('GENOAPAY_USER_EMAIL', "") ?: getenv('GENOAPAY_USER_EMAIL'));
         $I->fillField(['name' => 'password'], getenv('GENOAPAY_USER_PASSWORD', "") ?: getenv('GENOAPAY_USER_PASSWORD'));
         $I->click("button.btn-submit");
