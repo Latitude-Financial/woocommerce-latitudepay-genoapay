@@ -16,7 +16,7 @@ modules:
         WPCLI:
             path: '%WP_ROOT_FOLDER%'
             throw: true
-            timeout: 60
+            timeout: 120
             # This will be prepended to the command, `wp --allow-root <command>`.
             allow-root: true
         WPDb:
@@ -44,7 +44,7 @@ modules:
             host: '%TEST_SELENIUM_HOST%'
             port: '%TEST_SELENIUM_PORT%'
             window_size: 1920x1080
-            wait: 5
+            wait: 60
             capabilities:
                 acceptInsecureCerts: true
                 "goog:chromeOptions":
