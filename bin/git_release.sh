@@ -6,10 +6,16 @@
 # Prerequisite: Main plugin file slug must be the same as the plugin folder name.
 # Prerequisite: Existing git repo with its remote origin set up on GitHub. Both repo names must match the plugin slug, exactly.
 # Configure the first few variables.
-cd ..
 set -e
 #config
-SLUG=${PWD##*/}
+REPO_URL=$(git config --get remote.origin.url)
+
+RE="^(https|git)(:\/\/|@)([^\/:]+)[\/:]([^\/:]+)\/(.+).git$"
+
+if [[ $REPO_URL =~ $RE ]]; then
+    GITHUB_USER=${BASH_REMATCH[4]}
+    GITHUB_REPO=${BASH_REMATCH[5]}
+fi
 CURRENTDIR=`pwd`
 MAINFILE="LatitudeFinance.php"
 timestamp=$(date +%Y%m%d_%H%M%S) # +%Y%m%d_%H%M%S
@@ -39,6 +45,6 @@ CHANGELOG_JSON="${CHANGELOG//$'\n'/'\n'}"
  
 API_JSON=$(printf '{"tag_name": "%s","target_commitish": "ci-cd","name": "%s","body": "%s","draft": false,"prerelease": false}' $STABLEVERSION $STABLEVERSION "$CHANGELOG_JSON")
 
-curl --data "$API_JSON" https://api.github.com/repos/${GITHUB_USER}/${SLUG}/releases?access_token=${GITHUB_TOKEN}
+curl -H "Authorization: token ${GITHUB_TOKEN}" --data "$API_JSON"  https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/releases
 
 echo "*** FIN ***"
