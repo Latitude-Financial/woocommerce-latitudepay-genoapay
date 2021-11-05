@@ -526,16 +526,16 @@ workflows:
       - php80-build:
           requires:
             - php74-build
-      # - github-release:
-      #     requires:
-      #       # - php71-build
-      #       # - php72-build
-      #       - php73-build
-      #       - php74-build
-      #       - php80-build
-      #     filters:
-      #       branches:
-      #         only: master
+      - github-release:
+          requires:
+            # - php71-build
+            # - php72-build
+            - php73-build
+            - php74-build
+            - php80-build
+          filters:
+            branches:
+              only: master
       # - wordpress-release:
       #     requires:
       #       - github-release
