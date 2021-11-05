@@ -1,0 +1,26 @@
+# git files
+/.gitattributes export-ignore
+/.gitignore export-ignore
+
+# documentation
+/bin export-ignore
+/doc export-ignore
+/vendor export-ignore
+/ISSUE_TEMPLATE.md export-ignore
+/.github export-ignore
+/.circleci export-ignore
+/.docker export-ignore
+/default.env export-ignore
+/default.env.template export-ignore
+/docker-compose.yml export-ignore
+/.env.circleci export-ignore
+/.env.local export-ignore
+/.phpcs.xml.dist export-ignore
+/.phpmd.xml.dist export-ignore
+/composer.json export-ignore
+/composer.lock export-ignore
+/codeception.dev.yml export-ignore
+/codeception.yml export-ignore
+/vendor export-ignore
+/tests export-ignore
+/logs export-ignore

@@ -1,21 +1,21 @@
 <?php
 
 
-interface LatitudeFinance_Payment_Method_Interface
-{
-    /**
-     * @return string
-     */
-    public function getSnippetUrl();
+interface LatitudeFinance_Payment_Method_Interface {
 
-    /**
-     * @param $amount
-     * @return self
-     */
-    public function setAmount($amount);
+	/**
+	 * @return string
+	 */
+	public function getSnippetUrl();
 
-    /**
-     * @return string
-     */
-    public function getImagesApiUrl();
+	/**
+	 * @param $amount
+	 * @return self
+	 */
+	public function setAmount( $amount);
+
+	/**
+	 * @return string
+	 */
+	public function getImagesApiUrl();
 }
