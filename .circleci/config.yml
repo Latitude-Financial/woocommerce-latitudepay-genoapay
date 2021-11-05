@@ -159,9 +159,8 @@ jobs:
           name: Tag new release
           command: |
             cd ~/latitude
-            cd bin/
-            chmod +x git_release.sh
-            ./git_release.sh
+            chmod +x bin/git_release.sh
+            bin/git_release.sh
   wordpress-release:
     docker:
       - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.3
