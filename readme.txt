@@ -28,6 +28,9 @@ Please visit the official websites below for more information.
 Please send your integration related issues to [Integration Support](mailto:integrationsupport@latitudefinancial.com)
 
 == Changelog ==
+= 2.1.1 =
+* Implement automatic github release on CI/CD
+
 = 2.1 =
 * Fixed the CSS issue with the LatitudePay logo at checkout
 * Support Woocommerce blocks extension to show the payment method from the checkout page
