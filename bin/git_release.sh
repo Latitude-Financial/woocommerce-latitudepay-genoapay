@@ -37,14 +37,12 @@ echo "Versions match in readme.txt and PHP file. Let's proceed..."
 echo "Creating a new release on GitHub"
 # Get changelog text from readme
 BEGINLINE=`awk '/Changelog/{ print NR; exit }' "$CURRENTDIR/readme.txt"`
-BEGINLINE=$((BEGINLINE+1)) 
-ENDLINE=`grep -n '= ' "$CURRENTDIR/readme.txt"| sed -n '4 s/:.*//p'`
-ENDLINE=$((ENDLINE-1)) 
+BEGINLINE=$((BEGINLINE+1))
+ENDLINE=$((BEGINLINE+2))
 CHANGELOG=`sed -n -e "${BEGINLINE},${ENDLINE}p" "$CURRENTDIR/readme.txt"`
 CHANGELOG_JSON="${CHANGELOG//$'\n'/'\n'}"
  
-API_JSON=$(printf '{"tag_name": "%s","target_commitish": "ci-cd","name": "%s","body": "%s","draft": false,"prerelease": false}' $STABLEVERSION $STABLEVERSION "$CHANGELOG_JSON")
-
+API_JSON=$(printf '{"tag_name": "%s","target_commitish": "master","name": "%s","body": "%s","draft": false,"prerelease": false}' $STABLEVERSION $STABLEVERSION "$CHANGELOG_JSON")
 curl -H "Authorization: token ${GITHUB_TOKEN}" --data "$API_JSON"  https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/releases
 
 echo "*** FIN ***"
