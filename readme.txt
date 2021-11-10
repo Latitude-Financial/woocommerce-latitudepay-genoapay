@@ -2,7 +2,7 @@
 Tags: latitudepay, genoapay, woocommerce, bnpl, buynowpaylater
 Requires at least: 4.4
 Tested up to: 5.8
-Stable tag: 2.1.3
+Stable tag: 2.1
 Requires PHP: 5.6
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -28,15 +28,6 @@ Please visit the official websites below for more information.
 Please send your integration related issues to [Integration Support](mailto:integrationsupport@latitudefinancial.com)
 
 == Changelog ==
-= 2.1.3 =
-* Implement automatic github release on CI/CD Attempt #3
-
-= 2.1.2 =
-* Implement automatic github release on CI/CD Attempt #2
-
-= 2.1.1 =
-* Implement automatic github release on CI/CD
-
 = 2.1 =
 * Fixed the CSS issue with the LatitudePay logo at checkout
 * Support Woocommerce blocks extension to show the payment method from the checkout page
