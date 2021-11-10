@@ -15,8 +15,8 @@
 /docker-compose.yml export-ignore
 /.env.circleci export-ignore
 /.env.local export-ignore
-/.phpcs.xml.dist export-ignore
-/.phpmd.xml.dist export-ignore
+/phpcs.xml.dist export-ignore
+/phpmd.xml.dist export-ignore
 /composer.json export-ignore
 /composer.lock export-ignore
 /codeception.dev.yml export-ignore
