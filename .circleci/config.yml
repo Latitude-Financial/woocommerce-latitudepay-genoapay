@@ -183,6 +183,43 @@ jobs:
             cd bin/
             chmod +x wp_release.sh
             ./wp_release.sh
+  coding-standard:
+    docker:
+      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.3
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASSWORD
+        environment:
+          - MYSQL_ROOT_HOST=%
+          - PLATFORM=woocommerce
+          - MYSQL_ROOT_PASSWORD=woocommerce
+          - MYSQL_DATABASE=woocommerce
+          - MYSQL_USER=woocommerce
+          - MYSQL_PASSWORD=woocommerce
+          - MYSQL_DB_HOST=127.0.0.1
+          - WP_CORE_DIR=/var/www/html
+          - WP_SITE_URL=http://woocommerce.localhost
+          - PLATFORM_VERSION=5.6
+          - WC_VERSION=5.3.0
+          - WP_TESTS_DIR=/tmp/wordpress-tests-lib
+          - WP_CORE_DIR=/var/www/html
+          - WP_PLUGIN_DIR=/var/www/html/wp-content/plugins
+          - LATITUDE_API_PUBLIC_KEY=$LATITUDE_API_PUBLIC_KEY
+          - LATITUDE_API_PRIVATE_KEY=$LATITUDE_API_PRIVATE_KEY
+          - LATITUDE_USER_EMAIL=$LATITUDE_USER_EMAIL
+          - LATITUDE_USER_PASSWORD=$LATITUDE_USER_PASSWORD
+          - GENOAPAY_API_PUBLIC_KEY=$GENOAPAY_API_PUBLIC_KEY
+          - GENOAPAY_API_PRIVATE_KEY=$GENOAPAY_API_PRIVATE_KEY
+          - GENOAPAY_USER_EMAIL=$GENOAPAY_USER_EMAIL
+          - GENOAPAY_USER_PASSWORD=$GENOAPAY_USER_PASSWORD
+    environment:
+      - WP_TESTS_DIR: "/tmp/wordpress-tests-lib"
+      - WP_CORE_DIR: "/var/www/html"
+    working_directory: /var/www/html/wp-content/plugins/woocommerce-latitudepay-genoapay
+    resource_class: xlarge
+    steps:
+      - checkout
+      - cs-tests
   php56-build:
     docker:
       - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-4.9-php-5.6
@@ -227,7 +264,7 @@ jobs:
     steps:
       - build-tests:
           version: "5.6"
-      - cs-tests
+      #- cs-tests
       - lp-tests
       - wc-tests
   php70-build:
@@ -274,7 +311,7 @@ jobs:
     steps:
       - build-tests:
           version: "7.0"
-      - cs-tests
+      #- cs-tests
       - lp-tests
       - wc-tests
   php71-build:
@@ -321,7 +358,7 @@ jobs:
     steps:
       - build-tests:
           version: "7.1"
-      - cs-tests
+      #- cs-tests
       - lp-tests
       - wc-tests
   php72-build:
@@ -415,7 +452,7 @@ jobs:
     steps:
       - build-tests:
           version: "7.3"
-      - cs-tests
+      #- cs-tests
       - lp-tests
       - wc-tests
   php74-build:
@@ -462,7 +499,7 @@ jobs:
     steps:
       - build-tests:
           version: "7.4"
-      - cs-tests
+      #- cs-tests
       - lp-tests
       - wc-tests
   php80-build:
@@ -515,10 +552,13 @@ workflows:
   version: 2
   main:
     jobs:
+      - coding-standard
       # - php56-build
       # - php71-build
       # - php72-build
-      - php73-build
+      - php73-build:
+          requires:
+            - coding-standard
       - php74-build:
           requires:
             - php73-build
