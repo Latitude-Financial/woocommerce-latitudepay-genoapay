@@ -46,7 +46,7 @@ class ReturnActionWithLatitudePayTest extends LatitudePay
         $_GET = [
             'result' => \BinaryPay_Variable::STATUS_COMPLETED,
             'message' => 'Payment Success',
-            'wc-api' => 'latitudepay_return_action'
+            'wc-api' => 'latitudepay_return_action',
         ];
         $this->gateway->return_action();
         $notices = wc_get_notices( 'error' );
@@ -76,7 +76,8 @@ class ReturnActionWithLatitudePayTest extends LatitudePay
             'result' => \BinaryPay_Variable::STATUS_COMPLETED,
             'message' => 'Payment Success',
             'wc-api' => 'latitudepay_return_action',
-            'purchase_token' => $purchaseToken
+            'purchase_token' => $purchaseToken,
+            'reference' => $order->get_id()
         ];
         $this->gateway->return_action();
         $notices = wc_get_notices( 'error' );
