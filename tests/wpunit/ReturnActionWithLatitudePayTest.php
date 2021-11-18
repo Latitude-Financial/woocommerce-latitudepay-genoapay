@@ -78,6 +78,8 @@ class ReturnActionWithGenoaPayTest extends GenoaPay
             'purchase_token' => 'xxxxxxxxxxx',
             'reference' => $order->get_id()
         ];
+        $_GET['signature'] = $this->generate_signature($_GET);
+
         $this->gateway->return_action();
         $notices = wc_get_notices( 'error' );
         $this->assertEmpty($notices);
