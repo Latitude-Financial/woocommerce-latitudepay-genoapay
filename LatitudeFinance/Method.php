@@ -259,42 +259,42 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 			);
 		}
 
-        if ( !$this->validate_response_signature($request) ) {
-            throw new BinaryPay_Exception(
-                __(
-                    'The return action handler is not valid for the request.',
-                    'woocommerce-payment-gateway-latitudefinance'
-                )
-            );
-        }
+		if ( ! $this->validate_response_signature( $request ) ) {
+			throw new BinaryPay_Exception(
+				__(
+					'The return action handler is not valid for the request.',
+					'woocommerce-payment-gateway-latitudefinance'
+				)
+			);
+		}
 
 		return $this;
 	}
 
-    /**
-     * Validate if the signature is correct
-     * @param $request
-     * @return bool
-     */
-    private function validate_response_signature($request)
-    {
-        /**
-         * @var BinaryPay $gateway
-         */
-        $gateway = $this->get_gateway();
-        $gluedString = $gateway->recursiveImplode(
-            [
-                'token' => wc_latitudefinance_get_array_data('token', $request),
-                'reference' => WC()->session->get('order_id'),
-                'message' => wc_latitudefinance_get_array_data('message', $request),
-                'result' => wc_latitudefinance_get_array_data('result', $request),
-            ],
-            '',
-            true
-        );
-        $signature = hash_hmac('sha256', base64_encode($gluedString), $gateway->getConfig('password'));
-        return $signature === wc_latitudefinance_get_array_data('signature', $request);
-    }
+	/**
+	 * Validate if the signature is correct
+	 *
+	 * @param $request
+	 * @return bool
+	 */
+	private function validate_response_signature( $request ) {
+		/**
+		 * @var BinaryPay $gateway
+		 */
+		$gateway = $this->get_gateway();
+		$gluedString = $gateway->recursiveImplode(
+			array(
+				'token' => wc_latitudefinance_get_array_data( 'token', $request ),
+				'reference' => WC()->session->get( 'order_id' ),
+				'message' => wc_latitudefinance_get_array_data( 'message', $request ),
+				'result' => wc_latitudefinance_get_array_data( 'result', $request ),
+			),
+			'',
+			true
+		);
+		$signature = hash_hmac( 'sha256', base64_encode( $gluedString ), $gateway->getConfig( 'password' ) );
+		return $signature === wc_latitudefinance_get_array_data( 'signature', $request );
+	}
 
 	/**
 	 * process_response
