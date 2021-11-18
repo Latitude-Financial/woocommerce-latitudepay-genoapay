@@ -202,7 +202,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 		$this->currency_code = get_woocommerce_currency();
 		$this->credentials = $this->get_credentials();
 		$this->lpay_plus_payment_terms = $this->get_option( 'lpay_plus_payment_terms' );
-        $this->redirect_url = wc_get_checkout_url();
+		$this->redirect_url = wc_get_checkout_url();
 		$this->add_hooks();
 	}
 
@@ -250,14 +250,14 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 			throw new BinaryPay_Exception( __( 'You are not allowed to access the return handler directly. If you want to know more about this error message, please contact us.', 'woocommerce-payment-gateway-latitudefinance' ) );
 		}
 
-        if ( wc_latitudefinance_get_array_data('reference', $request) != $session->get('order_id') ) {
-            throw new BinaryPay_Exception(
-                __(
-                    'The return action handler is not valid for the request.',
-                    'woocommerce-payment-gateway-latitudefinance'
-                )
-            );
-        }
+		if ( wc_latitudefinance_get_array_data( 'reference', $request ) != $session->get( 'order_id' ) ) {
+			throw new BinaryPay_Exception(
+				__(
+					'The return action handler is not valid for the request.',
+					'woocommerce-payment-gateway-latitudefinance'
+				)
+			);
+		}
 
 		return $this;
 	}
