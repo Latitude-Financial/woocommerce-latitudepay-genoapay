@@ -999,9 +999,13 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 	}
 
 
+	/**
+	 *
+	 * @return mixed|string
+	 * @throws Exception
+	 */
 	public function get_purchase_url() {
 		try {
-			$session = $this->get_checkout_session();
 			$gateway = $this->get_gateway();
 			$reference = $this->get_reference_number();
 			$amount = $this->get_amount();
