@@ -202,7 +202,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 		$this->currency_code = get_woocommerce_currency();
 		$this->credentials = $this->get_credentials();
 		$this->lpay_plus_payment_terms = $this->get_option( 'lpay_plus_payment_terms' );
-
+		$this->redirect_url = wc_get_checkout_url();
 		$this->add_hooks();
 	}
 
@@ -242,7 +242,6 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 		}
 
 		if ( ! $token ) {
-			$this->redirect_url = wc_get_checkout_url();
 			$session->set( 'order_id', null );
 			/**
 			 * @todo If debug then output the request in to the log file
@@ -250,7 +249,51 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 			 */
 			throw new BinaryPay_Exception( __( 'You are not allowed to access the return handler directly. If you want to know more about this error message, please contact us.', 'woocommerce-payment-gateway-latitudefinance' ) );
 		}
+
+		if ( wc_latitudefinance_get_array_data( 'reference', $request ) != $session->get( 'order_id' ) ) {
+			throw new BinaryPay_Exception(
+				__(
+					'The return action handler is not valid for the request.',
+					'woocommerce-payment-gateway-latitudefinance'
+				)
+			);
+		}
+
+		if ( ! $this->validate_response_signature( $request ) ) {
+			throw new BinaryPay_Exception(
+				__(
+					'The return action handler is not valid for the request.',
+					'woocommerce-payment-gateway-latitudefinance'
+				)
+			);
+		}
+
 		return $this;
+	}
+
+	/**
+	 * Validate if the signature is correct
+	 *
+	 * @param $request
+	 * @return bool
+	 */
+	private function validate_response_signature( $request ) {
+		/**
+		 * @var BinaryPay $gateway
+		 */
+		$gateway = $this->get_gateway();
+		$gluedString = $gateway->recursiveImplode(
+			array(
+				'token' => wc_latitudefinance_get_array_data( 'token', $request ),
+				'reference' => WC()->session->get( 'order_id' ),
+				'message' => wc_latitudefinance_get_array_data( 'message', $request ),
+				'result' => wc_latitudefinance_get_array_data( 'result', $request ),
+			),
+			'',
+			true
+		);
+		$signature = hash_hmac( 'sha256', base64_encode( $gluedString ), $gateway->getConfig( 'password' ) );
+		return $signature === wc_latitudefinance_get_array_data( 'signature', $request );
 	}
 
 	/**
@@ -956,9 +999,13 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 	}
 
 
+	/**
+	 *
+	 * @return mixed|string
+	 * @throws Exception
+	 */
 	public function get_purchase_url() {
 		try {
-			$session = $this->get_checkout_session();
 			$gateway = $this->get_gateway();
 			$reference = $this->get_reference_number();
 			$amount = $this->get_amount();

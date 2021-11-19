@@ -167,4 +167,24 @@ class Base extends \Codeception\TestCase\WPTestCase
 		// stopping the web server during tear down allows us to reuse the port for later tests
 		self::$server->stop();
 	}
+
+    /**
+     * @param array $data
+     * @return false|string
+     */
+    protected function generate_signature($data)
+    {
+        $gateway = $this->gateway->get_gateway();
+        $gluedString = $gateway->recursiveImplode(
+            array(
+                'token' => wc_latitudefinance_get_array_data( 'token', $data ),
+                'reference' => WC()->session->get( 'order_id' ),
+                'message' => wc_latitudefinance_get_array_data( 'message', $data ),
+                'result' => wc_latitudefinance_get_array_data( 'result', $data ),
+            ),
+            '',
+            true
+        );
+        return hash_hmac( 'sha256', base64_encode( $gluedString ), $gateway->getConfig( 'password' ) );
+    }
 }

@@ -75,8 +75,11 @@ class ReturnActionWithGenoaPayTest extends GenoaPay
             'result' => \BinaryPay_Variable::STATUS_COMPLETED,
             'message' => 'Payment Success',
             'wc-api' => 'genoapay_return_action',
-            'purchase_token' => 'xxxxxxxxxxx'
+            'purchase_token' => 'xxxxxxxxxxx',
+            'reference' => $order->get_id()
         ];
+        $_GET['signature'] = $this->generate_signature($_GET);
+
         $this->gateway->return_action();
         $notices = wc_get_notices( 'error' );
         $this->assertEmpty($notices);
