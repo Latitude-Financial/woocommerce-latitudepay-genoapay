@@ -29,7 +29,7 @@ Please send your integration related issues to [Integration Support](mailto:inte
 
 == Changelog ==
 = 2.2 =
-* Fix the vulnerability in checkout callback URL
+* Some important security improvements and bug fixes
 
 = 2.1 =
 * Fixed the CSS issue with the LatitudePay logo at checkout
