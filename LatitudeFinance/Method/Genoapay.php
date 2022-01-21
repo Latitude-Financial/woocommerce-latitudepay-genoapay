@@ -112,15 +112,15 @@ class WC_LatitudeFinance_Method_Genoapay extends WC_LatitudeFinance_Method_Abstr
 	 * Show payment snippet and modal from images API
 	 */
 	public function generate_snippet_html() {
-		if(is_product()){
-			include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/snippet.php';
-		}
-		
-		if(is_cart() && $this->get_option( 'cart_page_snippet_enabled', 'yes' ) === 'yes'){
+		if ( is_product() ) {
 			include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/snippet.php';
 		}
 
-		if ( is_checkout() && $this->get_option( 'checkout_page_snippet_enabled', 'yes' ) === 'yes') {
+		if ( is_cart() && $this->get_option( 'cart_page_snippet_enabled', 'yes' ) === 'yes' ) {
+			include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/snippet.php';
+		}
+
+		if ( is_checkout() && $this->get_option( 'checkout_page_snippet_enabled', 'yes' ) === 'yes' ) {
 			include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/snippet.php';
 			include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/modal.php';
 		}
