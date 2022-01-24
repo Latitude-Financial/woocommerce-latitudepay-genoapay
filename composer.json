@@ -1,7 +1,7 @@
 {
     "name": "latitudepay/woocommerce-latitudepay-genoapay",
     "description": "Take credit card payments on your store using Latitudepay Genoapay.",
-    "version": "2.2",
+    "version": "2.2.1",
     "homepage": "https://woocommerce.com/products/woocommerce-latitudepay-genoapay/",
 		"license": "GPL-2.0",
 		"config": {
