@@ -408,6 +408,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 		$request = $_GET;
 		$message = wc_latitudefinance_get_array_data( 'message', $request );
 		$result = wc_latitudefinance_get_array_data( 'result', $request );
+		$token = wc_latitudefinance_get_array_data( 'token', $request );
 		$order_id = wc_latitudefinance_get_array_data( 'reference', $request );
 		if ($order_id === '') {
 			$this->logger("Order id (reference parameter) was not present on callback scenario");
@@ -444,6 +445,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 			$this->logger("CALLBACK FUNCTION - Successful payment on order #".$order_id.":\n" . $message);
 			$order->update_meta_data('processing', "true");
 			$order->update_status(self::PROCESSING_ORDER_STATUS, $message);
+			$order->set_transaction_id( $token );
 			$order->payment_complete(); //change status to processing (if admin need to ship) or completed (for downloadable items)
 			wc_reduce_stock_levels($order_id);
 			$order->save();
