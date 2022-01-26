@@ -109,7 +109,7 @@ commands: # a reusable command with parameters
 jobs:
   deploy:
     docker:
-      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.3
+      - image: registry.gitlab.com/Latitude-Financial/docker-opensource-ecommerce:woocommerce-5.6-php-7.3
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASSWORD
@@ -163,7 +163,7 @@ jobs:
             bin/git_release.sh
   wordpress-release:
     docker:
-      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.3
+      - image: registry.gitlab.com/Latitude-Financial/docker-opensource-ecommerce:woocommerce-5.6-php-7.3
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASSWORD
@@ -185,7 +185,7 @@ jobs:
             ./wp_release.sh
   coding-standard:
     docker:
-      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.3
+      - image: registry.gitlab.com/Latitude-Financial/docker-opensource-ecommerce:woocommerce-5.6-php-7.3
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASSWORD
@@ -222,7 +222,7 @@ jobs:
       - cs-tests
   php56-build:
     docker:
-      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-4.9-php-5.6
+      - image: registry.gitlab.com/Latitude-Financial/docker-opensource-ecommerce:woocommerce-4.9-php-5.6
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASSWORD
@@ -269,7 +269,7 @@ jobs:
       - wc-tests
   php70-build:
     docker:
-      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.1
+      - image: registry.gitlab.com/Latitude-Financial/docker-opensource-ecommerce:woocommerce-5.6-php-7.1
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASSWORD
@@ -316,7 +316,7 @@ jobs:
       - wc-tests
   php71-build:
     docker:
-      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.1
+      - image: registry.gitlab.com/Latitude-Financial/docker-opensource-ecommerce:woocommerce-5.6-php-7.1
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASSWORD
@@ -363,7 +363,7 @@ jobs:
       - wc-tests
   php72-build:
     docker:
-      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.2
+      - image: registry.gitlab.com/Latitude-Financial/docker-opensource-ecommerce:woocommerce-5.6-php-7.2
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASSWORD
@@ -410,7 +410,7 @@ jobs:
       - wc-tests
   php73-build:
     docker:
-      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-7.3
+      - image: registry.gitlab.com/Latitude-Financial/docker-opensource-ecommerce:woocommerce-5.6-php-7.3
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASSWORD
@@ -457,7 +457,7 @@ jobs:
       - wc-tests
   php74-build:
     docker:
-      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.8-php-7.4
+      - image: registry.gitlab.com/Latitude-Financial/docker-opensource-ecommerce:woocommerce-5.8-php-7.4
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASSWORD
@@ -504,7 +504,7 @@ jobs:
       - wc-tests
   php80-build:
     docker:
-      - image: registry.gitlab.com/magebinary/docker-opensource-ecommerce:woocommerce-5.6-php-8.0
+      - image: registry.gitlab.com/Latitude-Financial/docker-opensource-ecommerce:woocommerce-5.6-php-8.0
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASSWORD
