@@ -216,10 +216,11 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 
 		try {
 			// process the order depends on the request
-			//FIX: if order id not exist in session use callback flow
-			if ($this->get_checkout_session()->get( 'order_id' ) === null)
+			// FIX: if order id not exist in session use callback flow
+			$order_id = $this->get_checkout_session()->get( 'order_id' );
+			if ( $order_id === null )
 				$this->callback();
-			else
+			else 
 				$this->validate_response()
 					->process_response();
 		} catch ( BinaryPay_Exception $e ) {
@@ -241,7 +242,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 			throw new InvalidArgumentException( __( 'Request object cannot be empty!', 'woocommerce-payment-gateway-latitudefinance' ) );
 		}
 
-		//DOESN'T WORK IN CALLBACK because there'll be no active session
+		// DOESN'T WORK IN CALLBACK because there'll be no active session
 		$session = $this->get_checkout_session();
 		$token = $session->get( 'purchase_token' );
 		// Unset session after use
@@ -296,7 +297,7 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 		$gluedString = $gateway->recursiveImplode(
 			array(
 				'token' => wc_latitudefinance_get_array_data( 'token', $request ),
-				'reference' => $order_id !== null ?  $order_id : wc_latitudefinance_get_array_data( 'reference', $request ),
+				'reference' => $order_id !== null ? $order_id : wc_latitudefinance_get_array_data( 'reference', $request ),
 				'message' => wc_latitudefinance_get_array_data( 'message', $request ),
 				'result' => wc_latitudefinance_get_array_data( 'result', $request ),
 			),
@@ -366,9 +367,9 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 		// order object
 		$order = $this->get_order();
 
-		//prevent processing clash with callback & prevent status vulnerability
-        if ($order->get_meta('processing') === "true") {
-			wp_safe_redirect($this->get_return_url($order));
+		// prevent processing clash with callback & prevent status vulnerability
+		if ( $order->get_meta( 'processing' ) === 'true' ) {
+			wp_safe_redirect( $this->get_return_url( $order ) );
 			exit;
 		}
 
@@ -376,10 +377,10 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 
 		// Mark as on-hold (we're awaiting the payment)
 		$order->update_status( $this->order_status, $this->order_comment );
-		$order->update_meta_data('processing', "true");
+		$order->update_meta_data( 'processing', 'true' );
 
 		// Reduce stock levels
-		$order->reduce_order_stock(); //deprecated, replace with wc_reduce_stock_levels($order_id);
+		$order->reduce_order_stock(); // deprecated, replace with wc_reduce_stock_levels($order_id);
 		$order->set_transaction_id( $token );
 		$order->save();
 		// Remove cart
@@ -388,46 +389,45 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 		wp_redirect( $this->get_return_url( $order ) );
 	}
 
-	function logger($message)
-	{
-		if (empty($log)) {
+	function logger( $message ) {
+		if ( empty( $log )) {
 			$log = new WC_Logger();
 		}
 
-		if (is_array($message)) {
-			$message = print_r($message, true); 
+		if ( is_array( $message ) ) {
+			$message = print_r( $message, true );
 		} 
-		elseif (is_object($message)) {
-			$message = var_dump($message);
+		elseif ( is_object( $message ) ) {
+			$message = var_dump( $message );
 		}
 
-		$log->log('latitudePay', $message);
+		$log->log( 'latitudePay', $message );
 	}
 
-	function callback(){
+	function callback() {
 		$request = $_GET;
 		$message = wc_latitudefinance_get_array_data( 'message', $request );
 		$result = wc_latitudefinance_get_array_data( 'result', $request );
 		$token = wc_latitudefinance_get_array_data( 'token', $request );
 		$order_id = wc_latitudefinance_get_array_data( 'reference', $request );
-		if ($order_id === '') {
-			$this->logger("Order id (reference parameter) was not present on callback scenario");
+		if ( $order_id === '' ) {
+			$this->logger( 'Order id (reference parameter) was not present on callback scenario' );
 			exit;
 		}
-		$order = wc_get_order($order_id);
+		$order = wc_get_order( $order_id );
 
-		if (! $this->validate_response_signature($request)){
-			$this->logger("CALLBACK FUNCTION - Failed signature check on order #".$order_id);
+		if ( ! $this->validate_response_signature( $request ) ) {
+			$this->logger( 'CALLBACK FUNCTION - Failed signature check on order #' . $order_id );
 			exit;
 		}
 
-		if (($result == BinaryPay_Variable::STATUS_COMPLETED)) {
-			//prevent processing clash with normal scenario & prevent status vulnerability
-			if ($order->get_meta('processing') === "true") {
+		if ( ( $result == BinaryPay_Variable::STATUS_COMPLETED ) ) {
+			// prevent processing clash with normal scenario & prevent status vulnerability
+			if ( $order->get_meta( 'processing' ) === 'true' ) {
 				exit;
 			}
 
-			//Mage's not using Latitude's message payload, they're creating their own success message
+			// Mage's not using Latitude's message payload, they're creating their own success message
 			if ( is_array( $request ) ) {
 				$message = sprintf(
 					__( 'Payment was successful via %3$s. Amount: %1$s. Payment ID: %2$s', 'woocommerce-payment-gateway-latitudefinance' ),
@@ -442,20 +442,21 @@ abstract class WC_LatitudeFinance_Method_Abstract extends WC_Payment_Gateway
 				);
 			}
 
-			$this->logger("CALLBACK FUNCTION - Successful payment on order #".$order_id.":\n" . $message);
-			$order->update_meta_data('processing', "true");
-			$order->update_status(self::PROCESSING_ORDER_STATUS, $message);
+			$this->logger( 'CALLBACK FUNCTION - Successful payment on order #' . $order_id . ":\n" . $message );
+			$order->update_meta_data( 'processing', 'true' );
+			$order->update_status( self::PROCESSING_ORDER_STATUS, $message );
 			$order->set_transaction_id( $token );
-			$order->payment_complete(); //change status to processing (if admin need to ship) or completed (for downloadable items)
-			wc_reduce_stock_levels($order_id);
+			$order->payment_complete(); // change status to processing (if admin need to ship) or completed (for downloadable items)
+			wc_reduce_stock_levels( $order_id );
 			$order->save();
-		  }
-		else if (($result == BinaryPay_Variable::STATUS_FAILED)){
-		  $this->logger("CALLBACK FUNCTION - Failed payment on order #".$order_id." with the following message:\n" . $message);
-		}
-		else
+        }
+		else if ( ( $result == BinaryPay_Variable::STATUS_FAILED ) ) {
+            $this->logger( 'CALLBACK FUNCTION - Failed payment on order #' . $order_id . " with the following message:\n" . $message );
+		} 
+		else {
 			exit;
-	  }
+        } 
+    }
 
 	protected function get_order() {
 		$order_id = $this->get_checkout_session()->get( 'order_id' );
