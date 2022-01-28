@@ -93,7 +93,7 @@ class Genoapay extends BinaryPay {
 	 * @return [type]
 	 */
 	public function getToken() {
-		$url = $this->getApiUrl() . self::API_VERSION . DIRECTORY_SEPARATOR . self::TOKEN_ENDPOINT;
+		$url = $this->getApiUrl() . self::API_VERSION . '/' . self::TOKEN_ENDPOINT;
 
 		if ( ! $this->getConfig( 'authToken' ) ) {
 			$this->setConfig(
@@ -136,7 +136,7 @@ class Genoapay extends BinaryPay {
 	 * getPurchaseUrl
 	 */
 	public function getPurchaseUrl() {
-		return $this->getApiUrl() . self::API_VERSION . DIRECTORY_SEPARATOR . self::PURCHASE_ENDPOINT;
+		return $this->getApiUrl() . self::API_VERSION . '/' . self::PURCHASE_ENDPOINT;
 	}
 
 	/**
@@ -145,7 +145,7 @@ class Genoapay extends BinaryPay {
 	 * @return string
 	 */
 	public function getRefundUrl( $token ) {
-		return $this->getApiUrl() . self::API_VERSION . DIRECTORY_SEPARATOR . 'sale' . DIRECTORY_SEPARATOR . $token . DIRECTORY_SEPARATOR . 'refund';
+		return $this->getApiUrl() . self::API_VERSION . '/' . 'sale' . '/' . $token . '/' . 'refund';
 	}
 
 	/**
@@ -154,7 +154,7 @@ class Genoapay extends BinaryPay {
 	 * @return string
 	 */
 	public function getPurchaseStatusUrl( $token ) {
-		return $this->getApiUrl() . self::API_VERSION . DIRECTORY_SEPARATOR . self::PURCHASE_STATUS_ENDPOINT . DIRECTORY_SEPARATOR . $token . DIRECTORY_SEPARATOR . 'status';
+		return $this->getApiUrl() . self::API_VERSION . '/' . self::PURCHASE_STATUS_ENDPOINT . '/' . $token . '/' . 'status';
 	}
 
 	/**
@@ -163,7 +163,7 @@ class Genoapay extends BinaryPay {
 	 * @return string
 	 */
 	public function getConfigurationUrl() {
-		return $this->getApiUrl() . self::API_VERSION . DIRECTORY_SEPARATOR . self::CONFIGURATON_ENDPOINT;
+		return $this->getApiUrl() . self::API_VERSION . '/' . self::CONFIGURATON_ENDPOINT;
 	}
 
 	/**
