@@ -2,7 +2,7 @@
 Tags: latitudepay, genoapay, woocommerce, bnpl, buynowpaylater
 Requires at least: 4.4
 Tested up to: 5.8
-Stable tag: 2.2.1
+Stable tag: 2.2
 Requires PHP: 5.6
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -28,9 +28,6 @@ Please visit the official websites below for more information.
 Please send your integration related issues to [Integration Support](mailto:integrationsupport@latitudefinancial.com)
 
 == Changelog ==
-= 2.2.1 =
-* Fix compatibility with WordPress deployed on Windows server
-
 = 2.2 =
 * Some important security improvements and bug fixes
 
