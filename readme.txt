@@ -1,4 +1,4 @@
-=== LatitudePay & Genoapay Integrations for WooCommerce ===
+=== LatitudePay & Genoapay Integrations for WooCommerce Test ===
 Tags: latitudepay, genoapay, woocommerce, bnpl, buynowpaylater
 Requires at least: 4.4
 Tested up to: 5.8
