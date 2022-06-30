@@ -1,11 +1,13 @@
 <?php
 /**
- * Plugin Name: LatitudePay & GenoaPay Integrations for WooCommerce
- * Plugin URL: https://www.latitudefinancial.com.au/
- * Description: LatitudePay & Genoapay plugin supports both platforms. Genoapay is enabled if the store Currency is NZD and LatitudePay is enabled if the store currency is AUD.
- * Version: 2.2.1
+ * Plugin Name: LatitudePay & Genoapay Integrations for WooCommerce
+ * Plugin URI: https://www.latitudefinancial.com.au/
+ * Description: Genoapay is enabled if the store Currency is NZD and LatitudePay if AUD.
+ * Version: 3.0.1
+ * Requires at least: 5.2
+ * Requires PHP: 7.2
  * Author: Latitude Financial Services
- * Author URL: https://Latitudepay.com/
+ * Author URI: https://latitudepay.com/
  * Text Domain: latitudepay-genoapay-integrations-for-woocommerce
  * Domain Path: /i18n/languages/
  * License: Apache-2.0
@@ -13,7 +15,7 @@
  * @package LatitudeFinance
  */
 defined( 'ABSPATH' ) || exit;
-define( 'WC_LATITUDEPAY_VERSION', '2.2.1' );
+define( 'WC_LATITUDEPAY_VERSION', '3.0.1' );
 define( 'WC_LATITUDEPAY_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WC_LATITUDEPAY_URL', untrailingslashit( plugins_url( basename( plugin_dir_path( __FILE__ ) ), basename( __FILE__ ) ) ) );
 define( 'WC_LATITUDEPAY_ASSETS', plugin_dir_url( __FILE__ ) . 'assets/' );
@@ -34,8 +36,8 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'wc_latitudepa
 function wc_latitudepay_plugin_action_links( $links ) {
 	$plugin_links = array(
 		'<a href="admin.php?page=wc-settings&tab=checkout">' . esc_html__( 'Settings', 'woocommerce-payment-gateway-latitudefinance' ) . '</a>',
-		'<a href="">' . esc_html__( 'Docs', 'woocommerce-payment-gateway-latitudefinance' ) . '</a>',
-		'<a href="">' . esc_html__( 'Support', 'woocommerce-payment-gateway-latitudefinance' ) . '</a>',
+		'<a href="https://resources.latitudefinancial.com/docs/latitude-pay/woocommerce/" target="_blank">' . esc_html__( 'Docs', 'woocommerce-payment-gateway-latitudefinance' ) . '</a>',
+		'<a href="https://resources.latitudefinancial.com/docs/latitude-pay/merchant-support/" target="_blank">' . esc_html__( 'Support', 'woocommerce-payment-gateway-latitudefinance' ) . '</a>',
 	);
 	return array_merge( $plugin_links, $links );
 }
