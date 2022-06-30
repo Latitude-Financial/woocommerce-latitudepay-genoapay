@@ -88,8 +88,9 @@ class WC_Gateway_Genoapay_Blocks_Support extends AbstractPaymentMethodType {
 	 * @return false|LatitudeFinance_Payment_Method_Interface
 	 */
 	protected function get_payment_gateway() {
-		$payment_gateways_class = WC()->payment_gateways();
-		$payment_gateways       = $payment_gateways_class->payment_gateways();
+		// $payment_gateways_class = WC()->payment_gateways();
+		// $payment_gateways       = $payment_gateways_class->payment_gateways();
+		$payment_gateways       = WC()->payment_gateways->payment_gateways();
 		if ( ! isset( $payment_gateways[ $this->name ] ) ) {
 			return false;
 		}
