@@ -67,13 +67,14 @@ class WC_Gateway_Genoapay_Blocks_Support extends AbstractPaymentMethodType {
 			true
 		);
 
-		wp_enqueue_script(
-			'wc-' . $this->name . '-images-api-script',
-			WC_LATITUDEPAY_URL . '/assets/js/blocks/util.js',
-			array( 'jquery' ),
-			null,
-			true
-		);
+		// Removed on 24 Nov 2022 because no longer used
+		// wp_enqueue_script(
+		// 	'wc-' . $this->name . '-images-api-script',
+		// 	WC_LATITUDEPAY_URL . '/assets/js/blocks/util.js',
+		// 	array( 'jquery' ),
+		// 	null,
+		// 	true
+		// );
 
 		wp_set_script_translations(
 			'wc-' . $this->name . '-blocks-integration',

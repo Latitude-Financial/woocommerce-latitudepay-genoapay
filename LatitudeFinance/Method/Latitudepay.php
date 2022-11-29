@@ -106,8 +106,6 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
 			'woocommerce-payment-gateway-latitudefinance'
 		);
 
-		add_action( 'wp_footer', array( $this, 'latitudepay_footer_modal_script' ) );
-
 		parent::__construct();
 		$this->title = $this->method_title = $this->tab_title = __( $this->getMethodTitle(), 'woocommerce-payment-gateway-latitudefinance' );
 		$this->lpay_services = $this->get_option( 'lpay_services', wc_latitudefinance_get_array_data( 'lpay_services', $this->configuration, false ) );
@@ -162,18 +160,6 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
 	}
 
 	/**
-	 * Append modal script into page footer if the current template is in cart or product pages
-	 *
-	 * @return string|void
-	 */
-	public function latitudepay_footer_modal_script() {
-		if ( is_product() || is_cart()
-		) {
-			include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/modal.php';
-		}
-	}
-
-	/**
 	 * add_hooks
 	 */
 	public function add_hooks() {
@@ -190,10 +176,12 @@ class WC_LatitudeFinance_Method_Latitudepay extends WC_LatitudeFinance_Method_Ab
 	public function generate_snippet_html() {
 		if ( is_product() ) {
 			include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/snippet.php';
+			include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/modal.php';
 		}
 
 		if ( is_cart() && $this->get_option( 'cart_page_snippet_enabled', 'yes' ) === 'yes' ) {
 			include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/snippet.php';
+			include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/modal.php';
 		}
 
 		if ( is_checkout() && $this->get_option( 'checkout_page_snippet_enabled', 'yes' ) === 'yes' ) {

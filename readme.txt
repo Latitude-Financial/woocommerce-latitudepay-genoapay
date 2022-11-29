@@ -1,7 +1,7 @@
 === LatitudePay & Genoapay Integrations for WooCommerce ===
 Tags: latitudepay, genoapay, woocommerce, bnpl, buynowpaylater
-Stable tag: 3.0.1
-Tested up to: 6.0
+Stable tag: 3.0.2
+Tested up to: 6.1.1
 Requires at least: 5.2
 Requires PHP: 7.2
 License: GPLv2
@@ -28,6 +28,11 @@ Please visit the official websites below for more information.
 Please send your integration related issues to [Integration Support](mailto:integrationsupport@latitudefinancial.com)
 
 == Changelog ==
+= 3.0.2 =
+* Compatibility with WordPress 6.1.1
+* Compatibility with WooCommerce 7.1.0
+* Fix popup modal script appearing more than once
+
 = 3.0.1 =
 * Fix Woo payment_complete hook
 * Fix hyperlinks on WP plugins page
