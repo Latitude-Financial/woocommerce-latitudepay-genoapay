@@ -90,22 +90,8 @@ class WC_LatitudeFinance_Method_Genoapay extends WC_LatitudeFinance_Method_Abstr
 		// Add hook to handle the response from remote API
 		add_action( 'woocommerce_api_' . $this->id . '_return_action', array( $this, 'return_action' ) );
 
-		add_action( 'wp_footer', array( $this, 'genoapay_footer_modal_script' ) );
-
 		// Execture parent hooks
 		parent::add_hooks();
-	}
-
-	/**
-	 * Append modal script into page footer if the current template is in cart or product pages
-	 *
-	 * @return string|void
-	 */
-	public function genoapay_footer_modal_script() {
-		if ( is_product() || is_cart()
-		) {
-			include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/modal.php';
-		}
 	}
 
 	/**
@@ -114,10 +100,12 @@ class WC_LatitudeFinance_Method_Genoapay extends WC_LatitudeFinance_Method_Abstr
 	public function generate_snippet_html() {
 		if ( is_product() ) {
 			include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/snippet.php';
+			include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/modal.php';
 		}
 
 		if ( is_cart() && $this->get_option( 'cart_page_snippet_enabled', 'yes' ) === 'yes' ) {
 			include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/snippet.php';
+			include __DIR__ . DIRECTORY_SEPARATOR . '../../templates/images_api/modal.php';
 		}
 
 		if ( is_checkout() && $this->get_option( 'checkout_page_snippet_enabled', 'yes' ) === 'yes' ) {
